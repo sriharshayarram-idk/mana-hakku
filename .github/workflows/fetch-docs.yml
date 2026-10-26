@@ -1,0 +1,29 @@
+name: Fetch Constitution PDFs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official PDFs
+        run: |
+          set -e
+          sudo apt-get -qq install -y poppler-utils >/dev/null
+          mkdir -p app/src/main/assets/docs
+          UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36"
+          curl -fL --retry 3 -A "$UA" -o app/src/main/assets/docs/constitution-en.pdf "https://www.legislative.gov.in/static/uploads/2025/07/c9fe9c9b6840524844316f74bb1c556c.pdf"
+          curl -fL --retry 3 -A "$UA" -o app/src/main/assets/docs/constitution-te.pdf "https://cdnbbsr.s3waas.gov.in/s380537a945c7aaa788ccfcdf1b99b5d8f/uploads/2023/05/2023051268.pdf"
+          for f in app/src/main/assets/docs/*.pdf; do echo "== $f"; ls -la "$f"; pdfinfo "$f" | grep -E "Title|Pages|Producer|Creator|CreationDate" || true; pdffonts "$f" | head -8 || true; pdftotext -f 1 -l 3 "$f" - | head -40 || true; done
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/assets/docs
+          git commit -m "Add official Constitution of India PDFs (English 2026 edition, Telugu edition)" || echo "nothing to commit"
+          git push
