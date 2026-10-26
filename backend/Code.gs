@@ -36,7 +36,7 @@ const DISTRICTS = {
     'Peddapalli', 'Rajanna Sircilla', 'Ranga Reddy', 'Sangareddy', 'Siddipet', 'Suryapet', 'Vikarabad', 'Wanaparthy',
     'Warangal', 'Yadadri Bhuvanagiri']
 };
-const SECTORS = ['water', 'health', 'nutrition', 'education', 'child', 'women', 'elderly', 'livelihood', 'housing', 'roads', 'power', 'social', 'agri'];
+const SECTORS = ['water', 'sanitation', 'health', 'nutrition', 'education', 'child', 'women', 'elderly', 'livelihood', 'housing', 'roads', 'power', 'social', 'agri'];
 const URGENCY = ['high', 'medium', 'low'];
 const STATUSES = ['reported', 'acknowledged', 'progress', 'resolved'];
 const MAX_ROWS_RETURNED = 20000;   // every report from the start
@@ -200,7 +200,7 @@ function doPost(e) {
   }
 
   const r = d.report || {};
-  if (DISTRICTS[state].indexOf(r.district) < 0 || SECTORS.indexOf(r.sector) < 0 || URGENCY.indexOf(r.urgency) < 0) {
+  if (DISTRICTS[state].indexOf(r.district) < 0 || (SECTORS.indexOf(r.sector) < 0 && !/^[a-z]{3,20}$/.test(String(r.sector || ''))) || URGENCY.indexOf(r.urgency) < 0) {
     return json_({ ok: false, error: 'bad_request' });
   }
   const desc = clip_(r.desc, 1500).trim();

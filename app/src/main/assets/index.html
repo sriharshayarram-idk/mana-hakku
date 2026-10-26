@@ -412,6 +412,16 @@ dialog.pop[open]{display:flex;flex-direction:column}
 .gloss dd{margin:0}
 @media (max-width:640px){nav.tabs{position:static}.tab{font-size:.86rem;padding-inline:8px}}
 .say.sm{font-size:.9rem;margin-top:6px}
+.choose{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pickbtn{font:inherit;font-weight:600;text-align:left;cursor:pointer;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:14px;display:flex;gap:10px;align-items:center;min-height:64px}
+.pickbtn:hover,.pickbtn:focus-visible{border-color:var(--indigo);background:var(--indigo-soft)}
+.pickbtn .pi{width:38px;height:38px;border-radius:50%;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;flex:none}
+.pickbtn .pi .ico{width:22px;height:22px}
+.chgbtn{font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.6);background:transparent;color:#fff}
+.subpick{background:var(--surface);border:2px solid var(--indigo);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.subbtn{font:inherit;font-weight:600;font-size:.92rem;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px}
+.subbtn[aria-pressed="true"]{background:var(--indigo);border-color:var(--indigo);color:#fff}
+@media (max-width:420px){.choose{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -631,6 +641,10 @@ dialog.pop[open]{display:flex;flex-direction:column}
   <div class="popfoot" id="src-pop-foot"></div>
 </dialog>
 <div class="pdfov" id="pdf-view" hidden role="dialog" aria-modal="true" aria-labelledby="pdf-title"><div class="pdfbar"><b id="pdf-title"></b><button type="button" id="pdf-close"></button></div></div>
+<dialog class="pop" id="cat-pop" aria-labelledby="cat-pop-h">
+  <div class="pophead"><h3 id="cat-pop-h"></h3><button class="listen" type="button" id="cat-pop-listen"></button><button type="button" class="popx" id="cat-pop-x" aria-label="Close">✕</button></div>
+  <div class="popbody" id="cat-pop-body"></div>
+</dialog>
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script>
@@ -640,7 +654,7 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{tabMoney:"Public money",mnyH:"Praja Dhanam: your state's money, made simple",mnyLede:"Where the state's money comes from, where it goes, how much it borrows and what life costs for a family. Pick a year.",mnyPickYear:"Choose a year",
+en:{chooseH:"Is this about…?",chooseAllS:"Tap the area that matches your problem.",chooseS:"We could not tell clearly from your words. Tap the area that matches your problem.",seeAll:"See all areas",changeArea:"Change area",subPick:"Which problem exactly?",tabMoney:"Public money",mnyH:"Praja Dhanam: your state's money, made simple",mnyLede:"Where the state's money comes from, where it goes, how much it borrows and what life costs for a family. Pick a year.",mnyPickYear:"Choose a year",
 mnyYrActual:"{y}: real spending is known. Plan = the budget made at the start of the year. Spent = what was really spent.",mnyYrPlan:"{y}: the year is not finished in the records yet, so only the plan (budget) is shown.",
 kEco:"Size of the state's economy",kEcoS:"Everything made and every service given in the state in this year (GSDP).",kInc:"Average income per person",kIncS:"About {m} a month for each person.",
 kSpent:"The state spent",kSpentS:"Plan was {p}. It used {u} of the plan.",kPlan:"The state plans to spend",kPlanS:"This is the plan. Real spending is known after the year ends.",
@@ -689,7 +703,7 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{tabMoney:"ప్రజా ధనం",mnyH:"ప్రజా ధనం: మీ రాష్ట్ర డబ్బు, సులభంగా",mnyLede:"రాష్ట్రానికి డబ్బు ఎక్కడి నుండి వస్తుంది, ఎక్కడికి వెళ్తుంది, ఎంత అప్పు చేస్తుంది, ఒక కుటుంబానికి జీవితం ఎంత ఖర్చవుతుంది. ఒక సంవత్సరం ఎంచుకోండి.",mnyPickYear:"సంవత్సరం ఎంచుకోండి",
+te:{chooseH:"ఇది దేని గురించి?",chooseAllS:"మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",chooseS:"మీ మాటల నుండి స్పష్టంగా గుర్తించలేకపోయాం. మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",seeAll:"అన్ని రంగాలు చూడండి",changeArea:"రంగం మార్చండి",subPick:"సరిగ్గా ఏ సమస్య?",tabMoney:"ప్రజా ధనం",mnyH:"ప్రజా ధనం: మీ రాష్ట్ర డబ్బు, సులభంగా",mnyLede:"రాష్ట్రానికి డబ్బు ఎక్కడి నుండి వస్తుంది, ఎక్కడికి వెళ్తుంది, ఎంత అప్పు చేస్తుంది, ఒక కుటుంబానికి జీవితం ఎంత ఖర్చవుతుంది. ఒక సంవత్సరం ఎంచుకోండి.",mnyPickYear:"సంవత్సరం ఎంచుకోండి",
 mnyYrActual:"{y}: అసలు ఖర్చు తెలిసింది. ప్రణాళిక = సంవత్సరం మొదట్లో వేసిన బడ్జెట్. ఖర్చు = నిజంగా ఖర్చు చేసింది.",mnyYrPlan:"{y}: ఈ సంవత్సరం లెక్కలు ఇంకా పూర్తి కాలేదు, కాబట్టి ప్రణాళిక (బడ్జెట్) మాత్రమే చూపిస్తున్నాం.",
 kEco:"రాష్ట్ర ఆర్థిక వ్యవస్థ పరిమాణం",kEcoS:"ఈ సంవత్సరం రాష్ట్రంలో తయారైన ప్రతి వస్తువు, అందించిన ప్రతి సేవ విలువ (GSDP).",kInc:"ఒక్కొక్కరి సగటు ఆదాయం",kIncS:"ఒక్కొక్కరికి నెలకు సుమారు {m}.",
 kSpent:"రాష్ట్రం ఖర్చు చేసింది",kSpentS:"ప్రణాళిక {p}. ప్రణాళికలో {u} వాడింది.",kPlan:"రాష్ట్రం ఖర్చు చేయాలనుకుంటోంది",kPlanS:"ఇది ప్రణాళిక. అసలు ఖర్చు సంవత్సరం ముగిశాక తెలుస్తుంది.",
@@ -753,16 +767,47 @@ const dName=en=>{const d=DISTRICTS.find(x=>x[0]===en);return d?(LANG==="te"?d[1]
 
 // Sector data. Each text field: [english, telugu]
 const S={
- water:{name:["Drinking water & sanitation","తాగునీరు, పారిశుధ్యం"],
-  kw:["water","tap","borewell","bore well","drinking","sanitation","toilet","drain","sewage","fluoride","contaminat","tanker","pipeline","diarrh","నీరు","నీళ్లు","బోరు","కుళాయి","మరుగుదొడ్డి","డ్రైనేజీ","ఫ్లోరైడ్","చేతి పంపు","పైపులైన్"],
+ water:{name:["Drinking water","తాగునీరు"],
+  kw:["water","tap","borewell","bore well","drinking","fluoride","contaminat","tanker","pipeline","pipe line","handpump","hand pump","diarrh","neellu","neeru","nalla","manchineeru","bore","నీరు","నీళ్లు","నీళ్ల","నీటి","తాగునీ","మంచినీ","బోరు","బోర్","కుళాయి","నల్లా","ట్యాంకర్","ఫ్లోరైడ్","కలుషిత","చేతి పంపు","పైపు","పైప్‌లైన్","పైపులైన్","మిషన్ భగీరథ","వాటర్"],
+  subs:{
+   supply:{name:["No drinking water","తాగునీరు రావడం లేదు"],kw:["no water","not coming","not supplied","supply","shortage","dry","pipeline","pipe","borewell","bore","handpump","hand pump","tap","tanker","neellu ravatledu","రావడం లేదు","రావట్లేదు","రాలేదు","సరఫరా","కొరత","ఎండిపో","పైపు","బోరు","చేతి పంపు","కుళాయి","నల్లా","ట్యాంకర్"]},
+   quality:{name:["Dirty or unsafe water","కలుషిత / సురక్షితం కాని నీరు"],kw:["contaminat","dirty","muddy","fluoride","smell","colour","color","salty","diarrh","cholera","typhoid","jaundice","vomit","ill","sick","కలుషిత","బురద","మురికి నీ","ఫ్లోరైడ్","వాసన","ఉప్పు నీ","విరేచన","వాంతు","అస్వస్థ","కామెర్లు","టైఫాయిడ్","కలరా"],
+    plan:{now:[["Stop drinking from the suspect source; ask the Panchayat or municipality for chlorination and a safe supply (tanker) at once","అనుమానిత నీటిని తాగడం ఆపండి; వెంటనే క్లోరినేషన్, సురక్షిత నీటి సరఫరా (ట్యాంకర్) కోసం పంచాయతీ లేదా మున్సిపాలిటీని కోరండి"],["Get the water tested at the district water testing lab and inform the PHC if people are falling ill","జిల్లా నీటి పరీక్షా కేంద్రంలో నీటిని పరీక్షించండి; జనం అనారోగ్యానికి గురైతే PHCకి తెలియజేయండి"]],
+     d30:[["Find and fix the cause: leaking pipes near drains, a dirty tank, or a polluted source","కారణం కనుగొని సరిచేయాలి: కాలువల దగ్గర లీకైన పైపులు, మురికి ట్యాంకు లేదా కలుషిత మూలం"],["Clean the overhead tank regularly and publish the test results","ఓవర్‌హెడ్ ట్యాంకును క్రమం తప్పకుండా శుభ్రం చేసి, పరీక్ష ఫలితాలు ప్రకటించాలి"]],
+     d90:[["Defluoridation or a new safe source under Jal Jeevan Mission / the state water grid","జల్ జీవన్ మిషన్ / రాష్ట్ర వాటర్ గ్రిడ్ కింద ఫ్లోరైడ్ తొలగింపు లేదా కొత్త సురక్షిత నీటి మూలం"],["Regular water quality testing by trained village women (field test kits)","శిక్షణ పొందిన గ్రామ మహిళలతో క్రమం తప్పకుండా నీటి నాణ్యత పరీక్షలు (ఫీల్డ్ టెస్ట్ కిట్లు)"]]}}
+  },
   ap:[["Panchayat Raj & Rural Development (Rural Water Supply)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (గ్రామీణ నీటి సరఫరా)"],["Municipal Administration & Urban Development (towns and cities)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (పట్టణాలు, నగరాలు)"]],
   un:[["Ministry of Jal Shakti · Dept of Drinking Water & Sanitation","జల్ శక్తి మంత్రిత్వ శాఖ · తాగునీరు & పారిశుధ్య విభాగం"]],
-  law:[["Art 21","Right to life, which the Supreme Court has read to include safe drinking water","జీవించే హక్కు; సురక్షిత తాగునీరు దీనిలో భాగమని సుప్రీంకోర్టు స్పష్టం చేసింది"],["Art 47","State duty to improve nutrition, living standards and public health","పోషణ, జీవన ప్రమాణాలు, ప్రజారోగ్యం మెరుగుపరచడం రాష్ట్ర బాధ్యత"],["Art 243G","Panchayats plan drinking water and sanitation (11th Schedule)","తాగునీరు, పారిశుధ్య ప్రణాళికలో పంచాయతీల పాత్ర (11వ షెడ్యూల్)"]],
-  hr:["UDHR Art 25 · adequate standard of living; UN-recognised right to water and sanitation","UDHR ఆర్టికల్ 25 · తగిన జీవన ప్రమాణం; ఐక్యరాజ్యసమితి గుర్తించిన నీరు, పారిశుధ్య హక్కు"],
-  sch:["Jal Jeevan Mission","Swachh Bharat Mission"],
+  law:[["Art 21","Right to life, which the Supreme Court has read to include safe drinking water","జీవించే హక్కు; సురక్షిత తాగునీరు దీనిలో భాగమని సుప్రీంకోర్టు స్పష్టం చేసింది"],["Art 47","State duty to improve nutrition, living standards and public health","పోషణ, జీవన ప్రమాణాలు, ప్రజారోగ్యం మెరుగుపరచడం రాష్ట్ర బాధ్యత"],["Art 243G","Panchayats plan drinking water (11th Schedule)","తాగునీటి ప్రణాళికలో పంచాయతీల పాత్ర (11వ షెడ్యూల్)"]],
+  hr:["UDHR Art 25 · adequate standard of living; UN-recognised right to safe drinking water","UDHR ఆర్టికల్ 25 · తగిన జీవన ప్రమాణం; ఐక్యరాజ్యసమితి గుర్తించిన సురక్షిత తాగునీటి హక్కు"],
+  sch:["Jal Jeevan Mission (Har Ghar Jal)","15th Finance Commission tied grants (water)"],
   plan:{now:[["Request tanker supply and chlorination through the Grama/Ward Sachivalayam","గ్రామ/వార్డు సచివాలయం ద్వారా ట్యాంకర్ సరఫరా, క్లోరినేషన్ కోరండి"],["Get water samples tested at the district water testing lab","జిల్లా నీటి పరీక్షా కేంద్రంలో నీటి నమూనాలు పరీక్షించండి"]],
    d30:[["Repair or replace failed pumps, pipelines and handpumps","పాడైన పంపులు, పైపులైన్లు, చేతి పంపులు మరమ్మతు చేయించాలి"],["Publish a supply schedule and a local complaint contact","నీటి సరఫరా సమయ పట్టిక, స్థానిక ఫిర్యాదు సంప్రదింపు వివరాలు ప్రకటించాలి"]],
    d90:[["Add the habitation to the Jal Jeevan Mission village action plan","ఈ ఆవాసాన్ని జల్ జీవన్ మిషన్ గ్రామ కార్యాచరణ ప్రణాళికలో చేర్చాలి"],["Fix the source: recharge structures, defluoridation or a new scheme","నీటి మూలాన్ని సరిచేయాలి: భూగర్భ జల రీఛార్జ్, ఫ్లోరైడ్ తొలగింపు లేదా కొత్త పథకం"]]}},
+ sanitation:{name:["Sanitation · Swachh Bharat","పారిశుధ్యం · స్వచ్ఛ భారత్"],
+  kw:["sanitation","drain","drainage","sewage","sewer","gutter","overflow","stagnant","mosquito","manhole","septic","toilet","latrine","open defecation","urinal","garbage","waste","trash","rubbish","dump","dustbin","litter","swachh","clean","kaluva","murugu","chetta","dhomalu","మురుగు","కాలువ","డ్రైనేజీ","డ్రైనేజ్","దోమ","నిల్వ నీ","మ్యాన్‌హోల్","సెప్టిక్","మరుగుదొడ్డి","మరుగుదొడ్ల","టాయిలెట్","బహిరంగ మల","మూత్రశాల","చెత్త","వ్యర్థ","డంపింగ్","శుభ్రత","పారిశుధ్య","స్వచ్ఛ","దుర్వాసన","పొంగిపొర్లు","పొంగి"],
+  subs:{
+   drain:{name:["Drainage & sewage","మురుగు కాలువలు, డ్రైనేజీ"],kw:["drain","drainage","sewage","sewer","gutter","overflow","stagnant","mosquito","manhole","septic","kaluva","murugu","dhomalu","మురుగు","కాలువ","డ్రైనేజీ","డ్రైనేజ్","దోమ","నిల్వ నీ","మ్యాన్‌హోల్","సెప్టిక్","పొంగిపొర్లు","పొంగి","దుర్వాసన"],
+    plan:{now:[["Complain in writing to the Panchayat Secretary or municipal sanitary inspector to clear the blocked drain; keep the acknowledgement","మూసుకుపోయిన కాలువను శుభ్రం చేయమని పంచాయతీ కార్యదర్శి లేదా మున్సిపల్ శానిటరీ ఇన్‌స్పెక్టర్‌కు రాతపూర్వకంగా ఫిర్యాదు చేసి, రసీదు ఉంచుకోండి"],["Ask for bleaching powder and anti-mosquito spraying; tell the PHC if fever cases rise. If sewage mixes with drinking water pipes, report it to the water department at once","బ్లీచింగ్ పౌడర్, దోమల నివారణ పిచికారీ కోరండి; జ్వరాలు పెరిగితే PHCకి చెప్పండి. మురుగు తాగునీటి పైపుల్లో కలిస్తే వెంటనే నీటి సరఫరా శాఖకు తెలపండి"]],
+     d30:[["Desilt and repair broken drains and manhole covers; give stagnant water a proper outlet","పూడిక తీసి, పగిలిన కాలువలు, మ్యాన్‌హోల్ మూతలు మరమ్మతు చేయాలి; నిల్వ నీరు బయటకు పోయే దారి ఏర్పాటు చేయాలి"],["No person may be sent into a sewer or septic tank without safety gear: machines must be used (law of 2013)","భద్రతా పరికరాలు లేకుండా ఎవరినీ మురుగు గుంతలోకి లేదా సెప్టిక్ ట్యాంకులోకి దింపకూడదు: యంత్రాలు వాడాలి (2013 చట్టం)"]],
+     d90:[["Put covered drains in the Gram Panchayat / ward works plan","మూసి ఉన్న కాలువలను గ్రామ పంచాయతీ / వార్డు పనుల ప్రణాళికలో చేర్చాలి"],["Liquid waste management (soak pits, drain treatment) under Swachh Bharat Mission ODF Plus","స్వచ్ఛ భారత్ మిషన్ ODF ప్లస్ కింద ద్రవ వ్యర్థాల నిర్వహణ (ఇంకుడు గుంతలు, కాలువ నీటి శుద్ధి)"]]}},
+   toilet:{name:["Toilets","మరుగుదొడ్లు"],kw:["toilet","latrine","open defecation","urinal","washroom","bathroom","marugudoddi","మరుగుదొడ్డి","మరుగుదొడ్ల","టాయిలెట్","బహిరంగ మల","మూత్రశాల","బాత్‌రూమ్"],
+    plan:{now:[["For a home without a toilet, apply for the Swachh Bharat incentive (₹12,000 in villages) at the Gram Panchayat / Sachivalayam or municipality","ఇంట్లో మరుగుదొడ్డి లేకపోతే, స్వచ్ఛ భారత్ ప్రోత్సాహకం (గ్రామాల్లో ₹12,000) కోసం గ్రామ పంచాయతీ / సచివాలయం లేదా మున్సిపాలిటీలో దరఖాస్తు చేయండి"],["For a school, tell the head teacher and Mandal Educational Officer in writing: separate working toilets for girls are required by law","బడి విషయంలో ప్రధానోపాధ్యాయుడికి, మండల విద్యాధికారికి రాతపూర్వకంగా తెలపండి: బాలికలకు వేరుగా పనిచేసే మరుగుదొడ్లు చట్టప్రకారం తప్పనిసరి"]],
+     d30:[["Repair community, school and public toilets; give them water and a cleaner","సామూహిక, పాఠశాల, పబ్లిక్ మరుగుదొడ్లను మరమ్మతు చేసి, నీరు, శుభ్రం చేసే సిబ్బందిని ఏర్పాటు చేయాలి"],["List every household still without a toilet and track the incentive","ఇంకా మరుగుదొడ్డి లేని ప్రతి కుటుంబాన్ని జాబితా చేసి, ప్రోత్సాహకం అందేలా చూడాలి"]],
+     d90:[["Build a community sanitary complex where homes have no space","ఇళ్లలో స్థలం లేని చోట సామూహిక పారిశుధ్య సముదాయం నిర్మించాలి"],["Safe emptying of pits and septic tanks (faecal sludge management) under ODF Plus","ODF ప్లస్ కింద గుంతలు, సెప్టిక్ ట్యాంకుల సురక్షిత ఖాళీ (మల వ్యర్థాల నిర్వహణ)"]]}},
+   garbage:{name:["Garbage & cleanliness","చెత్త, శుభ్రత"],kw:["garbage","waste","trash","rubbish","dump","dustbin","litter","burning","chetta","చెత్త","వ్యర్థ","డంపింగ్","కుప్ప","తగలబెడ","శుభ్రం చేయ"],
+    plan:{now:[["Complain to the Panchayat or municipal sanitation section about uncollected garbage and the dump; in towns also use the Swachhata app or 1969","సేకరించని చెత్త, చెత్త కుప్ప గురించి పంచాయతీ లేదా మున్సిపల్ పారిశుధ్య విభాగానికి ఫిర్యాదు చేయండి; పట్టణాల్లో స్వచ్ఛత యాప్ లేదా 1969 కూడా వాడండి"],["Ask for the heap to be cleared and for door-to-door collection on fixed days","చెత్త కుప్పను తొలగించి, నిర్ణీత రోజుల్లో ఇంటింటి చెత్త సేకరణ కోరండి"]],
+     d30:[["Wet and dry waste kept separate at home; bins at markets and bus stops","ఇంటి వద్దే తడి, పొడి చెత్త వేరుచేయాలి; మార్కెట్లు, బస్ స్టాపుల వద్ద చెత్త డబ్బాలు"],["Stop open burning and dumping near water bodies and homes","నీటి వనరులు, ఇళ్ల దగ్గర చెత్త తగలబెట్టడం, పారబోయడం ఆపాలి"]],
+     d90:[["Compost and waste-processing shed for the village / ward under Swachh Bharat (ODF Plus / SBM-Urban 2.0)","స్వచ్ఛ భారత్ (ODF ప్లస్ / SBM-పట్టణ 2.0) కింద గ్రామం / వార్డుకు ఎరువు తయారీ, చెత్త శుద్ధి షెడ్"],["Pay and protect sanitation workers; regular review by the Gram Sabha / ward committee","పారిశుధ్య కార్మికులకు వేతనాలు, రక్షణ; గ్రామసభ / వార్డు కమిటీ క్రమ సమీక్ష"]]}}
+  },
+  ap:[["Panchayat Raj & Rural Development (Swachh Bharat Mission – Gramin)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (స్వచ్ఛ భారత్ మిషన్ – గ్రామీణ)"],["Municipal Administration & Urban Development (Swachh Bharat Mission – Urban)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (స్వచ్ఛ భారత్ మిషన్ – పట్టణ)"]],
+  un:[["Ministry of Jal Shakti · Dept of Drinking Water & Sanitation (SBM-Gramin)","జల్ శక్తి మంత్రిత్వ శాఖ · తాగునీరు & పారిశుధ్య విభాగం (SBM-గ్రామీణ)"],["Ministry of Housing & Urban Affairs (SBM-Urban 2.0)","గృహ & పట్టణ వ్యవహారాల మంత్రిత్వ శాఖ (SBM-పట్టణ 2.0)"]],
+  law:[["Art 21","Right to life includes a clean and healthy environment","జీవించే హక్కులో పరిశుభ్రమైన, ఆరోగ్యకరమైన వాతావరణం భాగం"],["Art 47 · 48A","Public health is a state duty; the state must protect the environment","ప్రజారోగ్యం రాష్ట్ర బాధ్యత; పర్యావరణాన్ని రక్షించాలి"],["Art 243G · 243W","Panchayats and municipalities are responsible for sanitation and waste (11th & 12th Schedules)","పారిశుధ్యం, వ్యర్థాల బాధ్యత పంచాయతీలు, మున్సిపాలిటీలదే (11వ, 12వ షెడ్యూళ్లు)"],["SWM Rules 2016","Local bodies must collect waste from every home and process it","ప్రతి ఇంటి నుండి చెత్త సేకరించి శుద్ధి చేయడం స్థానిక సంస్థల బాధ్యత"],["Manual Scavengers Act 2013","Sending people into sewers or septic tanks without safety gear is a crime","భద్రతా పరికరాలు లేకుండా మురుగు గుంతల్లోకి దింపడం నేరం"]],
+  hr:["UN-recognised human right to sanitation; UDHR Art 25 · health and well-being","ఐక్యరాజ్యసమితి గుర్తించిన పారిశుధ్య హక్కు; UDHR ఆర్టికల్ 25 · ఆరోగ్యం, శ్రేయస్సు"],
+  sch:["Swachh Bharat Mission – Gramin (ODF Plus)","Swachh Bharat Mission – Urban 2.0","15th Finance Commission tied grants (sanitation)"],
+  plan:{now:[["Complain in writing to the Panchayat Secretary or municipal sanitary inspector and keep the acknowledgement","పంచాయతీ కార్యదర్శి లేదా మున్సిపల్ శానిటరీ ఇన్‌స్పెక్టర్‌కు రాతపూర్వకంగా ఫిర్యాదు చేసి, రసీదు ఉంచుకోండి"],["Ask for cleaning and anti-mosquito spraying at once if there is a health risk","ఆరోగ్యానికి ప్రమాదం ఉంటే వెంటనే శుభ్రం చేయించి, దోమల నివారణ పిచికారీ కోరండి"]],
+   d30:[["Fix the drains, toilets or garbage collection named in the complaint","ఫిర్యాదులో పేర్కొన్న కాలువలు, మరుగుదొడ్లు లేదా చెత్త సేకరణను సరిచేయాలి"],["Publish a cleaning schedule and a local complaint contact","శుభ్రత సమయ పట్టిక, స్థానిక ఫిర్యాదు సంప్రదింపు వివరాలు ప్రకటించాలి"]],
+   d90:[["Plan liquid and solid waste management under Swachh Bharat (ODF Plus)","స్వచ్ఛ భారత్ (ODF ప్లస్) కింద ద్రవ, ఘన వ్యర్థాల నిర్వహణ ప్రణాళిక"],["Regular review by the Gram Sabha / ward committee","గ్రామసభ / వార్డు కమిటీ క్రమ సమీక్ష"]]}},
  health:{name:["Health care","ఆరోగ్య సేవలు"],
   kw:["hospital","phc","doctor","nurse","medicine","health","ambulance","fever","dengue","malaria","clinic","treatment","disease","maternal","delivery","snake","ఆసుపత్రి","డాక్టర్","వైద్య","మందు","జ్వరం","అంబులెన్స్","ఆరోగ్య","ప్రసవ","పాము కాటు"],
   ap:[["Health, Medical & Family Welfare","ఆరోగ్య, వైద్య & కుటుంబ సంక్షేమం"]],un:[["Ministry of Health & Family Welfare","ఆరోగ్య & కుటుంబ సంక్షేమ మంత్రిత్వ శాఖ"]],
@@ -879,11 +924,29 @@ const S={
    d30:[["Release input subsidy and insurance claims","ఇన్‌పుట్ సబ్సిడీ, బీమా క్లెయిమ్‌లు విడుదల చేయాలి"],["Repair minor irrigation tanks and canals","చిన్న నీటిపారుదల చెరువులు, కాలువలు మరమ్మతు చేయాలి"]],
    d90:[["Crop diversification and water-saving irrigation","పంట వైవిధ్యం, నీటి పొదుపు సాగు"],["Storage and market linkage through FPOs","FPO ల ద్వారా నిల్వ, మార్కెట్ అనుసంధానం"]]}}
 };
+// Telugu, Tenglish and extra English words so complaints in any of them are recognised
+const KW_ADD={
+ health:["hospital","aspatri","doctor ledu","mandulu","jwaram","fever","ambulance","108","pregnan","delivery","snake bite","ఆసుపత్రి","హాస్పిటల్","డాక్టర్","వైద్య","నర్సు","మందు","జ్వర","డెంగ్యూ","మలేరియా","అంబులెన్స్","చికిత్స","ప్రసవ","గర్భిణ","పాము కాటు","పీహెచ్‌సీ","ఆరోగ్య కేంద్ర"],
+ nutrition:["ration card","ration shop","biyyam","రేషన్","బియ్యం","అంగన్‌వాడీ","అంగన్వాడీ","పోషణ","పౌష్టికాహార","ఆకలి","చౌక ధరల","సరుకులు"],
+ education:["badi","teacher ledu","mid-day meal","midday meal","scholarship","బడి","పాఠశాల","స్కూల్","ఉపాధ్యాయ","టీచర్","విద్యార్థ","చదువు","తరగతి","కళాశాల","కాలేజీ","హాస్టల్","పుస్తక","యూనిఫాం","మధ్యాహ్న భోజన","స్కాలర్‌షిప్"],
+ child:["బాల కార్మిక","బాల్య వివాహ","అక్రమ రవాణా","అనాథ","తప్పిపోయిన","పిల్లలపై","బాలికపై","బాలుడిపై"],
+ women:["మహిళ","స్త్రీ","వేధింపు","వరకట్న","గృహ హింస","ఈవ్ టీజింగ్","వితంతు","లైంగిక"],
+ elderly:["pinchan","pension ravatledu","పింఛన్","పెన్షన్","వృద్ధ","వయోవృద్ధ","దివ్యాంగ","వికలాంగ","అంధ","చెవిటి","వీల్‌చైర్","సదరం"],
+ livelihood:["upadhi","kooli","no work","work demand","daily wage","job card","ఉపాధి","కూలి","వేతన","జీతం","నిరుద్యోగ","ఉద్యోగ","వలస","జాబ్ కార్డు","పని దొరక","పని లేదు"],
+ housing:["illu","house site","ఇల్లు","ఇళ్ల","ఇంటి స్థల","గుడిసె","పట్టా","తొలగింపు","నివాస","ఇళ్లు","గృహ"],
+ roads:["rodu","bus ravatledu","road","pothole","రోడ్డు","రోడ్లు","రహదారి","దారి","వంతెన","బస్సు","బస్","గుంత","కల్వర్టు","కాజ్‌వే","రవాణా"],
+ power:["street light","streetlight","street lights","light pole","current ledu","current pothundi","కరెంటు","కరెంట్","విద్యుత్","ట్రాన్స్‌ఫార్మర్","వోల్టేజ్","మీటర్","వీధి దీప","స్ట్రీట్ లైట్","విద్యుత్ బిల్లు"],
+ social:["కుల","అంటరాని","దళిత","గిరిజన","ఆదివాసీ","వివక్ష","అటవీ హక్కు","మైనారిటీ","వెట్టి","బహిష్కర"],
+ agri:["raithu","panta","రైతు","పంట","వ్యవసాయ","సాగు","విత్తన","ఎరువు","కరువు","వరద","మద్దతు ధర","వరి","పత్తి","మిర్చి","పంట నష్ట","బీమా"]
+};
+Object.entries(KW_ADD).forEach(([k,a])=>{if(S[k])S[k].kw=[...new Set([...S[k].kw,...a])]});
+// "work" alone also matches "not working"; use clearer phrases for jobs
+if(S.livelihood)S.livelihood.kw=S.livelihood.kw.filter(w=>w!=="work");
 const SKEYS=Object.keys(S);
 const L=v=>Array.isArray(v)?(LANG==="te"?v[1]:v[0]):v;
 function stDept(k){const kk=S[k]?k:"livelihood";return ST==="ts"&&TS_DEPT[kk]?TS_DEPT[kk]:S[kk].ap}
-function stPlanNow(k){const kk=S[k]?k:"livelihood";const n=S[kk].plan.now;return ST==="ts"&&TS_PLAN_NOW[kk]?[TS_PLAN_NOW[kk],...n.slice(1)]:n}
-function sec(k){const s=S[k]||S.livelihood;return {name:L(s.name),ap:stDept(k).map(L),un:s.un.map(L),law:s.law.map(x=>[x[0],LANG==="te"?x[2]:x[1]]),hr:L(s.hr),sch:s.sch,plan:{now:stPlanNow(k).map(L),d30:s.plan.d30.map(L),d90:s.plan.d90.map(L)}}}
+function stPlanNow(k,sub){const kk=S[k]?k:"livelihood";const sb=sub&&S[kk].subs&&S[kk].subs[sub];if(sb&&sb.plan)return sb.plan.now;const n=S[kk].plan.now;return ST==="ts"&&TS_PLAN_NOW[kk]?[TS_PLAN_NOW[kk],...n.slice(1)]:n}
+function sec(k,sub){const s=S[k]||S.livelihood;const sb=sub&&s.subs&&s.subs[sub];const pl=sb&&sb.plan?sb.plan:s.plan;return {name:L(s.name)+(sb?" · "+L(sb.name):""),sub:sb?sub:null,ap:stDept(k).map(L),un:s.un.map(L),law:s.law.map(x=>[x[0],LANG==="te"?x[2]:x[1]]),hr:L(s.hr),sch:s.sch,plan:{now:stPlanNow(k,sub).map(L),d30:pl.d30.map(L),d90:pl.d90.map(L)}}}
 
 const AP_LADDER=[
  [["Grama / Ward Sachivalayam","గ్రామ / వార్డు సచివాలయం"],["Register the need in writing and keep the acknowledgement","అవసరాన్ని రాతపూర్వకంగా నమోదు చేసి, రసీదు ఉంచుకోండి"],""],
@@ -1042,11 +1105,15 @@ function show(view){stopSpeak();const home=view==="home";try{if(window.AndroidSc
 tabs.forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
 
 // ---------- Classifier ----------
-function detect(text){const s0=" "+text.toLowerCase()+" ";let best=null,score=0;for(const k of SKEYS){let s=0;for(const w of S[k].kw){if(s0.includes(w))s+=w.length>4?2:1}if(s>score){score=s;best=k}}return {key:best||"livelihood",confident:score>=2}}
+const kwScore=(s0,list)=>{let s=0;for(const w of list){if(s0.includes(w.toLowerCase()))s+=w.length>4?2:1}return s};
+function detect(text){const s0=" "+text.toLowerCase().replace(/\s+/g," ")+" ";const rank=SKEYS.map(k=>[k,kwScore(s0,S[k].kw)]).sort((a,b)=>b[1]-a[1]);
+ const [k1,s1]=rank[0],s2=rank[1][1];return {key:s1>0?k1:null,confident:s1>=2&&s1>s2,rank:rank.filter(x=>x[1]>0)}}
+function detectSub(k,text){const s=S[k];if(!s||!s.subs)return null;const s0=" "+text.toLowerCase()+" ";let best=null,sc=0,tie=false;for(const [sk,sv] of Object.entries(s.subs)){const v=kwScore(s0,sv.kw);if(v>sc){sc=v;best=sk;tie=false}else if(v>0&&v===sc)tie=true}return tie?null:best}
+let subPick=null;   // sub-problem chosen by the person on the result screen
 
 // ---------- Report ----------
-function readForm(){const urg=document.querySelector('input[name="urg"]:checked');const desc=$("r-desc").value.trim();const sel=$("r-sector").value;const d=sel==="auto"?detect(desc):{key:sel,confident:true};
- return {district:$("r-district").value,place:$("r-place").value.trim(),desc,sector:d.key,confident:d.confident,auto:sel==="auto",affected:Math.max(1,parseInt($("r-affected").value,10)||1),urgency:urg?urg.value:"medium"}}
+function readForm(){const urg=document.querySelector('input[name="urg"]:checked');const desc=$("r-desc").value.trim();const sel=$("r-sector").value;const dd=sel==="auto"?detect(desc):{key:sel,confident:true,rank:[]};const d={...dd,key:dd.key||"livelihood"};const picked=subPick&&subPick[0]===d.key;const dsub=picked?subPick[1]:detectSub(d.key,desc);const subSure=!!dsub;const sub=dsub||(S[d.key]&&S[d.key].subs&&S[d.key].subs.supply?"supply":null);
+ return {district:$("r-district").value,place:$("r-place").value.trim(),desc,sector:d.key,sub,subSure,confident:d.confident,unknown:sel==="auto"&&!dd.key,rank:d.rank||[],auto:sel==="auto",affected:Math.max(1,parseInt($("r-affected").value,10)||1),urgency:urg?urg.value:"medium"}}
 function setForm(x){$("r-district").value=x.district;const loc=x[LANG]||x;$("r-place").value=loc.place||"";$("r-desc").value=loc.desc||"";$("r-affected").value=x.affected||"";const u=$("u-"+(x.urg||"medium"));if(u)u.checked=true;$("r-sector").value="auto"}
 const URG={high:["crit","uHigh"],medium:["warn","uMed"],low:["ok","uLow"]};
 
@@ -1054,6 +1121,7 @@ let current=null,lastRefine=null;
 const svg=(d,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
 const ICONS={
  water:"M12 3c-3.5 4.5-6 7.8-6 11a6 6 0 0 0 12 0c0-3.2-2.5-6.5-6-11z",
+ sanitation:"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",
  health:"M12 20.5s-7-4.3-9.1-8.8A5 5 0 0 1 12 6.2a5 5 0 0 1 9.1 5.5C19 16.2 12 20.5 12 20.5zM9 12h6M12 9v6",
  nutrition:"M3 11h18a9 9 0 0 1-18 0zM8 7c0-1 1-1.5 1-2.5M12 7c0-1 1-1.5 1-2.5M16 7c0-1 1-1.5 1-2.5",
  education:"M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5M22 9v6",
@@ -1092,13 +1160,15 @@ const RX={
  d7:["This week","ఈ వారంలోనే"],d30:["Within a month","నెల రోజుల్లో"],d90:["Within 3 months","3 నెలల్లో"]
 };
 const R=k=>L(RX[k]);
-const HELP={"112":["Emergency (police, fire)","అత్యవసరం (పోలీసు, అగ్నిమాపక)"],"108":["Ambulance","అంబులెన్స్"],"1098":["Childline","చైల్డ్‌లైన్"],"181":["Women helpline","మహిళా హెల్ప్‌లైన్"],"14567":["Elderline","వయోవృద్ధుల హెల్ప్‌లైన్"],"1912":["Electricity complaints","విద్యుత్ ఫిర్యాదులు"],"18001801551":["Kisan Call Centre","కిసాన్ కాల్ సెంటర్"],"1100":["PGRS complaint","PGRS ఫిర్యాదు"],"15100":["Free legal aid","ఉచిత న్యాయ సహాయం"]};
-const SECTOR_HELP={health:["108"],child:["1098","112"],women:["181","112"],elderly:["14567"],power:["1912"],agri:["18001801551"],social:["112"]};
+const HELP={"1969":["Swachh Bharat helpline (towns)","స్వచ్ఛ భారత్ హెల్ప్‌లైన్ (పట్టణాలు)"],"112":["Emergency (police, fire)","అత్యవసరం (పోలీసు, అగ్నిమాపక)"],"108":["Ambulance","అంబులెన్స్"],"1098":["Childline","చైల్డ్‌లైన్"],"181":["Women helpline","మహిళా హెల్ప్‌లైన్"],"14567":["Elderline","వయోవృద్ధుల హెల్ప్‌లైన్"],"1912":["Electricity complaints","విద్యుత్ ఫిర్యాదులు"],"18001801551":["Kisan Call Centre","కిసాన్ కాల్ సెంటర్"],"1100":["PGRS complaint","PGRS ఫిర్యాదు"],"15100":["Free legal aid","ఉచిత న్యాయ సహాయం"]};
+const SECTOR_HELP={sanitation:["1969"],health:["108"],child:["1098","112"],women:["181","112"],elderly:["14567"],power:["1912"],agri:["18001801551"],social:["112"]};
 const URGENT_HELP={health:"108",child:"1098",women:"181",water:"108",nutrition:"108"};
 const TERMS=[
  [/\bArt\b|ఆర్టికల్/,"Article","Article: a numbered part of the Constitution of India","ఆర్టికల్: భారత రాజ్యాంగంలోని ఒక సంఖ్య గల భాగం"],
  [/PGRS/,"PGRS","Public Grievance Redressal System, the AP government's complaint service","ప్రజా ఫిర్యాదుల పరిష్కార వ్యవస్థ, ఆంధ్రప్రదేశ్ ప్రభుత్వ ఫిర్యాదు సేవ"],
  [/Sachivalayam|సచివాలయ/,"Sachivalayam","Village or ward secretariat, the government office nearest to you","గ్రామ లేదా వార్డు సచివాలయం, మీకు దగ్గరలోని ప్రభుత్వ కార్యాలయం"],
+ [/Swachh Bharat|స్వచ్ఛ భారత్|\bSBM\b/,"Swachh Bharat","National mission for toilets, drainage and garbage management in villages and towns","గ్రామాలు, పట్టణాల్లో మరుగుదొడ్లు, మురుగు, చెత్త నిర్వహణ కోసం జాతీయ మిషన్"],
+ [/ODF/,"ODF Plus","Open-defecation-free village that also manages its drainage and garbage","బహిరంగ మలవిసర్జన లేని గ్రామం, మురుగు, చెత్తను కూడా సక్రమంగా నిర్వహించేది"],
  [/\bPHC\b/,"PHC","Primary Health Centre, the government clinic for a group of villages","ప్రాథమిక ఆరోగ్య కేంద్రం, కొన్ని గ్రామాలకు ఉండే ప్రభుత్వ వైద్యశాల"],
  [/\bANM\b/,"ANM","Auxiliary Nurse Midwife, the village health worker","గ్రామ ఆరోగ్య కార్యకర్త (నర్సు)"],
  [/NALSA/,"NALSA","National Legal Services Authority, gives a free lawyer to people who cannot pay","జాతీయ న్యాయ సేవల అధికార సంస్థ, ఫీజు కట్టలేని వారికి ఉచిత న్యాయవాది"],
@@ -1132,7 +1202,7 @@ const miniListen=id=>TTS?`<button class="mini" type="button" data-sec="${id}" ar
 const qHead=(icon,q,sub,id)=>`<div class="q"><span class="qi">${svg(ICONS[icon])}</span><div class="qt"><h3>${esc(q)}</h3>${sub?`<p class="note">${esc(sub)}</p>`:""}</div>${miniListen(id)}</div>`;
 
 function buildSpeech(r){
- const s=sec(r.sector);const helps=helpList(r);
+ const s=sec(r.sector,r.sub);const helps=helpList(r);
  const summary=summaryLine(r,s);
  return {
   head:`${R("yourProblem")}: ${summary} ${t(URG[r.urgency][1])}.`,
@@ -1149,8 +1219,31 @@ function helpList(r){const k=r.sector;const list=[...(SECTOR_HELP[k]||[])];if(r.
 function summaryLine(r,s){const place=r.place?` (${r.place})`:"";return LANG==="te"?`${dName(r.district)}${place}లో ${s.name} సమస్య. ${num(r.affected)} మంది ప్రభావితులు.`:`${s.name} problem in ${dName(r.district)}${place}. ${num(r.affected)} people affected.`}
 function resultSpeech(r){const sp=buildSpeech(r);return [sp.head,sp.first,sp.who,sp.right,sp.todo,sp.esc,sp.help].join("\n")}
 
+let catSpeech="";
+function openCat(){const d=$("cat-pop");if(d.showModal){if(!d.open)d.showModal()}else d.setAttribute("open","")}
+function closeCat(){const d=$("cat-pop");stopSpeak();if(d.close)d.close();else d.removeAttribute("open")}
+function finishPick(){const r2=readForm();closeCat();renderResult(r2);if(SHARED)runAutoSources(r2);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})}
+// Step 1: which area? (shown when the words are not clear enough, or when the person taps "Change area")
+function renderChooser(r,showAll){const top=r.rank.map(x=>x[0]);["water","sanitation","roads","health","education","power"].forEach(k=>{if(top.length<4&&!top.includes(k))top.push(k)});
+ const list=showAll?SKEYS:top.slice(0,4);
+ $("cat-pop-h").textContent=t("chooseH");
+ $("cat-pop-body").innerHTML=`<p class="note">${esc(t(showAll?"chooseAllS":"chooseS"))}</p><div class="choose">${list.map(k=>`<button type="button" class="pickbtn" data-k="${k}"><span class="pi">${svg(ICONS[k]||ICONS.livelihood)}</span><span>${esc(L(S[k].name))}</span></button>`).join("")}</div>${showAll?"":`<button type="button" class="btn ghost" id="ch-all">${esc(t("seeAll"))}</button>`}`;
+ $("cat-pop-body").querySelectorAll(".pickbtn").forEach(b=>b.onclick=()=>{const k=b.dataset.k;$("r-sector").value=k;subPick=null;const r2=readForm();if(S[k].subs&&!r2.subSure)renderSubChooser(r2);else finishPick()});
+ const al=$("ch-all");if(al)al.onclick=()=>renderChooser(r,true);
+ catSpeech=`${t("chooseH")} ${list.map(k=>L(S[k].name)).join(", ")}`;openCat();$("cat-pop-body").scrollTop=0;
+}
+// Step 2: which exact problem? (drinking water: no water / unsafe water; sanitation: drainage / toilets / garbage)
+function renderSubChooser(r){const s0=S[r.sector];$("cat-pop-h").textContent=t("subPick");
+ $("cat-pop-body").innerHTML=`<p class="note">${esc(L(s0.name))}</p><div class="choose">${Object.entries(s0.subs).map(([k,v])=>`<button type="button" class="pickbtn" data-sub="${k}"><span class="pi">${svg(ICONS[r.sector]||ICONS.livelihood)}</span><span>${esc(L(v.name))}</span></button>`).join("")}</div>`;
+ $("cat-pop-body").querySelectorAll(".pickbtn").forEach(b=>b.onclick=()=>{subPick=[r.sector,b.dataset.sub];finishPick()});
+ catSpeech=`${t("subPick")} ${Object.values(s0.subs).map(v=>L(v.name)).join(", ")}`;openCat();
+}
+$("cat-pop-x").onclick=closeCat;
+$("cat-pop").addEventListener("click",e=>{if(e.target===$("cat-pop"))closeCat()});
+bindListen($("cat-pop-listen"),()=>catSpeech);
+function subPickHTML(r){const s=S[r.sector];if(!s||!s.subs)return "";return `<div class="subpick" role="group" aria-label="${esc(t("subPick"))}"><p class="glbl">${esc(t("subPick"))}</p><div class="chips">${Object.entries(s.subs).map(([k,v])=>`<button type="button" class="subbtn" data-sub="${k}" aria-pressed="${r.sub===k}">${esc(L(v.name))}</button>`).join("")}</div></div>`}
 function renderResult(r){
- current=r;const s=sec(r.sector),k=r.sector in S?r.sector:"livelihood";const [uc,uk]=URG[r.urgency];
+ current=r;const s=sec(r.sector,r.sub),k=r.sector in S?r.sector:"livelihood";const [uc,uk]=URG[r.urgency];
  const sp=buildSpeech(r);const helps=helpList(r);
  const urgentNums=[URGENT_HELP[k]||"112","112"].filter((v,i,a)=>a.indexOf(v)===i);
  const allText=[s.ap,s.un,s.law.map(x=>x.join(" ")),s.hr,s.sch,s.plan.now,s.plan.d30,s.plan.d90,LADDER.map(x=>L(x[0])+" "+L(x[1]))].flat().join(" ");
@@ -1161,9 +1254,10 @@ function renderResult(r){
    <div class="herotop"><span class="heroicon">${svg(ICONS[k]||ICONS.livelihood)}</span>
     <div class="herotext"><p class="eyebrow">${esc(R("yourProblem"))}</p><h2>${esc(s.name)}</h2></div></div>
    <p class="summary">${esc(summaryLine(r,s))}</p>
-   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}</div>
+   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}<button type="button" class="chip chgbtn" id="r-change">${esc(t("changeArea"))}</button></div>
    ${TTS?`<button class="listen big" type="button" id="r-listen"></button>`:""}
   </section>
+  ${subPickHTML(r)}
   ${r.urgency==="high"?`<section class="urgent" role="alert"><div class="q"><span class="qi">${svg(ICONS.alert)}</span><div class="qt"><h3>${esc(R("urgentMsg"))}</h3></div></div><div class="calls">${urgentNums.map(callLink).join("")}</div></section>`:""}
   <section class="first"><div class="q"><span class="qi">${svg(ICONS.star)}</span><div class="qt"><p class="eyebrow">${esc(R("first"))}</p><p class="firsttext">${esc(s.plan.now[0])}</p></div>${miniListen("first")}</div></section>
   <section class="card">${qHead("who",R("whoQ"),R("whoSub"),"who")}
@@ -1183,6 +1277,8 @@ function renderResult(r){
   ${terms.length?`<section class="card">${qHead("book",R("termsQ"),"","")}<dl class="terms">${terms.map(([,w,en,te])=>`<dt>${esc(w)}</dt><dd>${esc(LANG==="te"?te:en)}</dd>`).join("")}</dl></section>`:""}
   <section class="card actions">${footerHTML()}</section>
  </article>`;
+ $("r-result").querySelectorAll(".subbtn").forEach(b=>b.onclick=()=>{subPick=[r.sector,b.dataset.sub];const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)});
+ const cb=$("r-change");if(cb)cb.onclick=()=>renderChooser(r,true);
  const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
  $("r-result").querySelectorAll("[data-sec]").forEach(b=>{const id=b.dataset.sec;if(!id){b.remove();return}b.onclick=()=>speak(sp[id]||"",b)});
  bindFooter();
@@ -1226,7 +1322,7 @@ function piiCheckForm(){
 $("pii-fix").onclick=()=>{["r-desc","r-place"].forEach(id=>{$(id).value=piiStrip($(id).value)});if(!piiCheckForm())toast(t("piiNameLeft"));$("r-desc").focus()};
 ["r-desc","r-place"].forEach(id=>$(id).addEventListener("input",piiCheckForm));
 
-$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);if(SHARED)runAutoSources(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();subPick=null;const r0=readForm();if(r0.auto&&!r0.confident){renderChooser(r0);return}if(S[r0.sector].subs&&!r0.subSure){renderSubChooser(r0);return}renderResult(r0);if(SHARED)runAutoSources(r0);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
 ["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
 
@@ -1240,7 +1336,7 @@ function persist(){try{localStorage.setItem(STORE,JSON.stringify(reports));retur
 const db={local:true,
  doc:p=>({update:async patch=>{const id=p.split("/")[1];const r=reports.find(x=>x.id===id);if(!r)throw {code:"not_found"};Object.assign(r,patch);if(!persist())throw {code:"storage"};renderDash()}})};
 
-function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\n${ST==="ts"?"Prajavani: District Collectorate, Mondays":"PGRS: 1100"}`}
+function shareText(r){const s=sec(r.sector,r.sub);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\n${ST==="ts"?"Prajavani: District Collectorate, Mondays":"PGRS: 1100"}`}
 
 
 // ---------- Shared register (Google Sheet web app). Empty = reports stay on this phone. ----------
@@ -1283,7 +1379,7 @@ function renderRefine(j){
  $("r-ai").innerHTML=`<p><b>${esc(j.summary)}</b></p>${j.root_causes?`<div class="block"><h3>${esc(t("rootCauses"))}</h3><ul>${li(j.root_causes)}</ul></div>`:""}${acts?`<div class="block"><h3>${esc(t("tailored"))}</h3><div class="scroll"><table><thead><tr><th>${esc(t("thStep"))}</th><th>${esc(t("thWho"))}</th><th>${esc(t("thBy"))}</th><th>${esc(t("thBasis"))}</th></tr></thead><tbody>${acts}</tbody></table></div></div>`:""}${j.evidence_to_collect?`<div class="block"><h3>${esc(t("evidence"))}</h3><ul>${li(j.evidence_to_collect)}</ul></div>`:""}${j.caution?`<p class="note">${esc(j.caution)}</p>`:""}`}
 async function refine(){
  if(!sampleFn||!current)return;const out=$("r-ai"),btn=$("r-refine");btn.disabled=true;out.innerHTML=`<p class='note'>${esc(t("thinking"))}</p>`;
- const r=current,s=sec(r.sector),key=refineKey();
+ const r=current,s=sec(r.sector,r.sub),key=refineKey();
  const prompt=`You are a public policy adviser for ${stateEn()}, India. Adapt an action plan to the specific situation below. Stay within the Constitution of India, central and ${stateEn()} laws, and basic human rights. Be concrete and practical for a citizen or local NGO. Do not invent scheme names, phone numbers or officials' names; name roles (e.g. Mandal Parishad Development Officer). ${langLine()}
 Situation: district ${r.district}; place ${r.place||"not given"}; people affected ${r.affected}; urgency ${r.urgency}.
 Description: """${r.desc}"""
@@ -1505,6 +1601,7 @@ const TS_DISTRICTS=[["Adilabad","ఆదిలాబాద్"],["Bhadradri Kotha
 
 // State departments by sector (the Union ministries, laws and schemes are the same for every state)
 const TS_DEPT={
+ sanitation:[["Panchayat Raj & Rural Development (Swachh Bharat Mission – Gramin)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (స్వచ్ఛ భారత్ మిషన్ – గ్రామీణ)"],["Municipal Administration & Urban Development (Swachh Bharat Mission – Urban)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (స్వచ్ఛ భారత్ మిషన్ – పట్టణ)"]],
  water:[["Panchayat Raj & Rural Development (Mission Bhagiratha, rural water supply)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (మిషన్ భగీరథ, గ్రామీణ నీటి సరఫరా)"],["Municipal Administration & Urban Development (towns and cities)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (పట్టణాలు, నగరాలు)"]],
  health:[["Health, Medical & Family Welfare","ఆరోగ్య, వైద్య & కుటుంబ సంక్షేమం"]],
  nutrition:[["Women Development & Child Welfare (anganwadi)","మహిళాభివృద్ధి & శిశు సంక్షేమం (అంగన్‌వాడీ)"],["Consumer Affairs, Food & Civil Supplies (ration)","వినియోగదారుల వ్యవహారాలు, ఆహార & పౌర సరఫరాలు (రేషన్)"]],
@@ -2004,7 +2101,7 @@ window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;i
 
 
 // ---------- Automatic source check (Google News through the register script) ----------
-const SECTOR_Q={water:["drinking water","తాగునీరు"],health:["hospital","ఆసుపత్రి"],nutrition:["anganwadi","అంగన్‌వాడీ"],education:["school","పాఠశాల"],child:["child","చిన్నారి"],women:["women","మహిళ"],elderly:["pension","పింఛన్"],livelihood:["wages","ఉపాధి"],housing:["houses","ఇళ్లు"],roads:["road","రోడ్డు"],power:["power supply","విద్యుత్"],social:["dalit","దళిత"],agri:["farmers","రైతులు"]};
+const SECTOR_Q={water:["drinking water","తాగునీరు"],sanitation:["drainage garbage sanitation","మురుగు చెత్త పారిశుధ్యం"],health:["hospital","ఆసుపత్రి"],nutrition:["anganwadi","అంగన్‌వాడీ"],education:["school","పాఠశాల"],child:["child","చిన్నారి"],women:["women","మహిళ"],elderly:["pension","పింఛన్"],livelihood:["wages","ఉపాధి"],housing:["houses","ఇళ్లు"],roads:["road","రోడ్డు"],power:["power supply","విద్యుత్"],social:["dalit","దళిత"],agri:["farmers","రైతులు"]};
 const KW_STOP=new Set("the and for with from that this have has had are was were been our their they them there here into over under about after before since without within village villages people families family mandal district months month weeks week days more than very also only still near since some many every each other another because".split(" "));
 const hasTe=x=>/[ఀ-౿]/.test(x);
 function keyWords(text,n,sector){const k=[];String(text||"").toLowerCase().replace(/[^a-z0-9ఀ-౿\s]/g," ").split(/\s+/).forEach(w=>{if(w.length>3&&!KW_STOP.has(w)&&!/^\d+$/.test(w)&&!k.includes(w))k.push(w)});
@@ -2094,7 +2191,7 @@ function closePdf(){const ov=$("pdf-view");if(ov.hidden)return false;const f=ov.
 $("pdf-close").onclick=closePdf;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePdf()});
 // Android back button: close the reader or the pop-up first
-window.mhBack=()=>{if(closePdf())return true;const d=$("src-pop");if(d&&d.open){closeSrcPop();return true}return false};
+window.mhBack=()=>{if(closePdf())return true;const d=$("src-pop");if(d&&d.open){closeSrcPop();return true}const c=$("cat-pop");if(c&&c.open){closeCat();return true}return false};
 
 
 // ---------- Praja Dhanam: state finances dashboard ----------
