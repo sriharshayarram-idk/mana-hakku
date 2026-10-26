@@ -12,6 +12,7 @@ import android.os.Environment
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.provider.MediaStore
+import android.view.WindowManager
 import android.widget.Toast
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -31,6 +32,7 @@ import java.util.Locale
  *  - AndroidShare : send a report to WhatsApp, SMS or email through the share sheet
  *  - AndroidPrint : print or "Save as PDF" a generated report
  *  - AndroidFile  : save an exported file (CSV) to the Downloads folder
+ *  - AndroidScreen: block screenshots and screen recording while reports are on screen
  */
 class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
@@ -66,6 +68,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
         web.addJavascriptInterface(ShareBridge(), "AndroidShare")
         web.addJavascriptInterface(PrintBridge(), "AndroidPrint")
         web.addJavascriptInterface(FileBridge(), "AndroidFile")
+        web.addJavascriptInterface(ScreenBridge(), "AndroidScreen")
 
         tts = TextToSpeech(this, this)
 
@@ -261,5 +264,16 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
     companion object {
         private const val VOICE_REQUEST = 41
         private const val LAST_ID = "mh-last"
+    }
+
+    // ---------- Screenshot block for the reports view ----------
+    inner class ScreenBridge {
+        @JavascriptInterface
+        fun secure(on: Boolean) {
+            runOnUiThread {
+                if (on) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            }
+        }
     }
 }
