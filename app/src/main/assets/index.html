@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mana Hakku</title>
+<meta name="description" content="మన హక్కు · Report a public need in Andhra Pradesh and see the responsible department, your constitutional rights and a step-by-step action plan. Telugu and English, with read-aloud.">
+<meta name="theme-color" content="#2B3A8F">
+<meta property="og:type" content="website">
+<meta property="og:title" content="మన హక్కు · Mana Hakku">
+<meta property="og:description" content="ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం. Report a public need in Andhra Pradesh, see who is responsible and what your rights are. Free, no login, Telugu and English with read-aloud.">
+<meta property="og:url" content="https://sriharshayarram-idk.github.io/mana-hakku/">
+<meta property="og:image" content="https://sriharshayarram-idk.github.io/mana-hakku/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@500;600;700&family=Hind+Guntur:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -149,6 +159,8 @@ table.dist th{font-weight:600;font-size:.82rem;color:var(--muted)}
 footer .wrap{padding-block:0 32px;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 body{margin:0;-webkit-text-size-adjust:100%}
 [hidden]{display:none!important}
+.getapp{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-weight:600;font-size:.9rem;color:var(--indigo);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.getapp svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .labelrow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .mic{border-color:var(--indigo);background:var(--indigo-soft);color:var(--indigo)}
 .mic[aria-busy="true"]{background:var(--indigo);color:var(--surface)}
@@ -237,6 +249,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
   </div>
   <h1 class="brand"><span id="brand-main">మన హక్కు</span><span class="alt" id="brand-alt">Mana Hakku</span></h1>
   <p class="sub" data-t="tagline">Every need, the right department, the right law.</p>
+  <a class="getapp" id="get-app" href="https://github.com/sriharshayarram-idk/mana-hakku/releases/latest" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg><span data-t="getApp">Get the Android app</span></a>
 </div></header>
 
 <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
@@ -374,7 +387,7 @@ pasteFirst:"Paste a headline first.",describeFirst:"Describe the need first.",mo
 foot1:"Prototype · Rights mapping follows the Constitution of India, central Acts and the UDHR. It is guidance, not legal advice.",foot2:"Indicators: NFHS-5 (2019–21) via NITI Aayog and a Lok Sabha reply; NITI Aayog National MPI 2023; SDG India Index 2023–24.",
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
-saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
+copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
 te:{eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
 repH:"మీ ప్రాంతంలో ఏమి లోపించింది?",repLede:"ఒక సమస్యను సరళమైన మాటల్లో వివరించండి. దానికి బాధ్యత వహించే శాఖ, వర్తించే హక్కులు, చట్టాలు, దశలవారీగా ఏమి జరగాలో మీకు కనిపిస్తుంది.",
 exFlag:"ఉదాహరణ నింపబడింది · మీ వివరాలతో మార్చండి",district:"జిల్లా",place:"మండలం / గ్రామం / వార్డు",placePh:"ఉదా: హుకుంపేట మండలం, కె. కొత్తూరు గ్రామం",desc:"అవసరాన్ని వివరించండి",descHint:"ఎవరి పేర్లు, ఫోన్ నంబర్లు లేదా ఆధార్ నమోదు చేయవద్దు.",
@@ -397,7 +410,7 @@ pasteFirst:"ముందుగా శీర్షికను అతికిం
 foot1:"నమూనా · హక్కుల వివరాలు భారత రాజ్యాంగం, కేంద్ర చట్టాలు, సార్వత్రిక మానవ హక్కుల ప్రకటన ఆధారంగా. ఇది మార్గదర్శనం మాత్రమే, న్యాయ సలహా కాదు.",foot2:"సూచికలు: NFHS-5 (2019–21), నీతి ఆయోగ్, లోక్‌సభ సమాధానం; నీతి ఆయోగ్ బహుముఖ పేదరిక సూచిక 2023; SDG ఇండియా ఇండెక్స్ 2023–24.",
 reported:"నమోదైంది",acknowledged:"అంగీకరించబడింది",progress:"చర్య జరుగుతోంది",resolved:"పరిష్కారమైంది",helpline:"హెల్ప్‌లైన్",
 speakIn:"మాట్లాడండి",listening:"వింటోంది…",voiceUnavailable:"ఈ ఫోన్‌లో మాటతో టైప్ చేసే సౌకర్యం లేదు. మీ ఫిర్యాదు చెప్పడానికి Google యాప్‌ను ఇన్‌స్టాల్ లేదా అప్‌డేట్ చేయండి.",share:"నివేదిక పంపండి",
-saveNoteLocal:"భద్రపరిచిన అవసరాలు ఈ ఫోన్‌లోనే ఉండి, లోటుల పట్టికలో కనిపిస్తాయి. అధికారికి లేదా స్వచ్ఛంద సంస్థకు పంపడానికి “నివేదిక పంపండి” వాడండి.",countLocal:"ఈ ఫోన్‌లో {n} అవసరాలు భద్రపరచబడ్డాయి.",shareHead:"మన హక్కు నివేదిక",whatNeeded:"అవసరం",peopleAffected:"ప్రభావితులు",urgencyL:"అత్యవసరత"}
+copied:"నివేదిక కాపీ అయింది. WhatsApp, SMS లేదా ఈమెయిల్‌లో పేస్ట్ చేయండి.",voiceDenied:"మీ ఫిర్యాదు చెప్పడానికి ఈ సైట్‌కు మైక్రోఫోన్ అనుమతి ఇవ్వండి.",getApp:"Android యాప్ పొందండి",saveNoteLocal:"భద్రపరిచిన అవసరాలు ఈ ఫోన్‌లోనే ఉండి, లోటుల పట్టికలో కనిపిస్తాయి. అధికారికి లేదా స్వచ్ఛంద సంస్థకు పంపడానికి “నివేదిక పంపండి” వాడండి.",countLocal:"ఈ ఫోన్‌లో {n} అవసరాలు భద్రపరచబడ్డాయి.",shareHead:"మన హక్కు నివేదిక",whatNeeded:"అవసరం",peopleAffected:"ప్రభావితులు",urgencyL:"అత్యవసరత"}
 };
 const t=k=>(I18N[LANG]&&I18N[LANG][k])??I18N.en[k]??k;
 
@@ -801,8 +814,14 @@ function renderResult(r){
  $("r-result").querySelectorAll("[data-sec]").forEach(b=>{const id=b.dataset.sec;if(!id){b.remove();return}b.onclick=()=>speak(sp[id]||"",b)});
  bindFooter();
 }
-function footerHTML(){return `<div class="btns"><button class="btn" type="button" id="r-save">${esc(t("save"))}</button>${typeof window.AndroidShare!=="undefined"?`<button class="btn ghost" type="button" id="r-share">${esc(t("share"))}</button>`:""}</div><p class="note" id="r-save-note">${esc(t("saveNoteLocal"))}</p>`}
-function bindFooter(){$("r-save").onclick=save;const sh=$("r-share");if(sh)sh.onclick=()=>{try{AndroidShare.share(shareText(current))}catch(e){}}}
+function footerHTML(){return `<div class="btns"><button class="btn" type="button" id="r-save">${esc(t("save"))}</button><button class="btn ghost" type="button" id="r-share">${esc(t("share"))}</button></div><p class="note" id="r-save-note">${esc(t("saveNoteLocal"))}</p>`}
+function bindFooter(){$("r-save").onclick=save;const sh=$("r-share");if(sh)sh.onclick=()=>shareReport(shareText(current))}
+function shareReport(text){
+ if(typeof window.AndroidShare!=="undefined"){try{AndroidShare.share(text)}catch(e){}return}
+ if(navigator.share){navigator.share({title:t("shareHead"),text}).catch(()=>{});return}
+ const done=()=>toast(t("copied"));
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done))}else fallbackCopy(text,done)}
+function fallbackCopy(text,done){const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
 $("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
 ["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
@@ -934,12 +953,19 @@ document.querySelectorAll("[data-speak]").forEach(b=>{
 
 // ---------- Voice input (Android) ----------
 const MIC_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>';
-const HASVOICE=typeof window.AndroidVoice!=="undefined";
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const HASVOICE=typeof window.AndroidVoice!=="undefined"||!!SR;
 let micTarget=null;
 function setMic(b,busy){b.setAttribute("aria-busy",String(busy));b.innerHTML=MIC_ICON+`<span>${esc(busy?t("listening"):t("speakIn"))}</span>`}
 document.querySelectorAll("[data-mic]").forEach(b=>{
  if(!HASVOICE)return;b.hidden=false;setMic(b,false);
- b.onclick=()=>{stopSpeak();micTarget=b;setMic(b,true);try{AndroidVoice.listen(LANG==="te"?"te-IN":"en-IN")}catch(e){micTarget=null;setMic(b,false);toast(t("voiceUnavailable"))}};
+ b.onclick=()=>{stopSpeak();micTarget=b;setMic(b,true);const lang=LANG==="te"?"te-IN":"en-IN";
+  if(typeof window.AndroidVoice!=="undefined"){try{AndroidVoice.listen(lang)}catch(e){micTarget=null;setMic(b,false);toast(t("voiceUnavailable"))}return}
+  try{const rec=new SR();rec.lang=lang;rec.interimResults=false;rec.maxAlternatives=1;let got=false;
+   rec.onresult=e=>{got=true;const tx=e.results&&e.results[0]&&e.results[0][0]?e.results[0][0].transcript:"";if(tx)window.mhVoiceResult(tx);else window.mhVoiceError("cancelled")};
+   rec.onerror=e=>{got=true;window.mhVoiceError(e.error==="not-allowed"||e.error==="service-not-allowed"?"denied":"cancelled")};
+   rec.onend=()=>{if(!got)window.mhVoiceError("cancelled")};rec.start()}
+  catch(e){micTarget=null;setMic(b,false);toast(t("voiceUnavailable"))}};
 });
 window.mhVoiceResult=txt=>{
  const b=micTarget;micTarget=null;if(!b)return;setMic(b,false);
@@ -948,11 +974,12 @@ window.mhVoiceResult=txt=>{
  ta.value=replace?txt:ta.value.trim()+" "+txt;
  ta.dispatchEvent(new Event("input"));ta.focus();
 };
-window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;if(code==="unavailable")toast(t("voiceUnavailable"))};
+window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;if(code==="unavailable")toast(t("voiceUnavailable"));if(code==="denied")toast(t("voiceDenied"))};
 
 // ---------- Init ----------
 applyStatic();fillSelects();renderIndic();
 if(!sampleFn)$("n-assess").hidden=true;
+if(typeof window.AndroidTTS==="undefined")$("get-app").hidden=false;
 $("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
 renderSources();renderVerdict();
 const hashMap={report:"report",dashboard:"dash",news:"news"};
