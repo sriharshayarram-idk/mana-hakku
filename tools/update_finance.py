@@ -10,7 +10,7 @@ and rebuilds web/data/finance.json for Andhra Pradesh and Telangana:
 
 All money is in ₹ crore unless noted. Run: python tools/update_finance.py [--from-dir DIR]
 """
-import asyncio, datetime, io, json, os, re, sys
+import asyncio, datetime, io, json, math, os, re, sys
 from openpyxl import load_workbook
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "web", "data", "finance.json")
@@ -41,6 +41,16 @@ CATS = [
     ("industry", ["2|I.B.6", "4|I.1.b.6", "4|IV.1.b.7", "4|IV.1.b.8"]),
     ("transport", ["2|I.B.7", "4|I.1.b.7", "4|I.1.b.8"]),
 ]
+
+
+def rnd(x, dec=0):
+    """Round half away from zero (the RBI tables and the app use this, not banker's rounding)."""
+    if x is None:
+        return None
+    f = 10 ** dec
+    v = math.floor(abs(x) * f + 0.5) / f
+    v = v if x >= 0 else -v
+    return int(v) if dec == 0 else v
 
 
 def num(v):
@@ -89,8 +99,8 @@ async def download_all(dest):
 
         want = {
             "estates": next((l for l in sf_links if re.search(r"/ESTATES[^/]*\.xlsx$", l, re.I)), None),
-            "liab": by_title(sf_rows, r"Total Outstanding Liabilities of State Governments(?!.*(GSDP|per cent))", r"/19_ST[^/]*\.xlsx$", sf_links),
-            "liabpct": by_title(sf_rows, r"Outstanding Liabilities of State Governments.*(GSDP|per cent)", r"/20_ST[^/]*\.xlsx$", sf_links),
+            "liab": by_title(sf_rows, r"Total Outstanding Liabilities of State Governments(?!.*GSDP)", r"/19_ST[^/]*\.xlsx$", sf_links),
+            "liabpct": by_title(sf_rows, r"Total Outstanding Liabilities of State Governments.*GSDP", r"/20_ST[^/]*\.xlsx$", sf_links),
             "gsdp": by_title(hs_rows, r"Gross State Domestic Product \(Current Prices\)", None),
             "pc": by_title(hs_rows, r"Per Capita Net State Domestic Product \(Current Prices\)", None),
             "cpi": by_title(hs_rows, r"Average Inflation \(CPI\)\s*[-–]\s*General", None),
@@ -153,16 +163,16 @@ def build_fiscal(G):
             v = g(s, y, a, c, i)
             if v is not None:
                 any_, t = True, t + sg * v
-        return round(t) if any_ else None
+        return rnd(t) if any_ else None
     def interest(s, y, i):
         t = g(s, y, 2, "II.C.2", i)
         if t is None:
             return None
         comp = sum((g(s, y, 2, c, i) or 0) for c in ["II.C.2.i", "II.C.2.ii", "II.C.2.iii", "II.C.2.iv"])
         if abs(t - comp) <= max(5, t * 0.01):
-            return round(t)
+            return rnd(t)
         alt = g(s, y, 2, "II.C.1", i)  # rows shifted by one in the source for a few cells
-        return round(alt) if alt is not None else round(comp)
+        return rnd(alt) if alt is not None else rnd(comp)
     def cat_val(s, y, i, codes):
         any_, t = False, 0.0
         for kc in codes:
@@ -170,7 +180,7 @@ def build_fiscal(G):
             v = g(s, y, a, c, i)
             if v is not None:
                 any_, t = True, t + v
-        return round(t) if any_ else None
+        return rnd(t) if any_ else None
 
     out = {"years": [f"{y}-{str(y + 1)[2:]}" for y in years]}
     for key, name in STATES.items():
@@ -216,7 +226,7 @@ def parse_hsis(path, years, scale=1.0, dec=0):
                 yv = str(v or "").strip()
                 if re.match(r"^20\d\d-\d\d$", yv) and i < len(r):
                     n = num(r[i])
-                    res[k][yv] = None if n is None else round(n / scale, dec)
+                    res[k][yv] = None if n is None else rnd(n / scale, dec)
     return {k: [res[k].get(y) for y in years] for k in STATES}
 
 
@@ -229,7 +239,7 @@ def parse_liab(path, dec=0):
     out = {}
     for k, name in STATES.items():
         r = state_row(rows, name)
-        out[k] = [None if num(r[i]) is None else round(num(r[i]), dec) for i, _ in cols]
+        out[k] = [None if num(r[i]) is None else rnd(num(r[i]), dec) for i, _ in cols]
     return labels, out
 
 
