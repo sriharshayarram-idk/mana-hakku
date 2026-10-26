@@ -19,6 +19,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import org.json.JSONObject
@@ -59,8 +60,23 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 if (uri.scheme == "file") return false
+                if (uri.scheme == "https" && uri.host == ASSET_HOST) return false
                 openExternal(uri)
                 return true
+            }
+
+            // The PDF reader and the Constitution PDFs are served from the app's own assets under a private https address.
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                val uri = request.url
+                if (uri.scheme != "https" || uri.host != ASSET_HOST) return null
+                val path = uri.path ?: return notFound()
+                if (!path.startsWith("/assets/") || path.contains("..")) return notFound()
+                val file = path.removePrefix("/assets/")
+                return try {
+                    val res = WebResourceResponse(mimeFor(file), null, assets.open(file))
+                    res.responseHeaders = mapOf("Cache-Control" to "max-age=86400")
+                    res
+                } catch (e: Exception) { notFound() }
             }
         }
         web.addJavascriptInterface(TtsBridge(), "AndroidTTS")
@@ -251,7 +267,10 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (web.canGoBack()) web.goBack() else super.onBackPressed()
+        web.evaluateJavascript("(window.mhBack && window.mhBack()) ? 'y' : 'n'") { r ->
+            if (r?.contains("y") == true) return@evaluateJavascript
+            if (web.canGoBack()) web.goBack() else finish()
+        }
     }
 
     override fun onDestroy() {
@@ -264,6 +283,7 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
     companion object {
         private const val VOICE_REQUEST = 41
         private const val LAST_ID = "mh-last"
+        private const val ASSET_HOST = "appassets.androidplatform.net"
     }
 
     // ---------- Screenshot block for the reports view ----------
@@ -275,5 +295,24 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                 else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
             }
         }
+    }
+
+    private fun notFound() = WebResourceResponse("text/plain", "utf-8", 404, "Not Found", emptyMap(), java.io.ByteArrayInputStream(ByteArray(0)))
+
+    private fun mimeFor(f: String): String = when (f.substringAfterLast('.', "").lowercase()) {
+        "html" -> "text/html"
+        "mjs", "js" -> "text/javascript"
+        "css" -> "text/css"
+        "json" -> "application/json"
+        "ftl", "txt" -> "text/plain"
+        "pdf" -> "application/pdf"
+        "svg" -> "image/svg+xml"
+        "png" -> "image/png"
+        "gif" -> "image/gif"
+        "wasm" -> "application/wasm"
+        "ttf" -> "font/ttf"
+        "otf" -> "font/otf"
+        "woff2" -> "font/woff2"
+        else -> "application/octet-stream"
     }
 }

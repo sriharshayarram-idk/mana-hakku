@@ -24,6 +24,8 @@ jobs:
           mkdir -p site
           cp app/src/main/assets/index.html site/index.html
           cp -r web/. site/
+          cp -r app/src/main/assets/pdfjs site/pdfjs
+          cp -r app/src/main/assets/docs site/docs
           touch site/.nojekyll
 
       - name: Push site to gh-pages branch
