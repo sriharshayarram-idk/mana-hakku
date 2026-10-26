@@ -939,7 +939,7 @@ function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r
 
 
 // ---------- Shared register (Google Sheet web app). Empty = reports stay on this phone. ----------
-const REGISTER_URL="";
+const REGISTER_URL="https://script.google.com/macros/s/AKfycbx6zeyFjjPTv1etA14Kjh1fADhWxSAjylBC54q3h27-kwlf4p2b0LctD_8s4zviY2BfNw/exec";
 const SHARED=/^https:\/\/script\.google\.com\//.test(REGISTER_URL);
 let sharedLoaded=false,sharedError=false,sharedReports=[];
 async function loadShared(){
