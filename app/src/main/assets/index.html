@@ -267,6 +267,10 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .cv{font-family:var(--f-mono);font-size:.85rem;text-align:right;font-variant-numeric:tabular-nums}
 .good{color:var(--ok)}.bad{color:var(--crit)}
 .export{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.pii{background:var(--crit-soft);border:2px solid var(--crit);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.pii .piit{font-weight:700;color:var(--crit)}
+.pii ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:3px;font-size:.93rem}
+.suggest .card textarea{min-height:90px}
 </style>
 </head>
 <body>
@@ -303,6 +307,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
     </div>
     <div class="labelrow"><label for="r-desc" style="flex:1 1 200px"><span data-t="desc"></span> <span class="hint" data-t="descHint"></span></label><button class="listen mic" type="button" id="r-mic" data-mic="r-desc" hidden></button></div>
     <textarea id="r-desc" required maxlength="1500" aria-label="Describe the need"></textarea>
+    <div class="pii" id="pii-warn" role="alert" hidden><p class="piit" id="pii-title"></p><ul id="pii-list"></ul><div class="btns"><button class="btn quiet" type="button" id="pii-fix"></button></div></div>
     <div class="row">
       <label for="r-sector"><span data-t="sector"></span><select id="r-sector"></select></label>
       <label for="r-affected"><span data-t="affected"></span><input id="r-affected" type="number" min="1" max="10000000" inputmode="numeric"></label>
@@ -315,6 +320,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
         <label><input type="radio" name="urg" id="u-low" value="low"> <span data-t="uLow"></span></label>
       </div>
     </fieldset>
+    <p class="manual" id="reg-note" data-t="registerNote" hidden></p>
     <div class="btns">
       <button class="btn" type="submit" data-t="analyse"></button>
       <button class="btn quiet" type="button" id="r-clear" data-t="clear"></button>
@@ -339,7 +345,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
       <h3 data-t="reportedH"></h3>
       <label style="flex-direction:row;align-items:center;gap:6px;font-weight:500;font-size:.86rem"><input type="checkbox" id="d-demo" style="width:auto"> <span data-t="showDemo"></span></label>
     </div>
-    <p class="note" id="d-src"></p>
+    <div class="btns" style="justify-content:space-between"><p class="note" id="d-src"></p><button class="btn quiet" type="button" id="d-refresh" hidden></button></div>
     <div id="d-summary"></div>
     <div class="export"><p class="glbl" data-t="exportH"></p><div class="btns"><button class="btn" type="button" id="x-pdf"></button><button class="btn ghost" type="button" id="x-csv"></button></div><p class="note" data-t="exportNote"></p></div>
   </div>
@@ -386,6 +392,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
 </section>
 </main>
 
+<section class="wrap suggest" id="suggest" hidden><div class="card"><h3 data-t="suggestH"></h3><textarea id="sg-text" maxlength="1500" aria-label="Suggestion"></textarea><div class="btns"><button class="btn" type="button" id="sg-send" data-t="suggestSend"></button></div><p class="note" id="sg-note"></p></div></section>
 <footer><div class="wrap">
   <p data-t="foot1"></p>
   <p data-t="foot2"></p>
@@ -400,7 +407,9 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
+en:{piiTitle:"Remove personal details to continue",piiPhone:"A mobile or phone number",piiLongNum:"An Aadhaar, bank account or other long ID number",piiEmail:"An email address",piiPan:"A PAN card number",piiName:"A person's name (for example “my name is…”, “S/o…”). Describe the problem without naming anyone.",piiFix:"Remove numbers and emails for me",piiBlocked:"This report has personal details. Remove them before analysing or saving.",piiNameLeft:"Numbers removed. Please also remove the person's name.",
+registerNote:"Reports saved here are visible to everyone. Never include names, phone numbers or Aadhaar.",countShared:"{n} needs reported by everyone.",loadingShared:"Loading everyone's reports…",sharedFail:"Couldn't load everyone's reports. Check your internet and refresh.",refresh:"Refresh",sharedSaved:"Shared. Everyone can now see this need.",shareFailNet:"Couldn't share now. It is saved on this phone; try again when online.",serverPii:"The register refused this report because it looks like it has personal details.",
+suggestH:"Give a suggestion",suggestPh:"What should we improve? (no names or phone numbers)",suggestSend:"Send suggestion",suggestThanks:"Thank you. Your suggestion was sent.",suggestFail:"Couldn't send now. Try again when online.",tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
 repH:"What is missing in your area?",repLede:"Describe one problem in plain words. You will see which department is responsible, which rights and laws apply, and what should happen step by step.",
 exFlag:"Example filled in · replace with your own",district:"District",place:"Mandal / village / ward",placePh:"e.g. Hukumpeta mandal, K. Kothuru village",desc:"Describe the need",descHint:"Do not enter names, phone numbers or Aadhaar of any person.",
 sector:"Sector",auto:"Detect from description",affected:"People affected (approx.)",urgency:"Urgency",uHigh:"Risk to life or health now",uMed:"Hardship for weeks",uLow:"Long-term gap",analyse:"Analyse need",clear:"Clear form",
@@ -423,7 +432,9 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
+te:{piiTitle:"కొనసాగడానికి వ్యక్తిగత వివరాలు తొలగించండి",piiPhone:"మొబైల్ లేదా ఫోన్ నంబర్",piiLongNum:"ఆధార్, బ్యాంకు ఖాతా లేదా ఇతర పొడవైన గుర్తింపు నంబర్",piiEmail:"ఈమెయిల్ చిరునామా",piiPan:"PAN కార్డు నంబర్",piiName:"వ్యక్తి పేరు (ఉదా: “నా పేరు…”, “S/o…”). ఎవరి పేరూ లేకుండా సమస్యను వివరించండి.",piiFix:"నంబర్లు, ఈమెయిల్ తొలగించు",piiBlocked:"ఈ నివేదికలో వ్యక్తిగత వివరాలు ఉన్నాయి. విశ్లేషించే ముందు లేదా భద్రపరిచే ముందు వాటిని తొలగించండి.",piiNameLeft:"నంబర్లు తొలగించాం. వ్యక్తి పేరును కూడా తొలగించండి.",
+registerNote:"ఇక్కడ భద్రపరిచిన నివేదికలు అందరికీ కనిపిస్తాయి. పేర్లు, ఫోన్ నంబర్లు, ఆధార్ ఎప్పుడూ రాయవద్దు.",countShared:"అందరూ నమోదు చేసిన అవసరాలు: {n}.",loadingShared:"అందరి నివేదికలు లోడ్ అవుతున్నాయి…",sharedFail:"అందరి నివేదికలు లోడ్ కాలేదు. ఇంటర్నెట్ చూసి మళ్లీ ప్రయత్నించండి.",refresh:"రిఫ్రెష్",sharedSaved:"పంచుకోబడింది. ఈ అవసరం ఇప్పుడు అందరికీ కనిపిస్తుంది.",shareFailNet:"ఇప్పుడు పంచుకోలేకపోయాం. ఈ ఫోన్‌లో భద్రపరిచాం; ఇంటర్నెట్ వచ్చాక మళ్లీ ప్రయత్నించండి.",serverPii:"వ్యక్తిగత వివరాలు ఉన్నట్లు కనిపించడంతో రిజిస్టర్ ఈ నివేదికను తిరస్కరించింది.",
+suggestH:"సూచన ఇవ్వండి",suggestPh:"మేము ఏమి మెరుగుపరచాలి? (పేర్లు, ఫోన్ నంబర్లు వద్దు)",suggestSend:"సూచన పంపండి",suggestThanks:"ధన్యవాదాలు. మీ సూచన పంపబడింది.",suggestFail:"ఇప్పుడు పంపలేకపోయాం. ఇంటర్నెట్ వచ్చాక ప్రయత్నించండి.",tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
 repH:"మీ ప్రాంతంలో ఏమి లోపించింది?",repLede:"ఒక సమస్యను సరళమైన మాటల్లో వివరించండి. దానికి బాధ్యత వహించే శాఖ, వర్తించే హక్కులు, చట్టాలు, దశలవారీగా ఏమి జరగాలో మీకు కనిపిస్తుంది.",
 exFlag:"ఉదాహరణ నింపబడింది · మీ వివరాలతో మార్చండి",district:"జిల్లా",place:"మండలం / గ్రామం / వార్డు",placePh:"ఉదా: హుకుంపేట మండలం, కె. కొత్తూరు గ్రామం",desc:"అవసరాన్ని వివరించండి",descHint:"ఎవరి పేర్లు, ఫోన్ నంబర్లు లేదా ఆధార్ నమోదు చేయవద్దు.",
 sector:"రంగం",auto:"వివరణ నుండి గుర్తించు",affected:"ప్రభావితులైన వారు (సుమారు)",urgency:"అత్యవసరత",uHigh:"ప్రాణానికి లేదా ఆరోగ్యానికి ఇప్పుడే ప్రమాదం",uMed:"వారాలుగా ఇబ్బంది",uLow:"దీర్ఘకాలిక లోటు",analyse:"విశ్లేషించండి",clear:"ఫారం ఖాళీ చేయండి",
@@ -699,6 +710,7 @@ function applyStatic(){
  if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
  document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
  document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
+ const dr=$("d-refresh");if(dr)dr.textContent=t("refresh");const sgt=$("sg-text");if(sgt)sgt.placeholder=t("suggestPh");if(!$("pii-warn").hidden)piiCheckForm();
  const xp=$("x-pdf"),xc=$("x-csv");if(xp){xp.textContent=t("exportPdf");xc.textContent=t("exportCsv")}
 }
 function fillSelect(el,opts,keepVal){const v=keepVal?el.value:null;el.innerHTML="";opts.forEach(([val,txt])=>{const o=document.createElement("option");o.value=val;o.textContent=txt;el.appendChild(o)});if(v!==null&&[...el.options].some(o=>o.value===v))el.value=v}
@@ -878,7 +890,38 @@ function shareReport(text){
  const done=()=>toast(t("copied"));
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done))}else fallbackCopy(text,done)}
 function fallbackCopy(text,done){const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
-$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+
+// ---------- Personal-details guard ----------
+const TE_DIGITS="౦౧౨౩౪౫౬౭౮౯";
+const normDigits=x=>x.replace(/[౦-౯]/g,c=>String(TE_DIGITS.indexOf(c)));
+const RX_LONGNUM=/(?:\+?\d[\s.\-()]*){10,}/g;           // 10+ digits even with spaces or dashes
+const RX_EMAIL=/[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g;
+const RX_PAN=/\b[A-Za-z]{5}\d{4}[A-Za-z]\b/g;
+const NAME_CUES=[/\bmy name\b/i,/\bname\s*(is|:|-)/i,/\b[sdwc]\s*\/\s*o\b/i,/\b(son|daughter|wife|husband) of\b/i,/\b(?:[Mm]rs?|[Mm]s|[Ss]mt|[Dd]r)\.?\s+[A-Z][a-z]{2,}/,
+ /నా పేరు/,/పేరు\s*[:\-]/,/తండ్రి పేరు/,/భర్త పేరు/,/తల్లి పేరు/,/శ్రీమతి\s+\S/,/కుమారుడు/,/కుమార్తె/];
+function piiFound(text){
+ const x=normDigits(String(text||""));const k=[];
+ const longs=x.match(RX_LONGNUM)||[];
+ longs.forEach(m=>{const d=m.replace(/\D/g,"");const phone=/^(?:91|0)?[6-9]\d{9}$/.test(d);const key=phone?"piiPhone":"piiLongNum";if(!k.includes(key))k.push(key)});
+ if(RX_EMAIL.test(x))k.push("piiEmail");RX_EMAIL.lastIndex=0;
+ if(RX_PAN.test(x))k.push("piiPan");RX_PAN.lastIndex=0;
+ if(NAME_CUES.some(re=>re.test(x)))k.push("piiName");
+ return k;
+}
+function piiStrip(text){return normDigits(text).replace(RX_LONGNUM," ").replace(RX_EMAIL," ").replace(RX_PAN," ").replace(/[ \t]{2,}/g," ").trim()}
+function piiCheckForm(){
+ const kinds=[...new Set([...piiFound($("r-desc").value),...piiFound($("r-place").value)])];
+ const box=$("pii-warn");
+ if(!kinds.length){box.hidden=true;return true}
+ $("pii-title").textContent=t("piiTitle");
+ $("pii-list").innerHTML=kinds.map(k=>`<li>${esc(t(k))}</li>`).join("");
+ const fx=$("pii-fix");fx.textContent=t("piiFix");fx.hidden=kinds.every(k=>k==="piiName");
+ box.hidden=false;return false;
+}
+$("pii-fix").onclick=()=>{["r-desc","r-place"].forEach(id=>{$(id).value=piiStrip($(id).value)});if(!piiCheckForm())toast(t("piiNameLeft"));$("r-desc").focus()};
+["r-desc","r-place"].forEach(id=>$(id).addEventListener("input",piiCheckForm));
+
+$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
 ["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
 
@@ -894,13 +937,36 @@ const db={local:true,
 
 function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\nPGRS: 1100`}
 
+
+// ---------- Shared register (Google Sheet web app). Empty = reports stay on this phone. ----------
+const REGISTER_URL="";
+const SHARED=/^https:\/\/script\.google\.com\//.test(REGISTER_URL);
+let sharedLoaded=false,sharedError=false,sharedReports=[];
+async function loadShared(){
+ if(!SHARED)return;sharedError=false;renderDash();
+ try{const res=await fetch(REGISTER_URL+"?t="+Date.now(),{method:"GET"});const j=await res.json();if(!j.ok)throw 0;
+  sharedReports=(j.reports||[]).filter(r=>r&&r.id&&DNAMES.includes(r.district)&&r.sector in S);sharedLoaded=true}
+ catch(e){sharedError=true}
+ renderDash();
+}
+async function postRegister(payload){
+ const res=await fetch(REGISTER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+ return res.json();
+}
+
 async function save(){
- if(!current)return;const btn=$("r-save");btn.disabled=true;
+ if(!current)return;
+ if(!piiCheckForm()||piiFound(current.desc+" "+current.place).length){toast(t("piiBlocked"));return}
+ const btn=$("r-save");btn.disabled=true;
  const r=current;const title=r.desc.split(/[.!?।]/)[0].slice(0,90);
  const rec={id:"r"+Date.now().toString(36),district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:newsLevel(),outlets:newsOutlets()},created:new Date().toISOString()};
  reports.unshift(rec);
- if(persist()){btn.textContent=t("saved");$("r-save-note").textContent=t("savedNote");toast(t("saved"));renderDash()}
- else{reports.shift();btn.disabled=false;$("r-save-note").textContent=t("saveFail")}
+ if(!persist()){reports.shift();btn.disabled=false;$("r-save-note").textContent=t("saveFail");return}
+ if(!SHARED){btn.textContent=t("saved");$("r-save-note").textContent=t("savedNote");toast(t("saved"));renderDash();return}
+ try{const j=await postRegister({type:"report",report:rec});
+  if(j&&j.ok){btn.textContent=t("saved");$("r-save-note").textContent=t("sharedSaved");toast(t("sharedSaved"));loadShared()}
+  else{btn.disabled=false;const m=t(j&&j.error==="pii"?"serverPii":"shareFailNet");$("r-save-note").textContent=m;toast(m)}}
+ catch(e){btn.disabled=false;$("r-save-note").textContent=t("shareFailNet");toast(t("shareFailNet"))}
 }
 
 const langLine=()=>LANG==="te"?"Write every text value in clear, simple Telugu (తెలుగు) that a rural reader understands; keep article numbers and scheme names as they are.":"Write every text value in plain English.";
@@ -963,8 +1029,8 @@ const verLabel=l=>l>=2?["ok","corroborated"]:l===1?["warn","single"]:["","unveri
 let dashSpeech="";let dashState={list:[],demo:false,fd:"",fs:"",ft:""};
 function renderDash(){
  const demo=$("d-demo").checked;
- const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):reports;
- $("d-src").textContent=demo?t("demoNote"):t("countLocal").replace("{n}",reports.length);
+ const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):(SHARED?sharedReports:reports);
+ $("d-src").textContent=demo?t("demoNote"):SHARED?(sharedError?t("sharedFail"):!sharedLoaded?t("loadingShared"):t("countShared").replace("{n}",sharedReports.length)):t("countLocal").replace("{n}",reports.length);
  if(!data.length){$("d-summary").innerHTML=`<div class="empty"><b>${esc(t("emptyB"))}</b><span>${esc(t("emptyS"))}</span></div>`;$("d-list").innerHTML="";dashSpeech=t("emptyB")+" "+t("emptyS");dashState={list:[],demo,fd:"",fs:"",ft:""};return}
  const by={};data.forEach(r=>{const k=r.sector in S?r.sector:"livelihood";by[k]=by[k]||{n:0,p:0};by[k].n++;by[k].p+=UW[r.urgency]||1});
  const rows=Object.entries(by).sort((a,b)=>b[1].p-a[1].p);const max=Math.max(...rows.map(r=>r[1].p));
@@ -980,7 +1046,7 @@ function renderDash(){
  const fd=$("d-f-district").value,fs=$("d-f-sector").value,ft=$("d-f-status").value;
  const list=data.filter(r=>(!fd||r.district===fd)&&(!fs||r.sector===fs)&&(!ft||(r.status||"reported")===ft)).sort((a,b)=>(UW[b.urgency]||0)-(UW[a.urgency]||0));
  dashState={list,demo,fd,fs,ft};
- const canEdit=!!db&&!demo;
+ const canEdit=!!db&&!demo&&!SHARED;
  $("d-list").innerHTML=list.length?list.map(r=>{const s=sec(r.sector);const [vc,vk]=verLabel(r.verify&&r.verify.level||0);const st=STATUSES.includes(r.status)?r.status:"reported";
   return `<article class="rep u-${esc(r.urgency)}"><div class="meta"><span>${esc(dName(r.district))}</span>${r.place?`<span>· ${esc(r.place)}</span>`:""}<span>· ${num(r.affected)} ${esc(t("people"))}</span>${r.created?`<span>· ${esc(new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"))}</span>`:""}</div>
   <h3>${esc(r.title||s.name)}</h3><p class="desc">${esc(r.desc)}</p>
@@ -1137,6 +1203,10 @@ window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;i
 // ---------- Init ----------
 applyStatic();fillSelects();renderIndic();
 if(!sampleFn)$("n-assess").hidden=true;
+if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;loadShared();
+ $("sg-send").onclick=async()=>{const tx=$("sg-text").value.trim();if(!tx)return;if(piiFound(tx).length){$("sg-note").textContent=t("piiBlocked");return}
+  $("sg-send").disabled=true;try{const j=await postRegister({type:"suggestion",text:tx,lang:LANG});if(j&&j.ok){$("sg-text").value="";$("sg-note").textContent=t("suggestThanks")}else $("sg-note").textContent=t(j&&j.error==="pii"?"serverPii":"suggestFail")}catch(e){$("sg-note").textContent=t("suggestFail")}$("sg-send").disabled=false}}
+
 $("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
 renderSources();renderVerdict();
 const hashMap={report:"report",dashboard:"dash",news:"news"};

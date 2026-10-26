@@ -35,3 +35,18 @@ Every push to `main` builds a new APK automatically (see `.github/workflows/buil
 - The rights mapping is guidance, not legal advice.
 - The Telugu text should be reviewed by a native speaker before a public pilot.
 - Indicators: NFHS-5 (2019–21); NITI Aayog National Multidimensional Poverty Index 2023; SDG India Index 2023–24.
+
+## Shared register (everyone sees everyone's reports)
+
+Reports can be stored in a Google Sheet so that everyone using the app or website sees all reports.
+
+1. Create a Google Sheet (any name, e.g. "Mana Hakku register").
+2. In the sheet: **Extensions → Apps Script**. Delete what is there and paste `backend/Code.gs`. Save.
+3. **Deploy → New deployment →** type **Web app**, *Execute as* **Me**, *Who has access* **Anyone** → **Deploy**, allow access.
+4. Copy the Web app URL (ends in `/exec`) and set it as `REGISTER_URL` in `app/src/main/assets/index.html`.
+
+Reports land in the **Reports** tab and suggestions in **Suggestions**. Change a report's progress by editing its `status` cell to `reported`, `acknowledged`, `progress` or `resolved`; the app shows it to everyone. Delete a row to remove a report.
+
+## Personal details are blocked
+
+The app refuses to analyse or save a report that contains a phone number, an Aadhaar, bank or other long ID number, an email address, a PAN, or a phrase introducing a person's name ("my name is", "S/o", "నా పేరు", …). The register script repeats the same check, so such details cannot reach the sheet even if the app is bypassed.
