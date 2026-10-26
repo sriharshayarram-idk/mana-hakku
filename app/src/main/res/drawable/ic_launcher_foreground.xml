@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Speech bubble (a voice raised) carrying a check mark (a right delivered). 108dp canvas, art inside the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,32 L74,32 Q80,32 80,38 L80,62 Q80,68 74,68 L52,68 L40,78 L42,68 L34,68 Q28,68 28,62 L28,38 Q28,32 34,32 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#E3A93A"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M42,50 L51,58 L67,42" />
+</vector>

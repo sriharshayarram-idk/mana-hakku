@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mana Hakku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@500;600;700&family=Hind+Guntur:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single mobile-first column, sticky tab bar, cards only for results; indigo ink + turmeric accent on cool paper */
+:root{
+  --bg:#F2F3EF; --surface:#FFFFFF; --sunk:#E8EAE4; --ink:#1B2233; --muted:#596173; --line:#D6D9D2;
+  --indigo:#2B3A8F; --indigo-soft:#E4E7F6; --ochre:#B97A0C; --ochre-soft:#F7ECD3;
+  --crit:#B4232C; --crit-soft:#F8E1E2; --warn:#9A5B00; --warn-soft:#F6E9D2; --ok:#2E7D4F; --ok-soft:#DDEFE4;
+  --f-display:"Anek Telugu","Hind Guntur",system-ui,sans-serif;
+  --f-body:"Hind Guntur","Anek Telugu",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11141B; --surface:#191E29; --sunk:#202634; --ink:#E8EAF0; --muted:#9AA2B4; --line:#2C3342;
+  --indigo:#9AA7F2; --indigo-soft:#252C4A; --ochre:#E3A93A; --ochre-soft:#3A2F17;
+  --crit:#F08A8F; --crit-soft:#3D2023; --warn:#F0B254; --warn-soft:#3A2D16; --ok:#76CF9A; --ok-soft:#1C3527; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11141B; --surface:#191E29; --sunk:#202634; --ink:#E8EAF0; --muted:#9AA2B4; --line:#2C3342;
+  --indigo:#9AA7F2; --indigo-soft:#252C4A; --ochre:#E3A93A; --ochre-soft:#3A2F17;
+  --crit:#F08A8F; --crit-soft:#3D2023; --warn:#F0B254; --warn-soft:#3A2D16; --ok:#76CF9A; --ok-soft:#1C3527; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:16px 10px;display:flex;flex-direction:column;gap:4px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.8rem;line-height:1.1;margin:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand .alt{font-size:1rem;font-weight:600;color:var(--ochre)}
+.sub{color:var(--muted);font-size:.95rem;margin:0;max-width:62ch}
+.langs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg)}
+.langs button{font:inherit;font-weight:600;font-size:.9rem;border:0;background:transparent;color:var(--muted);padding:5px 14px;border-radius:999px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--indigo);color:var(--surface)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;padding-block:6px;overflow-x:auto}
+.tab{flex:1 0 auto;min-width:0;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:9px 12px;border-radius:8px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--indigo-soft);color:var(--indigo)}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+main .wrap{padding-block:20px 48px;display:flex;flex-direction:column;gap:20px}
+h2{font-family:var(--f-display);font-weight:600;font-size:1.35rem;margin:0;line-height:1.25;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:1.05rem;margin:0;line-height:1.3}
+p{margin:0}
+.lede{color:var(--muted);max-width:62ch}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.intro{display:flex;flex-direction:column;gap:8px}
+.introhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+form,.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:5px;font-weight:500;font-size:.95rem;min-width:0}
+label .hint{font-weight:400;color:var(--muted);font-size:.83rem}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:120px;resize:vertical}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+legend{font-weight:500;font-size:.95rem;padding:0;margin-bottom:5px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{flex-direction:row;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-weight:500;cursor:pointer}
+.seg input{width:auto;accent-color:var(--indigo)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--indigo);background:var(--indigo);color:var(--surface)}
+.btn.ghost{background:transparent;color:var(--indigo)}
+.btn.quiet{border-color:var(--line);background:var(--surface);color:var(--ink);font-weight:500}
+.btn:disabled{opacity:.55;cursor:default}
+.listen{font:inherit;font-weight:600;font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ochre);background:var(--ochre-soft);color:var(--ochre);border-radius:999px;padding:6px 14px;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+.listen svg{width:16px;height:16px;fill:currentColor}
+.listen[aria-pressed="true"]{background:var(--ochre);color:var(--surface)}
+.note{font-size:.86rem;color:var(--muted)}
+.example-flag{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;background:var(--ochre-soft);color:var(--ochre);border-radius:999px;padding:2px 10px;font-weight:600;align-self:flex-start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.result-head{display:flex;flex-direction:column;gap:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.82rem;font-weight:600;border-radius:999px;padding:2px 10px;background:var(--sunk);color:var(--ink)}
+.chip.crit{background:var(--crit-soft);color:var(--crit)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.ind{background:var(--indigo-soft);color:var(--indigo)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:600px){.grid2{grid-template-columns:1fr}}
+.block{display:flex;flex-direction:column;gap:6px;min-width:0}
+.block ul,.block ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.law{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.95rem}
+.law b{font-family:var(--f-mono);font-weight:500;font-size:.8rem;color:var(--indigo);white-space:nowrap;padding-top:3px}
+.phase{display:grid;grid-template-columns:84px 1fr;gap:10px;padding-block:10px;border-top:1px solid var(--line)}
+.phase:first-of-type{border-top:0;padding-top:0}
+.phase .when{font-family:var(--f-body);font-size:.85rem;color:var(--ochre);font-weight:600;padding-top:2px}
+.phase ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px}
+.ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.ladder li{display:grid;grid-template-columns:26px 1fr;gap:8px;padding:7px 0;border-top:1px dashed var(--line);font-size:.95rem}
+.ladder li:first-child{border-top:0}
+.ladder .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);padding-top:3px}
+.ladder .tel{font-family:var(--f-mono);font-size:.88rem;color:var(--indigo);user-select:all}
+.ai-box{border-left:3px solid var(--ochre);padding-left:12px;display:flex;flex-direction:column;gap:8px}
+.ai-out{font-size:.95rem;display:flex;flex-direction:column;gap:8px}
+.ai-out table{border-collapse:collapse;width:100%;font-size:.88rem}
+.ai-out th,.ai-out td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.scroll{overflow-x:auto}
+.indic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.indic{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ind{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ind .v{font-family:var(--f-display);font-weight:700;font-size:1.6rem;line-height:1.05;font-variant-numeric:tabular-nums}
+.ind .l{font-size:.86rem;line-height:1.35}
+.ind .s{font-size:.75rem;color:var(--muted)}
+.ind.flag .v{color:var(--crit)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(0,170px) 1fr 34px;gap:10px;align-items:center;font-size:.88rem}
+.bar .track{height:12px;background:var(--sunk);border-radius:6px;overflow:hidden}
+.bar .fill{height:100%;background:var(--indigo);border-radius:6px}
+.bar .fill.hi{background:var(--crit)}
+.bar .num{font-family:var(--f-mono);font-size:.82rem;text-align:right;font-variant-numeric:tabular-nums}
+.bar .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filters select{width:auto;flex:1 1 160px}
+.reports{display:flex;flex-direction:column;gap:10px}
+.rep{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.rep.u-high{border-left-color:var(--crit)}
+.rep.u-medium{border-left-color:var(--warn)}
+.rep.u-low{border-left-color:var(--ok)}
+.rep .meta{font-size:.82rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.rep .desc{font-size:.95rem;overflow-wrap:anywhere}
+.rep .foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rep select{width:auto;padding:4px 8px;font-size:.85rem}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;color:var(--muted)}
+.empty b{color:var(--ink)}
+table.dist{border-collapse:collapse;width:100%;font-size:.9rem}
+table.dist th,table.dist td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+table.dist td.n,table.dist th.n{text-align:right}
+table.dist td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+table.dist th{font-weight:600;font-size:.82rem;color:var(--muted)}
+.sources{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.src{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.src:first-child{border-top:0}
+.src a{color:var(--indigo);font-weight:600;text-decoration:none}
+.src a:hover{text-decoration:underline}
+.src .k{font-size:.78rem;color:var(--muted)}
+.src label{flex-direction:row;align-items:center;gap:6px;font-size:.86rem;font-weight:500}
+.src input{width:auto;accent-color:var(--ok)}
+.verdict{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.meter{display:flex;gap:3px}
+.meter i{width:22px;height:8px;border-radius:3px;background:var(--sunk);display:block}
+.meter i.on{background:var(--ok)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.92rem;z-index:20;max-width:calc(100% - 32px)}
+footer .wrap{padding-block:0 32px;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+body{margin:0;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+.labelrow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.mic{border-color:var(--indigo);background:var(--indigo-soft);color:var(--indigo)}
+.mic[aria-busy="true"]{background:var(--indigo);color:var(--surface)}
+@media (prefers-reduced-motion:no-preference){.card,.rep{animation:rise .25s ease-out both}@keyframes rise{from{transform:translateY(4px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="toprow">
+    <p class="eyebrow" data-t="eyebrow">Andhra Pradesh · 28 districts</p>
+    <div class="langs" role="group" aria-label="Language / భాష">
+      <button type="button" id="lang-te" aria-pressed="true" lang="te">తెలుగు</button>
+      <button type="button" id="lang-en" aria-pressed="false" lang="en">English</button>
+    </div>
+  </div>
+  <h1 class="brand"><span id="brand-main">మన హక్కు</span><span class="alt" id="brand-alt">Mana Hakku</span></h1>
+  <p class="sub" data-t="tagline">Every need, the right department, the right law.</p>
+</div></header>
+
+<nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
+  <button class="tab" role="tab" id="t-report" aria-selected="true" data-view="report" data-t="tabReport">Report a need</button>
+  <button class="tab" role="tab" id="t-dash" aria-selected="false" data-view="dash" data-t="tabDash">Gap dashboard</button>
+  <button class="tab" role="tab" id="t-news" aria-selected="false" data-view="news" data-t="tabNews">News check</button>
+</div></nav>
+
+<main>
+<section class="wrap" id="v-report" aria-labelledby="t-report">
+  <div class="intro">
+    <div class="introhead"><h2 data-t="repH">What is missing in your area?</h2><button class="listen" type="button" data-speak="report"></button></div>
+    <p class="lede" data-t="repLede"></p>
+  </div>
+  <form id="f-report" class="card" autocomplete="off">
+    <span class="example-flag" id="ex-flag" data-t="exFlag"></span>
+    <div class="row">
+      <label for="r-district"><span data-t="district"></span><select id="r-district" required></select></label>
+      <label for="r-place"><span data-t="place"></span><input id="r-place" maxlength="80"></label>
+    </div>
+    <div class="labelrow"><label for="r-desc" style="flex:1 1 200px"><span data-t="desc"></span> <span class="hint" data-t="descHint"></span></label><button class="listen mic" type="button" id="r-mic" data-mic="r-desc" hidden></button></div>
+    <textarea id="r-desc" required maxlength="1500" aria-label="Describe the need"></textarea>
+    <div class="row">
+      <label for="r-sector"><span data-t="sector"></span><select id="r-sector"></select></label>
+      <label for="r-affected"><span data-t="affected"></span><input id="r-affected" type="number" min="1" max="10000000" inputmode="numeric"></label>
+    </div>
+    <fieldset>
+      <legend data-t="urgency"></legend>
+      <div class="seg">
+        <label><input type="radio" name="urg" id="u-high" value="high"> <span data-t="uHigh"></span></label>
+        <label><input type="radio" name="urg" id="u-medium" value="medium" checked> <span data-t="uMed"></span></label>
+        <label><input type="radio" name="urg" id="u-low" value="low"> <span data-t="uLow"></span></label>
+      </div>
+    </fieldset>
+    <div class="btns">
+      <button class="btn" type="submit" data-t="analyse"></button>
+      <button class="btn quiet" type="button" id="r-clear" data-t="clear"></button>
+    </div>
+  </form>
+  <div id="r-result"></div>
+</section>
+
+<section class="wrap" id="v-dash" aria-labelledby="t-dash" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="dashH"></h2><button class="listen" type="button" data-speak="dash"></button></div>
+    <p class="lede" data-t="dashLede"></p>
+  </div>
+  <div class="stack">
+    <p class="eyebrow" data-t="indicEb"></p>
+    <div class="indic" id="indic"></div>
+    <p class="note" data-t="indicNote"></p>
+  </div>
+  <div class="card">
+    <div class="btns" style="justify-content:space-between">
+      <h3 data-t="reportedH"></h3>
+      <label style="flex-direction:row;align-items:center;gap:6px;font-weight:500;font-size:.86rem"><input type="checkbox" id="d-demo" style="width:auto"> <span data-t="showDemo"></span></label>
+    </div>
+    <p class="note" id="d-src"></p>
+    <div id="d-summary"></div>
+  </div>
+  <div class="stack">
+    <div class="filters">
+      <select id="d-f-district" aria-label="District"></select>
+      <select id="d-f-sector" aria-label="Sector"></select>
+      <select id="d-f-status" aria-label="Status"></select>
+    </div>
+    <div class="reports" id="d-list"></div>
+  </div>
+</section>
+
+<section class="wrap" id="v-news" aria-labelledby="t-news" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="newsH"></h2><button class="listen" type="button" data-speak="news"></button></div>
+    <p class="lede" data-t="newsLede"></p>
+  </div>
+  <div class="card">
+    <span class="example-flag" id="n-ex" data-t="nEx"></span>
+    <div class="labelrow"><label for="n-text" style="flex:1 1 200px"><span data-t="nText"></span></label><button class="listen mic" type="button" id="n-mic" data-mic="n-text" hidden></button></div>
+    <textarea id="n-text" maxlength="3000" aria-label="Headline or excerpt"></textarea>
+    <div class="row">
+      <label for="n-district"><span data-t="nDistrict"></span><select id="n-district"></select></label>
+      <label for="n-query"><span data-t="nQuery"></span> <span class="hint" data-t="nQueryHint"></span><input id="n-query" maxlength="160"></label>
+    </div>
+    <div class="btns">
+      <button class="btn" type="button" id="n-assess" data-t="assess"></button>
+      <button class="btn ghost" type="button" id="n-tolog" data-t="toLog"></button>
+    </div>
+    <p class="note" id="n-note" data-t="nNote"></p>
+    <div id="n-ai" hidden class="ai-box"></div>
+  </div>
+  <div class="stack">
+    <div class="btns" style="justify-content:space-between">
+      <h3 data-t="searchH"></h3>
+      <div class="verdict"><div class="meter" id="n-meter"><i></i><i></i><i></i></div><span class="chip" id="n-verdict"></span></div>
+    </div>
+    <div class="sources" id="n-sources"></div>
+    <p class="note" data-t="corrNote"></p>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <p data-t="foot1"></p>
+  <p data-t="foot2"></p>
+  <p class="note" id="voice-note" hidden></p>
+</div></footer>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function(){
+"use strict";
+let LANG="te";
+try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
+
+const I18N={
+en:{eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
+repH:"What is missing in your area?",repLede:"Describe one problem in plain words. You will see which department is responsible, which rights and laws apply, and what should happen step by step.",
+exFlag:"Example filled in · replace with your own",district:"District",place:"Mandal / village / ward",placePh:"e.g. Hukumpeta mandal, K. Kothuru village",desc:"Describe the need",descHint:"Do not enter names, phone numbers or Aadhaar of any person.",
+sector:"Sector",auto:"Detect from description",affected:"People affected (approx.)",urgency:"Urgency",uHigh:"Risk to life or health now",uMed:"Hardship for weeks",uLow:"Long-term gap",analyse:"Analyse need",clear:"Clear form",
+analysis:"Analysis",people:"people",detected:"Detected from description",guess:"Best guess · pick a sector to confirm",stateDept:"State department",union:"Union ministry",legal:"Constitutional and legal basis",hrStd:"Human rights standard",schemes:"Schemes to use",plan:"Action plan",d7:"0–7 days",d30:"30 days",d90:"90 days",escalate:"If it is not resolved, escalate",
+refine:"Tailor the plan with Claude",refineNote:"Uses your Claude account to adapt the plan to this exact situation.",save:"Save to gap register",saveNote:"Saved needs appear on the Gap dashboard for officials and NGOs.",saved:"Saved",savedNote:"Saved. It now appears on the Gap dashboard.",saveNeedsSignin:"Saving needs a signed-in Claude account with access to this page.",saveViewOnly:"Your access to this page is view-only, so saving is not possible. Ask the owner for Contributor access.",saveFull:"The register is full. Ask the owner to archive resolved needs.",saveFail:"Could not save just now. Try again in a moment.",
+listen:"Listen",stop:"Stop",noTeVoice:"This phone has no Telugu voice installed. Add Telugu in your phone's text-to-speech settings to hear it in Telugu.",noVoice:"Read-aloud is not available in this browser.",
+dashH:"Where the gaps are",dashLede:"State-level indicators from official surveys, alongside needs reported here. Officials and NGOs can update the status of each report.",indicEb:"Official indicators · Andhra Pradesh",indicNote:"Survey figures are state averages and lag on-ground change. Use them to prioritise, then confirm with district data.",
+reportedH:"Reported needs",showDemo:"Show example reports",demoNote:"Showing example reports. These are illustrations, not real cases.",countNote:"{n} needs in the shared register.",connecting:"Connecting to the shared register…",signin:"The shared register is available to signed-in viewers of this page.",
+emptyB:"No needs reported yet.",emptyS:"Use “Report a need” to add the first one, or tick “Show example reports” to see how the dashboard reads.",needsN:"needs",urgentN:"urgent",resolvedN:"resolved",priorityEb:"Priority by sector · weighted by urgency",distEb:"Districts with most urgent needs",thDistrict:"District",thNeeds:"Needs",thUrgent:"Urgent",thPeople:"People",
+allDistricts:"All districts",allSectors:"All sectors",anyStatus:"Any status",noMatch:"No needs match these filters.",statusUpdated:"Status updated",viewOnly:"Your access is view-only.",updFail:"Could not update. Try again.",
+newsH:"Check a news report",newsLede:"Paste a headline or excerpt about an incident. Open the trusted outlets below to see who else reports it, tick the ones that confirm it, and log it as a need once it holds up.",
+nEx:"Example headline · replace with the one you saw",nText:"Headline or excerpt",nDistrict:"District it mentions",notSure:"Not sure",nQuery:"Search words",nQueryHint:"Edit to sharpen the search",assess:"Ask Claude to assess",toLog:"Log as a need",
+nNote:"Claude reads only the text you paste; it cannot browse news itself. The links below search live, trusted outlets.",nNoteNoAI:"The links below search live, trusted outlets.",searchH:"Search trusted outlets",confirms:"Confirms",allOutlets:"all outlets",
+corrNote:"Two or more independent outlets reporting the same facts counts as corroborated. A government release or PIB fact check confirms or denies officially.",
+unverified:"Unverified",single:"Single source",corroborated:"Corroborated",official:"Officially acknowledged",
+aiRead:"Claude's reading of the text",redFlags:"Red flags",toConfirm:"Confirm in other reports",noneFound:"None found",rootCauses:"Likely root causes",tailored:"Tailored actions",thStep:"Step",thWho:"Who",thBy:"By",thBasis:"Basis",evidence:"Evidence to collect",thinking:"Thinking…",
+aiDenied:"Claude was not allowed for this page.",aiBusy:"Too many requests right now. Try again later.",aiFail:"Claude could not finish this time. Try again.",
+pasteFirst:"Paste a headline first.",describeFirst:"Describe the need first.",moved:"Moved to the report form. Add the people affected and analyse.",fromNews:"From a news report, not yet verified",reportedBy:"Reported by",
+foot1:"Prototype · Rights mapping follows the Constitution of India, central Acts and the UDHR. It is guidance, not legal advice.",foot2:"Indicators: NFHS-5 (2019–21) via NITI Aayog and a Lok Sabha reply; NITI Aayog National MPI 2023; SDG India Index 2023–24.",
+reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
+speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
+saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
+te:{eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
+repH:"మీ ప్రాంతంలో ఏమి లోపించింది?",repLede:"ఒక సమస్యను సరళమైన మాటల్లో వివరించండి. దానికి బాధ్యత వహించే శాఖ, వర్తించే హక్కులు, చట్టాలు, దశలవారీగా ఏమి జరగాలో మీకు కనిపిస్తుంది.",
+exFlag:"ఉదాహరణ నింపబడింది · మీ వివరాలతో మార్చండి",district:"జిల్లా",place:"మండలం / గ్రామం / వార్డు",placePh:"ఉదా: హుకుంపేట మండలం, కె. కొత్తూరు గ్రామం",desc:"అవసరాన్ని వివరించండి",descHint:"ఎవరి పేర్లు, ఫోన్ నంబర్లు లేదా ఆధార్ నమోదు చేయవద్దు.",
+sector:"రంగం",auto:"వివరణ నుండి గుర్తించు",affected:"ప్రభావితులైన వారు (సుమారు)",urgency:"అత్యవసరత",uHigh:"ప్రాణానికి లేదా ఆరోగ్యానికి ఇప్పుడే ప్రమాదం",uMed:"వారాలుగా ఇబ్బంది",uLow:"దీర్ఘకాలిక లోటు",analyse:"విశ్లేషించండి",clear:"ఫారం ఖాళీ చేయండి",
+analysis:"విశ్లేషణ",people:"మంది",detected:"వివరణ నుండి గుర్తించబడింది",guess:"అంచనా మాత్రమే · రంగాన్ని ఎంచుకుని నిర్ధారించండి",stateDept:"రాష్ట్ర శాఖ",union:"కేంద్ర మంత్రిత్వ శాఖ",legal:"రాజ్యాంగ, చట్టపరమైన ఆధారం",hrStd:"మానవ హక్కుల ప్రమాణం",schemes:"ఉపయోగించుకోవలసిన పథకాలు",plan:"కార్యాచరణ ప్రణాళిక",d7:"0–7 రోజులు",d30:"30 రోజులు",d90:"90 రోజులు",escalate:"పరిష్కారం కాకపోతే, పై స్థాయికి తీసుకెళ్లండి",
+refine:"Claude తో ప్రణాళిక మెరుగుపరచండి",refineNote:"మీ Claude ఖాతాను ఉపయోగించి ఈ పరిస్థితికి తగిన ప్రణాళిక తయారుచేస్తుంది.",save:"లోటుల రిజిస్టర్‌లో భద్రపరచండి",saveNote:"భద్రపరిచిన అవసరాలు అధికారులకు, స్వచ్ఛంద సంస్థలకు లోటుల పట్టికలో కనిపిస్తాయి.",saved:"భద్రపరచబడింది",savedNote:"భద్రపరచబడింది. ఇది ఇప్పుడు లోటుల పట్టికలో కనిపిస్తుంది.",saveNeedsSignin:"భద్రపరచడానికి ఈ పేజీకి అనుమతి ఉన్న Claude ఖాతాతో సైన్ ఇన్ కావాలి.",saveViewOnly:"ఈ పేజీకి మీకు చూసే అనుమతి మాత్రమే ఉంది. Contributor అనుమతి కోసం యజమానిని అడగండి.",saveFull:"రిజిస్టర్ నిండిపోయింది. పరిష్కారమైన వాటిని తొలగించమని యజమానిని అడగండి.",saveFail:"ఇప్పుడు భద్రపరచలేకపోయాం. కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+listen:"వినండి",stop:"ఆపండి",noTeVoice:"ఈ ఫోన్‌లో తెలుగు వాయిస్ లేదు. తెలుగులో వినడానికి ఫోన్ సెట్టింగ్స్‌లో టెక్స్ట్-టు-స్పీచ్ కోసం తెలుగును జోడించండి.",noVoice:"ఈ బ్రౌజర్‌లో చదివి వినిపించే సౌకర్యం లేదు.",
+dashH:"లోటులు ఎక్కడ ఉన్నాయి",dashLede:"అధికారిక సర్వేల నుండి రాష్ట్ర స్థాయి సూచికలు, ఇక్కడ నమోదైన అవసరాలు. అధికారులు, స్వచ్ఛంద సంస్థలు ప్రతి నివేదిక స్థితిని మార్చవచ్చు.",indicEb:"అధికారిక సూచికలు · ఆంధ్రప్రదేశ్",indicNote:"సర్వే గణాంకాలు రాష్ట్ర సగటులు; క్షేత్రస్థాయి మార్పులను ఆలస్యంగా చూపుతాయి. ప్రాధాన్యతల కోసం వాడండి, జిల్లా సమాచారంతో నిర్ధారించండి.",
+reportedH:"నమోదైన అవసరాలు",showDemo:"ఉదాహరణ నివేదికలు చూపు",demoNote:"ఉదాహరణ నివేదికలు చూపిస్తున్నాం. ఇవి నిజమైన కేసులు కావు.",countNote:"భాగస్వామ్య రిజిస్టర్‌లో {n} అవసరాలు.",connecting:"రిజిస్టర్‌కు కనెక్ట్ అవుతోంది…",signin:"భాగస్వామ్య రిజిస్టర్ సైన్ ఇన్ అయిన వారికి అందుబాటులో ఉంటుంది.",
+emptyB:"ఇంకా ఏ అవసరమూ నమోదు కాలేదు.",emptyS:"మొదటిది జోడించడానికి “అవసరం తెలపండి” వాడండి, లేదా పట్టిక ఎలా ఉంటుందో చూడటానికి “ఉదాహరణ నివేదికలు చూపు” ఎంచుకోండి.",needsN:"అవసరాలు",urgentN:"అత్యవసరం",resolvedN:"పరిష్కారమైనవి",priorityEb:"రంగాల వారీ ప్రాధాన్యత · అత్యవసరత ఆధారంగా",distEb:"అత్యవసర అవసరాలు ఎక్కువగా ఉన్న జిల్లాలు",thDistrict:"జిల్లా",thNeeds:"అవసరాలు",thUrgent:"అత్యవసరం",thPeople:"ప్రజలు",
+allDistricts:"అన్ని జిల్లాలు",allSectors:"అన్ని రంగాలు",anyStatus:"ఏ స్థితి అయినా",noMatch:"ఈ ఎంపికలకు సరిపడే అవసరాలు లేవు.",statusUpdated:"స్థితి మార్చబడింది",viewOnly:"మీకు చూసే అనుమతి మాత్రమే ఉంది.",updFail:"మార్చలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
+newsH:"వార్తను నిర్ధారించండి",newsLede:"ఒక సంఘటన గురించి శీర్షిక లేదా వార్త భాగాన్ని అతికించండి. ఇంకా ఎవరు నివేదించారో చూడటానికి కింది విశ్వసనీయ వార్తా సంస్థలను తెరవండి, నిర్ధారించిన వాటిని టిక్ చేయండి, నిజమని తేలాక అవసరంగా నమోదు చేయండి.",
+nEx:"ఉదాహరణ శీర్షిక · మీరు చూసిన దానితో మార్చండి",nText:"శీర్షిక లేదా వార్త భాగం",nDistrict:"పేర్కొన్న జిల్లా",notSure:"తెలియదు",nQuery:"వెతకవలసిన పదాలు",nQueryHint:"వెతుకులాట కోసం మార్చవచ్చు",assess:"Claude తో పరిశీలించండి",toLog:"అవసరంగా నమోదు చేయండి",
+nNote:"Claude మీరు అతికించిన వచనాన్ని మాత్రమే చదువుతుంది; వార్తలను స్వయంగా వెతకదు. కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",nNoteNoAI:"కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",searchH:"విశ్వసనీయ వార్తా సంస్థల్లో వెతకండి",confirms:"నిర్ధారిస్తుంది",allOutlets:"అన్ని సంస్థలు",
+corrNote:"రెండు లేదా అంతకంటే ఎక్కువ స్వతంత్ర సంస్థలు ఒకే విషయాన్ని నివేదిస్తే నిర్ధారించబడినట్లు. ప్రభుత్వ ప్రకటన లేదా PIB ఫ్యాక్ట్ చెక్ అధికారికంగా నిర్ధారిస్తుంది లేదా ఖండిస్తుంది.",
+unverified:"నిర్ధారించబడలేదు",single:"ఒకే మూలం",corroborated:"నిర్ధారించబడింది",official:"అధికారికంగా అంగీకరించబడింది",
+aiRead:"వచనంపై Claude పరిశీలన",redFlags:"అనుమాన సూచనలు",toConfirm:"ఇతర వార్తల్లో నిర్ధారించవలసినవి",noneFound:"ఏమీ కనిపించలేదు",rootCauses:"సంభావ్య మూల కారణాలు",tailored:"మీ పరిస్థితికి తగిన చర్యలు",thStep:"దశ",thWho:"ఎవరు",thBy:"గడువు",thBasis:"ఆధారం",evidence:"సేకరించవలసిన ఆధారాలు",thinking:"ఆలోచిస్తోంది…",
+aiDenied:"ఈ పేజీకి Claude అనుమతి ఇవ్వలేదు.",aiBusy:"ప్రస్తుతం చాలా అభ్యర్థనలు ఉన్నాయి. తర్వాత ప్రయత్నించండి.",aiFail:"Claude ఈసారి పూర్తి చేయలేకపోయింది. మళ్లీ ప్రయత్నించండి.",
+pasteFirst:"ముందుగా శీర్షికను అతికించండి.",describeFirst:"ముందుగా అవసరాన్ని వివరించండి.",moved:"నివేదిక ఫారంకు తరలించాం. ప్రభావితుల సంఖ్య జోడించి విశ్లేషించండి.",fromNews:"వార్త నుండి, ఇంకా నిర్ధారించలేదు",reportedBy:"నివేదించినవి",
+foot1:"నమూనా · హక్కుల వివరాలు భారత రాజ్యాంగం, కేంద్ర చట్టాలు, సార్వత్రిక మానవ హక్కుల ప్రకటన ఆధారంగా. ఇది మార్గదర్శనం మాత్రమే, న్యాయ సలహా కాదు.",foot2:"సూచికలు: NFHS-5 (2019–21), నీతి ఆయోగ్, లోక్‌సభ సమాధానం; నీతి ఆయోగ్ బహుముఖ పేదరిక సూచిక 2023; SDG ఇండియా ఇండెక్స్ 2023–24.",
+reported:"నమోదైంది",acknowledged:"అంగీకరించబడింది",progress:"చర్య జరుగుతోంది",resolved:"పరిష్కారమైంది",helpline:"హెల్ప్‌లైన్",
+speakIn:"మాట్లాడండి",listening:"వింటోంది…",voiceUnavailable:"ఈ ఫోన్‌లో మాటతో టైప్ చేసే సౌకర్యం లేదు. మీ ఫిర్యాదు చెప్పడానికి Google యాప్‌ను ఇన్‌స్టాల్ లేదా అప్‌డేట్ చేయండి.",share:"నివేదిక పంపండి",
+saveNoteLocal:"భద్రపరిచిన అవసరాలు ఈ ఫోన్‌లోనే ఉండి, లోటుల పట్టికలో కనిపిస్తాయి. అధికారికి లేదా స్వచ్ఛంద సంస్థకు పంపడానికి “నివేదిక పంపండి” వాడండి.",countLocal:"ఈ ఫోన్‌లో {n} అవసరాలు భద్రపరచబడ్డాయి.",shareHead:"మన హక్కు నివేదిక",whatNeeded:"అవసరం",peopleAffected:"ప్రభావితులు",urgencyL:"అత్యవసరత"}
+};
+const t=k=>(I18N[LANG]&&I18N[LANG][k])??I18N.en[k]??k;
+
+const DISTRICTS=[["Alluri Sitharama Raju","అల్లూరి సీతారామరాజు"],["Anakapalli","అనకాపల్లి"],["Ananthapuramu","అనంతపురం"],["Annamayya","అన్నమయ్య"],["Bapatla","బాపట్ల"],["Chittoor","చిత్తూరు"],["Dr. B. R. Ambedkar Konaseema","డా. బి.ఆర్. అంబేద్కర్ కోనసీమ"],["East Godavari","తూర్పు గోదావరి"],["Eluru","ఏలూరు"],["Guntur","గుంటూరు"],["Kakinada","కాకినాడ"],["Krishna","కృష్ణా"],["Kurnool","కర్నూలు"],["Markapuram","మార్కాపురం"],["Nandyal","నంద్యాల"],["NTR","ఎన్టీఆర్"],["Palnadu","పల్నాడు"],["Parvathipuram Manyam","పార్వతీపురం మన్యం"],["Polavaram","పోలవరం"],["Prakasam","ప్రకాశం"],["Sri Potti Sriramulu Nellore","శ్రీ పొట్టి శ్రీరాములు నెల్లూరు"],["Sri Sathya Sai","శ్రీ సత్యసాయి"],["Srikakulam","శ్రీకాకుళం"],["Tirupati","తిరుపతి"],["Visakhapatnam","విశాఖపట్నం"],["Vizianagaram","విజయనగరం"],["West Godavari","పశ్చిమ గోదావరి"],["YSR Kadapa","వైఎస్ఆర్ కడప"]];
+const DNAMES=DISTRICTS.map(d=>d[0]);
+const dName=en=>{const d=DISTRICTS.find(x=>x[0]===en);return d?(LANG==="te"?d[1]:d[0]):en};
+
+// Sector data. Each text field: [english, telugu]
+const S={
+ water:{name:["Drinking water & sanitation","తాగునీరు, పారిశుధ్యం"],
+  kw:["water","tap","borewell","bore well","drinking","sanitation","toilet","drain","sewage","fluoride","contaminat","tanker","pipeline","diarrh","నీరు","నీళ్లు","బోరు","కుళాయి","మరుగుదొడ్డి","డ్రైనేజీ","ఫ్లోరైడ్","చేతి పంపు","పైపులైన్"],
+  ap:[["Panchayat Raj & Rural Development (Rural Water Supply)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (గ్రామీణ నీటి సరఫరా)"],["Municipal Administration & Urban Development (towns and cities)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (పట్టణాలు, నగరాలు)"]],
+  un:[["Ministry of Jal Shakti · Dept of Drinking Water & Sanitation","జల్ శక్తి మంత్రిత్వ శాఖ · తాగునీరు & పారిశుధ్య విభాగం"]],
+  law:[["Art 21","Right to life, which the Supreme Court has read to include safe drinking water","జీవించే హక్కు; సురక్షిత తాగునీరు దీనిలో భాగమని సుప్రీంకోర్టు స్పష్టం చేసింది"],["Art 47","State duty to improve nutrition, living standards and public health","పోషణ, జీవన ప్రమాణాలు, ప్రజారోగ్యం మెరుగుపరచడం రాష్ట్ర బాధ్యత"],["Art 243G","Panchayats plan drinking water and sanitation (11th Schedule)","తాగునీరు, పారిశుధ్య ప్రణాళికలో పంచాయతీల పాత్ర (11వ షెడ్యూల్)"]],
+  hr:["UDHR Art 25 · adequate standard of living; UN-recognised right to water and sanitation","UDHR ఆర్టికల్ 25 · తగిన జీవన ప్రమాణం; ఐక్యరాజ్యసమితి గుర్తించిన నీరు, పారిశుధ్య హక్కు"],
+  sch:["Jal Jeevan Mission","Swachh Bharat Mission"],
+  plan:{now:[["Request tanker supply and chlorination through the Grama/Ward Sachivalayam","గ్రామ/వార్డు సచివాలయం ద్వారా ట్యాంకర్ సరఫరా, క్లోరినేషన్ కోరండి"],["Get water samples tested at the district water testing lab","జిల్లా నీటి పరీక్షా కేంద్రంలో నీటి నమూనాలు పరీక్షించండి"]],
+   d30:[["Repair or replace failed pumps, pipelines and handpumps","పాడైన పంపులు, పైపులైన్లు, చేతి పంపులు మరమ్మతు చేయించాలి"],["Publish a supply schedule and a local complaint contact","నీటి సరఫరా సమయ పట్టిక, స్థానిక ఫిర్యాదు సంప్రదింపు వివరాలు ప్రకటించాలి"]],
+   d90:[["Add the habitation to the Jal Jeevan Mission village action plan","ఈ ఆవాసాన్ని జల్ జీవన్ మిషన్ గ్రామ కార్యాచరణ ప్రణాళికలో చేర్చాలి"],["Fix the source: recharge structures, defluoridation or a new scheme","నీటి మూలాన్ని సరిచేయాలి: భూగర్భ జల రీఛార్జ్, ఫ్లోరైడ్ తొలగింపు లేదా కొత్త పథకం"]]}},
+ health:{name:["Health care","ఆరోగ్య సేవలు"],
+  kw:["hospital","phc","doctor","nurse","medicine","health","ambulance","fever","dengue","malaria","clinic","treatment","disease","maternal","delivery","snake","ఆసుపత్రి","డాక్టర్","వైద్య","మందు","జ్వరం","అంబులెన్స్","ఆరోగ్య","ప్రసవ","పాము కాటు"],
+  ap:[["Health, Medical & Family Welfare","ఆరోగ్య, వైద్య & కుటుంబ సంక్షేమం"]],un:[["Ministry of Health & Family Welfare","ఆరోగ్య & కుటుంబ సంక్షేమ మంత్రిత్వ శాఖ"]],
+  law:[["Art 21","Right to life includes timely emergency medical care","జీవించే హక్కులో సకాలంలో అత్యవసర వైద్యం పొందే హక్కు భాగం"],["Art 47","Public health is a primary state duty","ప్రజారోగ్యం రాష్ట్ర ప్రాథమిక బాధ్యత"],["Art 39(e)","Health of workers, men, women and children must not be abused","కార్మికులు, పురుషులు, మహిళలు, పిల్లల ఆరోగ్యాన్ని దుర్వినియోగం చేయకూడదు"]],
+  hr:["UDHR Art 25 · medical care; ICESCR Art 12 · highest attainable standard of health","UDHR ఆర్టికల్ 25 · వైద్య సంరక్షణ; ICESCR ఆర్టికల్ 12 · అత్యున్నత ఆరోగ్య ప్రమాణం"],
+  sch:["National Health Mission","Ayushman Bharat PM-JAY","Ayushman Arogya Mandirs"],
+  plan:{now:[["Call 108 for emergencies; hold the PHC to its listed working hours","అత్యవసరమైతే 108 కి కాల్ చేయండి; PHC ప్రకటించిన పని వేళల్లో పనిచేసేలా చూడండి"],["Report outbreaks to the District Medical & Health Officer for a rapid response team","అంటువ్యాధుల వ్యాప్తిని జిల్లా వైద్య ఆరోగ్య అధికారికి తెలియజేసి, త్వరిత స్పందన బృందాన్ని కోరండి"]],
+   d30:[["Fill doctor, nurse and ANM vacancies or deploy staff on deputation","ఖాళీగా ఉన్న డాక్టర్, నర్సు, ANM పోస్టులు భర్తీ చేయాలి లేదా డిప్యుటేషన్‌పై సిబ్బందిని పంపాలి"],["Restock essential medicines against the state's free drug list","రాష్ట్ర ఉచిత మందుల జాబితా ప్రకారం అవసరమైన మందులు నిల్వ ఉంచాలి"]],
+   d90:[["Upgrade the facility to Indian Public Health Standards","కేంద్రాన్ని భారత ప్రజారోగ్య ప్రమాణాలకు (IPHS) మెరుగుపరచాలి"],["Set up outreach or mobile clinics for remote habitations","దూర ఆవాసాలకు సంచార వైద్యశాలలు, అవుట్‌రీచ్ శిబిరాలు ఏర్పాటు చేయాలి"]]}},
+ nutrition:{name:["Nutrition & food security","పోషణ, ఆహార భద్రత"],
+  kw:["ration","pds","rice","anganwadi","hunger","malnutrition","malnourished","food","meal","stunt","underweight","anaemia","anemia","fair price","రేషన్","బియ్యం","అంగన్‌వాడీ","అంగన్వాడీ","ఆకలి","పోషకాహార","భోజనం","రక్తహీనత"],
+  ap:[["Women, Children, Differently Abled & Senior Citizens Welfare (anganwadi)","మహిళా, శిశు, దివ్యాంగుల & వయోవృద్ధుల సంక్షేమం (అంగన్‌వాడీ)"],["Consumer Affairs, Food & Civil Supplies (ration)","వినియోగదారుల వ్యవహారాలు, ఆహార & పౌర సరఫరాలు (రేషన్)"]],
+  un:[["Ministry of Women & Child Development","మహిళా & శిశు అభివృద్ధి మంత్రిత్వ శాఖ"],["Ministry of Consumer Affairs, Food & Public Distribution","వినియోగదారుల వ్యవహారాలు, ఆహారం & ప్రజా పంపిణీ మంత్రిత్వ శాఖ"]],
+  law:[["Art 21","Right to food, as part of the right to life","ఆహార హక్కు జీవించే హక్కులో భాగం"],["Art 47","Raise the level of nutrition","పోషణ స్థాయిని పెంచడం రాష్ట్ర బాధ్యత"],["NFSA 2013","Legal entitlement to subsidised grain, take-home ration and meals","సబ్సిడీ ధాన్యం, ఇంటికి రేషన్, భోజనం చట్టబద్ధ హక్కు"]],
+  hr:["UDHR Art 25 · food; ICESCR Art 11 · freedom from hunger","UDHR ఆర్టికల్ 25 · ఆహారం; ICESCR ఆర్టికల్ 11 · ఆకలి నుండి విముక్తి"],
+  sch:["Saksham Anganwadi & Poshan 2.0","PM Garib Kalyan Anna Yojana","PM POSHAN"],
+  plan:{now:[["Restore ration and anganwadi supply; identify severely wasted children for referral","రేషన్, అంగన్‌వాడీ సరఫరా పునరుద్ధరించాలి; తీవ్ర పోషకాహార లోపం ఉన్న పిల్లలను గుర్తించి వైద్యానికి పంపాలి"],["Check ration card status and e-KYC failures household by household","ప్రతి ఇంటి రేషన్ కార్డు స్థితి, e-KYC సమస్యలు తనిఖీ చేయాలి"]],
+   d30:[["Run growth monitoring in every anganwadi and act on red-flagged children","ప్రతి అంగన్‌వాడీలో ఎదుగుదల పర్యవేక్షణ జరిపి, ప్రమాద సూచనలు ఉన్న పిల్లలకు చర్య తీసుకోవాలి"],["Hold a social audit of the fair price shop","రేషన్ దుకాణంపై సామాజిక తనిఖీ (సోషల్ ఆడిట్) నిర్వహించాలి"]],
+   d90:[["Fix supply chain gaps and anganwadi infrastructure","సరఫరా లోపాలు, అంగన్‌వాడీ మౌలిక వసతులు సరిచేయాలి"],["Converge with health for anaemia testing and treatment","రక్తహీనత పరీక్ష, చికిత్స కోసం ఆరోగ్య శాఖతో కలిసి పనిచేయాలి"]]}},
+ education:{name:["Education","విద్య"],
+  kw:["school","teacher","student","education","classroom","dropout","college","hostel","books","uniform","exam","learning","బడి","పాఠశాల","టీచర్","ఉపాధ్యాయ","విద్యార్థ","కాలేజీ","హాస్టల్","చదువు"],
+  ap:[["Human Resources Development (School Education)","మానవ వనరుల అభివృద్ధి (పాఠశాల విద్య)"],["Human Resources Development (Higher Education)","మానవ వనరుల అభివృద్ధి (ఉన్నత విద్య)"]],un:[["Ministry of Education","విద్యా మంత్రిత్వ శాఖ"]],
+  law:[["Art 21A","Free and compulsory education for children aged 6–14","6–14 ఏళ్ల పిల్లలకు ఉచిత, నిర్బంధ విద్య"],["Art 45","Early childhood care and education below 6","6 ఏళ్లలోపు పిల్లలకు బాల్య సంరక్షణ, విద్య"],["RTE Act 2009","Norms for teachers, classrooms, toilets and drinking water in schools","పాఠశాలల్లో ఉపాధ్యాయులు, తరగతి గదులు, మరుగుదొడ్లు, తాగునీటికి నిబంధనలు"]],
+  hr:["UDHR Art 26 · right to education","UDHR ఆర్టికల్ 26 · విద్యా హక్కు"],
+  sch:["Samagra Shiksha","PM POSHAN","PM SHRI"],
+  plan:{now:[["Report the gap to the School Management Committee and Mandal Educational Officer","సమస్యను పాఠశాల యాజమాన్య కమిటీకి, మండల విద్యాధికారికి తెలియజేయండి"],["Track out-of-school children and re-enrol them","బడి బయట ఉన్న పిల్లలను గుర్తించి మళ్లీ చేర్పించండి"]],
+   d30:[["Post teachers against RTE pupil–teacher norms","విద్యా హక్కు చట్టం నిష్పత్తి ప్రకారం ఉపాధ్యాయులను నియమించాలి"],["Repair classrooms, toilets and drinking water","తరగతి గదులు, మరుగుదొడ్లు, తాగునీరు మరమ్మతు చేయాలి"]],
+   d90:[["Plan transport or hostel support for distant habitations","దూర ఆవాసాలకు రవాణా లేదా హాస్టల్ సౌకర్యం కల్పించాలి"],["Add learning recovery classes and monitor outcomes","అభ్యసన లోపాల పూరణ తరగతులు నిర్వహించి ఫలితాలు పర్యవేక్షించాలి"]]}},
+ child:{name:["Child protection","బాలల రక్షణ"],
+  kw:["child labour","child labor","child marriage","trafficking","abuse","orphan","minor","juvenile","begging","missing child","బాల కార్మిక","బాల్య వివాహ","అక్రమ రవాణా","అనాథ","తప్పిపోయిన"],
+  ap:[["Women, Children, Differently Abled & Senior Citizens Welfare","మహిళా, శిశు, దివ్యాంగుల & వయోవృద్ధుల సంక్షేమం"],["Home (police)","హోం (పోలీసు)"]],un:[["Ministry of Women & Child Development","మహిళా & శిశు అభివృద్ధి మంత్రిత్వ శాఖ"]],
+  law:[["Art 15(3)","Special provisions for children","పిల్లల కోసం ప్రత్యేక నిబంధనలు"],["Art 24","No child under 14 in hazardous work","14 ఏళ్లలోపు పిల్లలను ప్రమాదకర పనుల్లో పెట్టకూడదు"],["Art 39(f)","Children grow up in freedom and dignity","పిల్లలు స్వేచ్ఛ, గౌరవంతో ఎదగాలి"],["JJ Act 2015 · POCSO 2012","Care, protection and justice for children","పిల్లల సంరక్షణ, రక్షణ, న్యాయం"]],
+  hr:["UN Convention on the Rights of the Child","ఐక్యరాజ్యసమితి బాలల హక్కుల ఒడంబడిక"],
+  sch:["Mission Vatsalya","Childline 1098"],
+  plan:{now:[["Call 1098 or 112; ensure the child is safe before anything else","1098 లేదా 112 కి కాల్ చేయండి; ముందుగా బిడ్డ భద్రతను నిర్ధారించండి"],["Inform the District Child Protection Unit and Child Welfare Committee","జిల్లా బాలల రక్షణ విభాగానికి, బాలల సంక్షేమ కమిటీకి తెలియజేయండి"]],
+   d30:[["Rehabilitation, schooling and family support for the child","బిడ్డకు పునరావాసం, చదువు, కుటుంబానికి సహాయం"],["Register the case under the right law and follow up","సరైన చట్టం కింద కేసు నమోదు చేసి కొనసాగించాలి"]],
+   d90:[["Village child protection committee meeting regularly","గ్రామ బాలల రక్షణ కమిటీ క్రమం తప్పకుండా సమావేశమవ్వాలి"],["Awareness on child marriage and labour with SHGs and schools","స్వయం సహాయక సంఘాలు, పాఠశాలలతో బాల్య వివాహాలు, బాల కార్మికులపై అవగాహన"]]}},
+ women:{name:["Women's safety & rights","మహిళల భద్రత, హక్కులు"],
+  kw:["women","woman","harassment","dowry","domestic violence","eve teasing","safety","widow","molest","assault","మహిళ","వేధింపు","కట్నం","గృహ హింస","వితంతు"],
+  ap:[["Women, Children, Differently Abled & Senior Citizens Welfare","మహిళా, శిశు, దివ్యాంగుల & వయోవృద్ధుల సంక్షేమం"],["Home (police)","హోం (పోలీసు)"]],un:[["Ministry of Women & Child Development","మహిళా & శిశు అభివృద్ధి మంత్రిత్వ శాఖ"]],
+  law:[["Art 14 · 15(3)","Equality, and special provisions for women","సమానత్వం; మహిళల కోసం ప్రత్యేక నిబంధనలు"],["Art 21","Life with dignity and bodily safety","గౌరవంగా, సురక్షితంగా జీవించే హక్కు"],["Art 39(a) · 42","Equal livelihood rights; maternity relief","సమాన జీవనోపాధి హక్కు; ప్రసూతి సహాయం"],["PWDVA 2005","Protection from domestic violence","గృహ హింస నుండి రక్షణ"]],
+  hr:["CEDAW; UDHR Art 3 · security of person","CEDAW; UDHR ఆర్టికల్ 3 · వ్యక్తిగత భద్రత"],
+  sch:["Mission Shakti (One Stop Centres)","Women helpline 181"],
+  plan:{now:[["Call 181 or 112; reach the nearest One Stop Centre","181 లేదా 112 కి కాల్ చేయండి; సమీప వన్ స్టాప్ సెంటర్‌కు వెళ్లండి"],["File an FIR or approach the Protection Officer","FIR నమోదు చేయండి లేదా రక్షణ అధికారిని సంప్రదించండి"]],
+   d30:[["Free legal aid through the District Legal Services Authority","జిల్లా న్యాయ సేవల అధికార సంస్థ ద్వారా ఉచిత న్యాయ సహాయం"],["Safe transport, lighting and patrols where incidents repeat","ఘటనలు పదేపదే జరిగే చోట సురక్షిత రవాణా, వీధి దీపాలు, గస్తీ"]],
+   d90:[["Strengthen SHG and livelihood links for economic independence","ఆర్థిక స్వావలంబన కోసం స్వయం సహాయక సంఘాలు, జీవనోపాధి అనుసంధానం"],["Regular review of pending cases by the district committee","పెండింగ్ కేసులపై జిల్లా కమిటీ క్రమం తప్పని సమీక్ష"]]}},
+ elderly:{name:["Elderly & persons with disabilities","వయోవృద్ధులు, దివ్యాంగులు"],
+  kw:["pension","elderly","old age","senior","disab","handicap","blind","wheelchair","deaf","divyang","పెన్షన్","పింఛన్","వృద్ధ","దివ్యాంగ","వికలాంగ","అంధ"],
+  ap:[["Women, Children, Differently Abled & Senior Citizens Welfare","మహిళా, శిశు, దివ్యాంగుల & వయోవృద్ధుల సంక్షేమం"],["Social Welfare (pensions)","సాంఘిక సంక్షేమం (పెన్షన్లు)"]],
+  un:[["Ministry of Social Justice & Empowerment","సామాజిక న్యాయం & సాధికారత మంత్రిత్వ శాఖ"],["Ministry of Rural Development (NSAP pensions)","గ్రామీణాభివృద్ధి మంత్రిత్వ శాఖ (NSAP పెన్షన్లు)"]],
+  law:[["Art 41","Public assistance in old age, sickness and disablement","వృద్ధాప్యం, అనారోగ్యం, వైకల్యంలో ప్రభుత్వ సహాయం"],["RPwD Act 2016","Rights, access and reservation for persons with disabilities","దివ్యాంగుల హక్కులు, అందుబాటు, రిజర్వేషన్"],["MWPSC Act 2007","Maintenance and welfare of parents and senior citizens","తల్లిదండ్రులు, వయోవృద్ధుల పోషణ, సంక్షేమం"]],
+  hr:["UN CRPD; UN Principles for Older Persons","ఐక్యరాజ్యసమితి దివ్యాంగుల హక్కుల ఒడంబడిక; వయోవృద్ధుల కోసం ఐరాస సూత్రాలు"],
+  sch:["NSAP pensions","UDID card","Elderline 14567"],
+  plan:{now:[["Check pension status and release pending amounts at the Sachivalayam","సచివాలయంలో పెన్షన్ స్థితి తనిఖీ చేసి, పెండింగ్ మొత్తాలు విడుదల చేయించండి"],["Arrange medical certification camps for disability","వైకల్య ధ్రువీకరణ కోసం వైద్య శిబిరాలు ఏర్పాటు చేయాలి"]],
+   d30:[["Issue UDID cards and assistive devices","UDID కార్డులు, సహాయ పరికరాలు అందించాలి"],["Door-step delivery for bedridden pensioners","మంచం పట్టిన పెన్షనర్లకు ఇంటి వద్దకే పంపిణీ"]],
+   d90:[["Make public buildings accessible","ప్రభుత్వ భవనాలను దివ్యాంగులకు అందుబాటులోకి తేవాలి"],["Set up day-care or old age homes where needed","అవసరమైన చోట డే-కేర్ లేదా వృద్ధాశ్రమాలు ఏర్పాటు చేయాలి"]]}},
+ livelihood:{name:["Livelihood & wages","జీవనోపాధి, వేతనాలు"],
+  kw:["job","work","wage","unemploy","mgnrega","nrega","employment","labour","labor","migrant","salary","income","ఉపాధి","కూలి","వేతన","నిరుద్యోగ","వలస","జాబ్ కార్డ్"],
+  ap:[["Panchayat Raj & Rural Development (MGNREGS)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (ఉపాధి హామీ)"],["Labour, Factories, Boilers & Insurance Medical Services","కార్మిక, కర్మాగారాలు, బాయిలర్లు & బీమా వైద్య సేవలు"],["Skill Development & Training","నైపుణ్యాభివృద్ధి & శిక్షణ"]],
+  un:[["Ministry of Rural Development","గ్రామీణాభివృద్ధి మంత్రిత్వ శాఖ"],["Ministry of Labour & Employment","కార్మిక & ఉపాధి మంత్రిత్వ శాఖ"]],
+  law:[["Art 21","Right to livelihood, part of the right to life","జీవనోపాధి హక్కు జీవించే హక్కులో భాగం"],["Art 23","No forced or bonded labour","బలవంతపు లేదా వెట్టి చాకిరి నిషేధం"],["Art 39(a) · 41 · 43","Livelihood, right to work, living wage","జీవనోపాధి, పని హక్కు, జీవన వేతనం"],["MGNREGA 2005","100 days of wage work on demand, wages within 15 days","అడిగినప్పుడు 100 రోజుల పని, 15 రోజుల్లో వేతనం"]],
+  hr:["UDHR Art 23 · right to work and fair pay","UDHR ఆర్టికల్ 23 · పని హక్కు, న్యాయమైన వేతనం"],
+  sch:["MGNREGS","DAY-NRLM","e-Shram"],
+  plan:{now:[["Submit written work demand under MGNREGA and get a dated receipt","ఉపాధి హామీ కింద రాతపూర్వకంగా పని కోరి, తేదీతో రసీదు తీసుకోండి"],["Claim delayed-wage compensation for pending payments","ఆలస్యమైన వేతనాలకు నష్టపరిహారం కోరండి"]],
+   d30:[["Open works in the village shelf of projects","గ్రామ పనుల జాబితాలోని పనులు ప్రారంభించాలి"],["Register informal workers on e-Shram","అసంఘటిత కార్మికులను e-Shram లో నమోదు చేయాలి"]],
+   d90:[["Skill and credit linkage through SHGs and skill centres","స్వయం సహాయక సంఘాలు, నైపుణ్య కేంద్రాల ద్వారా శిక్షణ, రుణ అనుసంధానం"],["Social audit of MGNREGS works","ఉపాధి హామీ పనులపై సామాజిక తనిఖీ"]]}},
+ housing:{name:["Housing & shelter","గృహం, నివాసం"],
+  kw:["house","housing","shelter","homeless","hut","roof","slum","eviction","patta","ఇల్లు","ఇళ్లు","ఇంటి స్థల","పట్టా","గుడిసె","నివాసం"],
+  ap:[["Housing","గృహ నిర్మాణం"],["Revenue (house site pattas)","రెవెన్యూ (ఇంటి స్థలం పట్టాలు)"],["Municipal Administration & Urban Development","పురపాలక పరిపాలన & పట్టణాభివృద్ధి"]],
+  un:[["Ministry of Rural Development (PMAY-G)","గ్రామీణాభివృద్ధి మంత్రిత్వ శాఖ (PMAY-G)"],["Ministry of Housing & Urban Affairs (PMAY-U)","గృహ నిర్మాణ & పట్టణ వ్యవహారాల మంత్రిత్వ శాఖ (PMAY-U)"]],
+  law:[["Art 21","Right to shelter, part of the right to life","నివాస హక్కు జీవించే హక్కులో భాగం"],["Art 39(b)","Distribute material resources for the common good","వనరులను సమాజ హితం కోసం పంపిణీ చేయాలి"],["Art 46","Protect weaker sections from injustice","బలహీన వర్గాలను అన్యాయం నుండి రక్షించాలి"]],
+  hr:["UDHR Art 25 · housing","UDHR ఆర్టికల్ 25 · నివాసం"],
+  sch:["PMAY-Gramin","PMAY-Urban 2.0"],
+  plan:{now:[["Temporary shelter for families who lost homes","ఇళ్లు కోల్పోయిన కుటుంబాలకు తాత్కాలిక వసతి"],["Stop evictions without notice and rehabilitation","నోటీసు, పునరావాసం లేకుండా తొలగింపులు ఆపాలి"]],
+   d30:[["Enrol eligible families in PMAY lists","అర్హులైన కుటుంబాలను PMAY జాబితాల్లో చేర్చాలి"],["Process house site patta applications","ఇంటి స్థలం పట్టా దరఖాస్తులు పరిష్కరించాలి"]],
+   d90:[["Sanction and track house construction","ఇళ్ల నిర్మాణం మంజూరు చేసి పర్యవేక్షించాలి"],["Basic services in housing colonies","గృహ కాలనీల్లో ప్రాథమిక సౌకర్యాలు కల్పించాలి"]]}},
+ roads:{name:["Roads & transport","రహదారులు, రవాణా"],
+  kw:["road","bridge","bus","transport","culvert","pothole","connectivity","causeway","రోడ్డు","రహదారి","వంతెన","బస్సు","కాజ్‌వే","గుంత"],
+  ap:[["Transport, Roads & Buildings","రవాణా, రోడ్లు & భవనాలు"],["Panchayat Raj & Rural Development (rural roads)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (గ్రామీణ రోడ్లు)"]],
+  un:[["Ministry of Road Transport & Highways","రోడ్డు రవాణా & రహదారుల మంత్రిత్వ శాఖ"],["Ministry of Rural Development (PMGSY)","గ్రామీణాభివృద్ధి మంత్రిత్వ శాఖ (PMGSY)"]],
+  law:[["Art 21","Access to health, school and markets depends on roads","ఆసుపత్రి, బడి, మార్కెట్ చేరుకోవడం రోడ్లపై ఆధారపడుతుంది"],["Art 38","State to secure a social order for the welfare of the people","ప్రజల సంక్షేమం కోసం సామాజిక వ్యవస్థను రాష్ట్రం నెలకొల్పాలి"]],
+  hr:["UDHR Art 13 · freedom of movement","UDHR ఆర్టికల్ 13 · సంచార స్వేచ్ఛ"],
+  sch:["PM Gram Sadak Yojana"],
+  plan:{now:[["Make dangerous stretches safe; restore cut-off causeways after rain","ప్రమాదకర ప్రాంతాలను సురక్షితం చేయాలి; వర్షాలకు తెగిన కాజ్‌వేలు పునరుద్ధరించాలి"],["Request a bus service through the depot manager","డిపో మేనేజర్ ద్వారా బస్సు సర్వీసు కోరండి"]],
+   d30:[["Repair potholes and drains","గుంతలు, కాలువలు మరమ్మతు చేయాలి"],["Include the stretch in the annual road plan","ఈ రోడ్డును వార్షిక రోడ్డు ప్రణాళికలో చేర్చాలి"]],
+   d90:[["All-weather connectivity under PMGSY","PMGSY కింద అన్ని కాలాల్లో పనిచేసే రోడ్డు"],["Road safety audit","రోడ్డు భద్రతా తనిఖీ"]]}},
+ power:{name:["Electricity","విద్యుత్"],
+  kw:["power","electric","current","transformer","outage","voltage","meter","కరెంటు","కరెంట్","విద్యుత్","ట్రాన్స్‌ఫార్మర్","మీటర్"],
+  ap:[["Energy","ఇంధన శాఖ"]],un:[["Ministry of Power","విద్యుత్ మంత్రిత్వ శాఖ"]],
+  law:[["Art 38 · 39(b)","Welfare and equitable distribution of resources","సంక్షేమం, వనరుల సమాన పంపిణీ"],["Electricity Act 2003","Duty to supply and consumer grievance forums","సరఫరా బాధ్యత, వినియోగదారుల ఫిర్యాదుల వేదికలు"]],
+  hr:["UDHR Art 25 · adequate standard of living","UDHR ఆర్టికల్ 25 · తగిన జీవన ప్రమాణం"],
+  sch:["Revamped Distribution Sector Scheme","PM Surya Ghar"],
+  plan:{now:[["Register the fault with the DISCOM and note the complaint number","విద్యుత్ పంపిణీ సంస్థ (DISCOM)లో ఫిర్యాదు నమోదు చేసి నంబర్ ఉంచుకోండి"],["Restore supply to health centres and schools first","ఆరోగ్య కేంద్రాలు, పాఠశాలలకు ముందుగా సరఫరా పునరుద్ధరించాలి"]],
+   d30:[["Replace overloaded transformers","అధిక భారం ఉన్న ట్రాన్స్‌ఫార్మర్లు మార్చాలి"],["Approach the Consumer Grievance Redressal Forum if unresolved","పరిష్కారం కాకపోతే వినియోగదారుల ఫిర్యాదుల పరిష్కార వేదికను ఆశ్రయించండి"]],
+   d90:[["Network strengthening and feeder separation","నెట్‌వర్క్ బలోపేతం, ఫీడర్ విభజన"],["Solar options for remote habitations","దూర ఆవాసాలకు సౌర విద్యుత్ అవకాశాలు"]]}},
+ social:{name:["Social justice & discrimination","సామాజిక న్యాయం, వివక్ష"],
+  kw:["caste","untouchab","dalit","tribal","adivasi","discriminat","minority","atrocity","forest rights","bonded","కుల","అంటరాని","గిరిజన","దళిత","వివక్ష","మైనారిటీ","అటవీ హక్కు"],
+  ap:[["Social Welfare","సాంఘిక సంక్షేమం"],["Tribal Welfare","గిరిజన సంక్షేమం"],["Backward Classes Welfare","బీసీ సంక్షేమం"],["Minorities Welfare","మైనారిటీల సంక్షేమం"]],
+  un:[["Ministry of Social Justice & Empowerment","సామాజిక న్యాయం & సాధికారత మంత్రిత్వ శాఖ"],["Ministry of Tribal Affairs","గిరిజన వ్యవహారాల మంత్రిత్వ శాఖ"],["Ministry of Minority Affairs","మైనారిటీ వ్యవహారాల మంత్రిత్వ శాఖ"]],
+  law:[["Art 14 · 15 · 16","Equality and no discrimination","సమానత్వం, వివక్ష నిషేధం"],["Art 17","Untouchability is abolished and punishable","అంటరానితనం రద్దు, శిక్షార్హం"],["Art 46","Educational and economic interests of SCs, STs and weaker sections","SC, ST, బలహీన వర్గాల విద్యా, ఆర్థిక ప్రయోజనాలు కాపాడాలి"],["SC/ST (PoA) Act 1989 · FRA 2006","Protection from atrocities; forest rights for tribal communities","అత్యాచారాల నుండి రక్షణ; గిరిజనులకు అటవీ హక్కులు"]],
+  hr:["UDHR Art 1–2 · equal dignity; ICERD","UDHR ఆర్టికల్ 1–2 · సమాన గౌరవం; ICERD"],
+  sch:["Post-matric scholarships","Forest Rights Act titles"],
+  plan:{now:[["File an FIR under the PoA Act where it applies; seek relief for victims","వర్తించే చోట అత్యాచారాల నిరోధక చట్టం (PoA) కింద FIR నమోదు చేయండి; బాధితులకు సహాయం కోరండి"],["Inform the district Social Welfare / ITDA office","జిల్లా సాంఘిక సంక్షేమ / ITDA కార్యాలయానికి తెలియజేయండి"]],
+   d30:[["Victim compensation and legal aid","బాధితులకు నష్టపరిహారం, న్యాయ సహాయం"],["Process pending forest rights claims","పెండింగ్ అటవీ హక్కుల దరఖాస్తులు పరిష్కరించాలి"]],
+   d90:[["Vigilance and monitoring committee review","నిఘా, పర్యవేక్షణ కమిటీ సమీక్ష"],["Targeted hostels, scholarships and skilling","లక్ష్యిత హాస్టళ్లు, ఉపకార వేతనాలు, నైపుణ్య శిక్షణ"]]}},
+ agri:{name:["Farmers & agriculture","రైతులు, వ్యవసాయం"],
+  kw:["farmer","crop","agri","irrigation","seed","fertiliser","fertilizer","drought","flood","msp","paddy","రైతు","పంట","సాగు","ఎరువు","విత్తన","కరువు","వరద","నీటిపారుదల"],
+  ap:[["Agriculture & Co-operation","వ్యవసాయం & సహకారం"],["Water Resources","జల వనరులు"]],
+  un:[["Ministry of Agriculture & Farmers Welfare","వ్యవసాయ & రైతు సంక్షేమ మంత్రిత్వ శాఖ"],["Ministry of Jal Shakti (irrigation)","జల్ శక్తి మంత్రిత్వ శాఖ (నీటిపారుదల)"]],
+  law:[["Art 48","Organise agriculture on modern, scientific lines","ఆధునిక, శాస్త్రీయ పద్ధతుల్లో వ్యవసాయం"],["Art 38","Welfare of the people","ప్రజల సంక్షేమం"]],
+  hr:["ICESCR Art 11 · food production and livelihood","ICESCR ఆర్టికల్ 11 · ఆహార ఉత్పత్తి, జీవనోపాధి"],
+  sch:["PM-KISAN","PM Fasal Bima Yojana","Soil Health Card"],
+  plan:{now:[["Crop loss enumeration within the insurance deadline","బీమా గడువులోపు పంట నష్టం అంచనా వేయించండి"],["Seed and fertiliser supply at the farmer service centre","రైతు సేవా కేంద్రంలో విత్తనాలు, ఎరువుల సరఫరా"]],
+   d30:[["Release input subsidy and insurance claims","ఇన్‌పుట్ సబ్సిడీ, బీమా క్లెయిమ్‌లు విడుదల చేయాలి"],["Repair minor irrigation tanks and canals","చిన్న నీటిపారుదల చెరువులు, కాలువలు మరమ్మతు చేయాలి"]],
+   d90:[["Crop diversification and water-saving irrigation","పంట వైవిధ్యం, నీటి పొదుపు సాగు"],["Storage and market linkage through FPOs","FPO ల ద్వారా నిల్వ, మార్కెట్ అనుసంధానం"]]}}
+};
+const SKEYS=Object.keys(S);
+const L=v=>Array.isArray(v)?(LANG==="te"?v[1]:v[0]):v;
+function sec(k){const s=S[k]||S.livelihood;return {name:L(s.name),ap:s.ap.map(L),un:s.un.map(L),law:s.law.map(x=>[x[0],LANG==="te"?x[2]:x[1]]),hr:L(s.hr),sch:s.sch,plan:{now:s.plan.now.map(L),d30:s.plan.d30.map(L),d90:s.plan.d90.map(L)}}}
+
+const LADDER=[
+ [["Grama / Ward Sachivalayam","గ్రామ / వార్డు సచివాలయం"],["Register the need in writing and keep the acknowledgement","అవసరాన్ని రాతపూర్వకంగా నమోదు చేసి, రసీదు ఉంచుకోండి"],""],
+ [["PGRS grievance","PGRS ఫిర్యాదు"],["Online at pgrs.ap.gov.in or the PGRS app","pgrs.ap.gov.in లేదా PGRS యాప్‌లో"],"1100"],
+ [["District Collector · PGRS Monday","జిల్లా కలెక్టర్ · సోమవారం PGRS"],["Go in person with the grievance number if the deadline passes","గడువు దాటితే ఫిర్యాదు నంబర్‌తో స్వయంగా వెళ్లండి"],""],
+ [["Department head","శాఖాధిపతి"],["Escalate in writing to the state department named above","పైన పేర్కొన్న రాష్ట్ర శాఖకు రాతపూర్వకంగా తెలియజేయండి"],""],
+ [["Legal aid / Human rights body","న్యాయ సహాయం / మానవ హక్కుల సంస్థ"],["Free legal aid (NALSA) or the State Human Rights Commission","ఉచిత న్యాయ సహాయం (NALSA) లేదా రాష్ట్ర మానవ హక్కుల కమిషన్"],"15100"],
+ [["High Court · Art 226","హైకోర్టు · ఆర్టికల్ 226"],["Writ petition or PIL when rights remain denied","హక్కులు నిరాకరిస్తూనే ఉంటే రిట్ పిటిషన్ లేదా ప్రజాహిత వ్యాజ్యం"],""]
+];
+
+const INDIC=[
+ {v:"31.2%",l:["Children under 5 stunted","వయసుకు తగిన ఎత్తు లేని 5 ఏళ్లలోపు పిల్లలు"],s:["NFHS-5, 2019–21","NFHS-5, 2019–21"],flag:true},
+ {v:"16.1%",l:["Children under 5 wasted","ఎత్తుకు తగిన బరువు లేని 5 ఏళ్లలోపు పిల్లలు"],s:["NFHS-5, 2019–21","NFHS-5, 2019–21"],flag:true},
+ {v:"63.2%",l:["Children 6–59 months anaemic","రక్తహీనత ఉన్న 6–59 నెలల పిల్లలు"],s:["NFHS-5 (India 67.1%)","NFHS-5 (భారత్ 67.1%)"],flag:true},
+ {v:"29.6%",l:["Children under 5 underweight","తక్కువ బరువు ఉన్న 5 ఏళ్లలోపు పిల్లలు"],s:["NFHS-5, 2019–21","NFHS-5, 2019–21"],flag:true},
+ {v:"6.06%",l:["People multidimensionally poor","బహుముఖ పేదరికంలో ఉన్నవారు"],s:["NITI MPI 2023 (India 14.96%)","నీతి ఆయోగ్ 2023 (భారత్ 14.96%)"]},
+ {v:"74",l:["SDG India Index score","SDG ఇండియా ఇండెక్స్ స్కోరు"],s:["2023–24 (India 71)","2023–24 (భారత్ 71)"]}
+];
+
+const SOURCES=[
+ ["Google News","news.google.com","https://news.google.com/search?hl=en-IN&gl=IN&ceid=IN:en&q="],
+ ["The Hindu","thehindu.com","https://www.google.com/search?tbm=nws&q=site:thehindu.com+"],
+ ["The New Indian Express","newindianexpress.com","https://www.google.com/search?tbm=nws&q=site:newindianexpress.com+"],
+ ["Deccan Chronicle","deccanchronicle.com","https://www.google.com/search?tbm=nws&q=site:deccanchronicle.com+"],
+ ["The Hans India","thehansindia.com","https://www.google.com/search?tbm=nws&q=site:thehansindia.com+"],
+ ["Times of India","timesofindia.indiatimes.com","https://www.google.com/search?tbm=nws&q=site:timesofindia.indiatimes.com+"],
+ ["ఈనాడు · Eenadu","eenadu.net","https://www.google.com/search?tbm=nws&q=site:eenadu.net+"],
+ ["సాక్షి · Sakshi","sakshi.com","https://www.google.com/search?tbm=nws&q=site:sakshi.com+"],
+ ["PIB / PIB Fact Check","pib.gov.in","https://www.google.com/search?q=site:pib.gov.in+"]
+];
+const STATUSES=["reported","acknowledged","progress","resolved"];
+
+const EXAMPLE={en:{place:"Hukumpeta mandal, tribal habitation",desc:"Our habitation of about 60 families has no working handpump since July. Women walk 3 km to a stream and the water is muddy. Children have had diarrhoea twice this month and the PHC is 18 km away."},
+ te:{place:"హుకుంపేట మండలం, గిరిజన ఆవాసం",desc:"సుమారు 60 కుటుంబాలున్న మా ఆవాసంలో జూలై నుండి ఒక్క చేతి పంపు కూడా పనిచేయడం లేదు. మహిళలు 3 కి.మీ. నడిచి వాగు నుండి నీళ్లు తెస్తున్నారు, ఆ నీరు బురదగా ఉంటుంది. ఈ నెలలో పిల్లలకు రెండుసార్లు విరేచనాలు అయ్యాయి, PHC 18 కి.మీ. దూరంలో ఉంది."},
+ district:"Alluri Sitharama Raju",affected:280,urg:"high"};
+const NEWS_EX={en:"Villagers in a tribal hamlet of Alluri Sitharama Raju district fall ill after drinking contaminated stream water; health camp set up",te:"అల్లూరి సీతారామరాజు జిల్లాలోని గిరిజన గ్రామంలో కలుషిత వాగు నీరు తాగి గ్రామస్తులు అస్వస్థత; వైద్య శిబిరం ఏర్పాటు"};
+const DEMO=[
+ {district:"Alluri Sitharama Raju",place:["Hukumpeta mandal","హుకుంపేట మండలం"],sector:"water",title:["No working handpump; children ill","పనిచేసే చేతి పంపు లేదు; పిల్లలకు అనారోగ్యం"],desc:["60 families walk 3 km to a stream; diarrhoea cases this month.","60 కుటుంబాలు 3 కి.మీ. నడిచి వాగు నీళ్లు తెస్తున్నాయి; ఈ నెల విరేచనాల కేసులు."],affected:280,urgency:"high",status:"acknowledged",verify:{level:2}},
+ {district:"Kurnool",place:["Adoni rural","ఆదోని గ్రామీణం"],sector:"nutrition",title:["Anganwadi closed for two months","రెండు నెలలుగా అంగన్‌వాడీ మూతపడింది"],desc:["No take-home ration for pregnant women and young children.","గర్భిణులు, చిన్న పిల్లలకు ఇంటికి రేషన్ అందడం లేదు."],affected:120,urgency:"high",status:"reported",verify:{level:0}},
+ {district:"Parvathipuram Manyam",place:["Seethampeta","సీతంపేట"],sector:"health",title:["PHC without doctor at night","రాత్రి వేళ PHCలో డాక్టర్ లేరు"],desc:["Snakebite victims referred 40 km away after dark.","చీకటి పడ్డాక పాము కాటు బాధితులను 40 కి.మీ. దూరం పంపుతున్నారు."],affected:5000,urgency:"high",status:"progress",verify:{level:1}},
+ {district:"Prakasam",place:["Kanigiri","కనిగిరి"],sector:"water",title:["High fluoride in borewell water","బోరు నీటిలో ఫ్లోరైడ్ ఎక్కువ"],desc:["Dental mottling seen in school children.","బడి పిల్లల పళ్లపై మచ్చలు కనిపిస్తున్నాయి."],affected:1500,urgency:"medium",status:"reported",verify:{level:2}},
+ {district:"YSR Kadapa",place:["Rayachoti road","రాయచోటి రోడ్డు"],sector:"livelihood",title:["MGNREGS wages pending 7 weeks","7 వారాలుగా ఉపాధి హామీ వేతనాలు పెండింగ్"],desc:["Workers have job cards; demand submitted in August.","కార్మికులకు జాబ్ కార్డులు ఉన్నాయి; ఆగస్టులో పని కోరారు."],affected:340,urgency:"medium",status:"reported",verify:{level:0}},
+ {district:"Visakhapatnam",place:["Ward 41","వార్డు 41"],sector:"housing",title:["Families without house sites","ఇంటి స్థలాలు లేని కుటుంబాలు"],desc:["Living in rented rooms; applications pending.","అద్దె గదుల్లో ఉంటున్నారు; దరఖాస్తులు పెండింగ్‌లో ఉన్నాయి."],affected:90,urgency:"low",status:"reported",verify:{level:0}},
+ {district:"Srikakulam",place:["Uddanam area","ఉద్దానం ప్రాంతం"],sector:"health",title:["Kidney disease screening not reaching villages","కిడ్నీ వ్యాధి పరీక్షలు గ్రామాలకు చేరడం లేదు"],desc:["Patients travel to the district hospital for dialysis.","డయాలిసిస్ కోసం రోగులు జిల్లా ఆసుపత్రికి వెళ్తున్నారు."],affected:2000,urgency:"medium",status:"acknowledged",verify:{level:2}},
+ {district:"Palnadu",place:["Macherla","మాచర్ల"],sector:"education",title:["Single-teacher primary school","ఒకే ఉపాధ్యాయుడున్న ప్రాథమిక పాఠశాల"],desc:["84 children across five classes with one teacher.","ఐదు తరగతుల్లో 84 మంది పిల్లలకు ఒక్కరే ఉపాధ్యాయుడు."],affected:84,urgency:"medium",status:"reported",verify:{level:0}}
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toast=m=>{const el=$("toast");el.textContent=m;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,3000)};
+const num=n=>(+n||0).toLocaleString("en-IN");
+const reduceMotion=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- Speech ----------
+const SPK_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+const STOP_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>';
+const NATIVE=typeof window.AndroidTTS!=="undefined";
+const WEBTTS="speechSynthesis" in window&&typeof SpeechSynthesisUtterance!=="undefined";
+const TTS=NATIVE||WEBTTS;
+window.mhSpeechDone=()=>{if(speakingBtn){setListenBtn(speakingBtn,false);speakingBtn=null}};
+let voices=[],speakingBtn=null;
+function loadVoices(){try{voices=speechSynthesis.getVoices()||[]}catch(e){voices=[]}}
+if(WEBTTS&&!NATIVE){loadVoices();try{speechSynthesis.addEventListener("voiceschanged",loadVoices)}catch(e){}}
+function pickVoice(lang){const p=lang.slice(0,2);return voices.find(v=>v.lang&&v.lang.replace("_","-").toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(p))||null}
+const digits=s=>String(s).replace(/\d{3,}/g,m=>m.split("").join(" "));
+function chunks(text){const parts=text.replace(/\s+/g," ").split(/(?<=[.!?।;:])\s+|\n/);const out=[];let cur="";for(const p of parts){if((cur+" "+p).length>220&&cur){out.push(cur);cur=p}else cur=cur?cur+" "+p:p}if(cur)out.push(cur);return out.filter(x=>x.trim())}
+function stopSpeak(){if(!TTS)return;try{if(NATIVE)AndroidTTS.stop();else speechSynthesis.cancel()}catch(e){}if(speakingBtn){setListenBtn(speakingBtn,false)}speakingBtn=null}
+function setListenBtn(b,on){b.setAttribute("aria-pressed",String(on));b.innerHTML=(on?STOP_ICON:SPK_ICON)+`<span>${esc(on?t("stop"):t("listen"))}</span>`}
+function speak(text,btn){
+ if(!TTS){toast(t("noVoice"));return}
+ if(speakingBtn===btn){stopSpeak();return}
+ stopSpeak();
+ if(NATIVE){const lang=LANG==="te"?"te-IN":"en-IN";
+  try{if(LANG==="te"&&AndroidTTS.ready()&&!AndroidTTS.hasLang(lang)){const n=$("voice-note");n.textContent=t("noTeVoice");n.hidden=false;toast(t("noTeVoice"))}}catch(e){}
+  speakingBtn=btn;setListenBtn(btn,true);try{AndroidTTS.speak(digits(text),lang)}catch(e){window.mhSpeechDone()}return}
+ loadVoices();
+ const lang=LANG==="te"?"te-IN":"en-IN";const v=pickVoice(lang);
+ if(LANG==="te"&&!v){const n=$("voice-note");n.textContent=t("noTeVoice");n.hidden=false;toast(t("noTeVoice"))}
+ const list=chunks(digits(text));if(!list.length)return;
+ speakingBtn=btn;setListenBtn(btn,true);
+ list.forEach((c,i)=>{const u=new SpeechSynthesisUtterance(c);u.lang=lang;if(v)u.voice=v;u.rate=LANG==="te"?0.92:0.97;if(i===list.length-1){u.onend=()=>{if(speakingBtn===btn){setListenBtn(btn,false);speakingBtn=null}}}u.onerror=()=>{if(speakingBtn===btn){setListenBtn(btn,false);speakingBtn=null}};try{speechSynthesis.speak(u)}catch(e){}});
+}
+function bindListen(btn,getText){if(!TTS){btn.hidden=true;return}setListenBtn(btn,false);btn.onclick=()=>speak(getText(),btn)}
+
+// ---------- Static text / language ----------
+function applyStatic(){
+ document.documentElement.lang=LANG;
+ document.querySelectorAll("[data-t]").forEach(el=>{el.textContent=t(el.dataset.t)});
+ $("brand-main").textContent=LANG==="te"?"మన హక్కు":"Mana Hakku";
+ $("brand-alt").textContent=LANG==="te"?"Mana Hakku":"మన హక్కు";
+ $("lang-te").setAttribute("aria-pressed",String(LANG==="te"));$("lang-en").setAttribute("aria-pressed",String(LANG==="en"));
+ $("r-place").placeholder=t("placePh");
+ if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
+ document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
+ document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
+}
+function fillSelect(el,opts,keepVal){const v=keepVal?el.value:null;el.innerHTML="";opts.forEach(([val,txt])=>{const o=document.createElement("option");o.value=val;o.textContent=txt;el.appendChild(o)});if(v!==null&&[...el.options].some(o=>o.value===v))el.value=v}
+function fillSelects(){
+ const dOpts=DNAMES.map(d=>[d,dName(d)]);
+ fillSelect($("r-district"),dOpts,true);
+ fillSelect($("n-district"),[["",t("notSure")],...dOpts],true);
+ fillSelect($("d-f-district"),[["",t("allDistricts")],...dOpts],true);
+ const sOpts=SKEYS.map(k=>[k,L(S[k].name)]);
+ fillSelect($("r-sector"),[["auto",t("auto")],...sOpts],true);
+ fillSelect($("d-f-sector"),[["",t("allSectors")],...sOpts],true);
+ fillSelect($("d-f-status"),[["",t("anyStatus")],...STATUSES.map(s=>[s,t(s)])],true);
+}
+function setLang(l){
+ if(l===LANG)return;stopSpeak();
+ const exReport=!$("ex-flag").hidden,exNews=!$("n-ex").hidden;
+ LANG=l;try{localStorage.setItem("mh-lang",l)}catch(e){}
+ applyStatic();fillSelects();
+ if(exReport){setForm(EXAMPLE);$("ex-flag").hidden=false}
+ if(exNews){$("n-text").value=NEWS_EX[LANG];$("n-ex").hidden=false;if(!queryTouched)$("n-query").value=autoQuery()}
+ if(current){current=readForm();renderResult(current)}
+ renderIndic();renderDash();renderSources();renderVerdict();
+ if(lastNewsAI)renderNewsAI(lastNewsAI);
+}
+$("lang-te").onclick=()=>setLang("te");$("lang-en").onclick=()=>setLang("en");
+
+// ---------- Tabs ----------
+const tabs=[...document.querySelectorAll(".tab")];
+function show(view){stopSpeak();tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["report","dash","news"].forEach(v=>$("v-"+v).hidden=v!==view);try{localStorage.setItem("mh-tab",view)}catch(e){}}
+tabs.forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
+
+// ---------- Classifier ----------
+function detect(text){const s0=" "+text.toLowerCase()+" ";let best=null,score=0;for(const k of SKEYS){let s=0;for(const w of S[k].kw){if(s0.includes(w))s+=w.length>4?2:1}if(s>score){score=s;best=k}}return {key:best||"livelihood",confident:score>=2}}
+
+// ---------- Report ----------
+function readForm(){const urg=document.querySelector('input[name="urg"]:checked');const desc=$("r-desc").value.trim();const sel=$("r-sector").value;const d=sel==="auto"?detect(desc):{key:sel,confident:true};
+ return {district:$("r-district").value,place:$("r-place").value.trim(),desc,sector:d.key,confident:d.confident,auto:sel==="auto",affected:Math.max(1,parseInt($("r-affected").value,10)||1),urgency:urg?urg.value:"medium"}}
+function setForm(x){$("r-district").value=x.district;const loc=x[LANG]||x;$("r-place").value=loc.place||"";$("r-desc").value=loc.desc||"";$("r-affected").value=x.affected||"";const u=$("u-"+(x.urg||"medium"));if(u)u.checked=true;$("r-sector").value="auto"}
+const URG={high:["crit","uHigh"],medium:["warn","uMed"],low:["ok","uLow"]};
+
+let current=null,lastRefine=null;
+function resultSpeech(r){const s=sec(r.sector);const parts=[];
+ parts.push(`${t("analysis")}. ${dName(r.district)}${r.place?", "+r.place:""}. ${s.name}. ${t(URG[r.urgency][1])}. ${num(r.affected)} ${t("people")}.`);
+ parts.push(`${t("stateDept")}: ${s.ap.join(", ")}.`);parts.push(`${t("union")}: ${s.un.join(", ")}.`);
+ parts.push(`${t("legal")}: ${s.law.map(([a,b])=>(LANG==="te"?a.replace(/^Art /,"ఆర్టికల్ "):a.replace(/^Art /,"Article "))+", "+b).join(". ")}.`);
+ parts.push(`${t("plan")}. ${t("d7")}: ${s.plan.now.join(". ")}. ${t("d30")}: ${s.plan.d30.join(". ")}. ${t("d90")}: ${s.plan.d90.join(". ")}.`);
+ parts.push(`${t("escalate")}. ${LADDER.map(([a,b,tel],i)=>`${i+1}. ${L(a)}. ${L(b)}${tel?". "+t("helpline")+" "+tel:""}`).join(". ")}.`);
+ return parts.join("\n")}
+function renderResult(r){
+ current=r;const s=sec(r.sector);const [uc,uk]=URG[r.urgency];
+ const lawRows=s.law.map(([a,b])=>`<b>${esc(a)}</b><span>${esc(b)}</span>`).join("");
+ const phase=(k,items)=>`<div class="phase"><span class="when">${esc(t(k))}</span><ul>${items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`;
+ const ladder=LADDER.map(([a,b,tel],i)=>`<li><span class="n">${i+1}</span><span><b>${esc(L(a))}</b> · ${esc(L(b))}${tel?` · ${esc(t("helpline"))} <span class="tel">${tel}</span>`:""}</span></li>`).join("");
+ $("r-result").innerHTML=`<article class="card" aria-live="polite">
+  <div class="introhead"><div class="result-head">
+   <p class="eyebrow">${esc(t("analysis"))} · ${esc(dName(r.district))}${r.place?" · "+esc(r.place):""}</p>
+   <h2>${esc(s.name)}</h2>
+   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span><span class="chip">${num(r.affected)} ${esc(t("people"))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}</div>
+  </div><button class="listen" type="button" id="r-listen"></button></div>
+  <div class="grid2">
+   <div class="block"><h3>${esc(t("stateDept"))}</h3><ul>${s.ap.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+   <div class="block"><h3>${esc(t("union"))}</h3><ul>${s.un.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  </div>
+  <div class="block"><h3>${esc(t("legal"))}</h3><div class="law">${lawRows}</div><p class="note">${esc(t("hrStd"))}: ${esc(s.hr)}</p></div>
+  <div class="block"><h3>${esc(t("schemes"))}</h3><div class="chips">${s.sch.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div></div>
+  <div class="block"><h3>${esc(t("plan"))}</h3>${phase("d7",s.plan.now)}${phase("d30",s.plan.d30)}${phase("d90",s.plan.d90)}</div>
+  <div class="block"><h3>${esc(t("escalate"))}</h3><ol class="ladder">${ladder}</ol></div>
+  <div class="ai-box" id="r-ai-box"${sampleFn?"":" hidden"}><div class="btns"><button class="btn ghost" type="button" id="r-refine">${esc(t("refine"))}</button><span class="note">${esc(t("refineNote"))}</span></div><div class="ai-out" id="r-ai"></div></div>
+  <div class="btns"><button class="btn" type="button" id="r-save">${esc(t("save"))}</button>${typeof window.AndroidShare!=="undefined"?`<button class="btn ghost" type="button" id="r-share">${esc(t("share"))}</button>`:""}</div>
+  <p class="note" id="r-save-note">${esc(t("saveNoteLocal"))}</p>
+ </article>`;
+ $("r-refine").onclick=refine;$("r-save").onclick=save;
+ const sh=$("r-share");if(sh)sh.onclick=()=>{try{AndroidShare.share(shareText(current))}catch(e){}};
+ bindListen($("r-listen"),()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
+ if(lastRefine&&lastRefine.key===refineKey()&&lastRefine.lang===LANG)renderRefine(lastRefine.j);
+}
+$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+$("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
+["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
+
+// ---------- Capabilities ----------
+// On-phone register (no server in this version): reports live in this phone's storage.
+const STORE="mh-reports-v1";
+const sampleFn=null,user=null,live=true;
+let reports=[];
+try{reports=JSON.parse(localStorage.getItem(STORE)||"[]");if(!Array.isArray(reports))reports=[]}catch(e){reports=[]}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(reports));return true}catch(e){return false}}
+const db={local:true,
+ doc:p=>({update:async patch=>{const id=p.split("/")[1];const r=reports.find(x=>x.id===id);if(!r)throw {code:"not_found"};Object.assign(r,patch);if(!persist())throw {code:"storage"};renderDash()}})};
+
+function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\nPGRS: 1100`}
+
+async function save(){
+ if(!current)return;const btn=$("r-save");btn.disabled=true;
+ const r=current;const title=r.desc.split(/[.!?।]/)[0].slice(0,90);
+ const rec={id:"r"+Date.now().toString(36),district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:newsLevel(),outlets:newsOutlets()},created:new Date().toISOString()};
+ reports.unshift(rec);
+ if(persist()){btn.textContent=t("saved");$("r-save-note").textContent=t("savedNote");toast(t("saved"));renderDash()}
+ else{reports.shift();btn.disabled=false;$("r-save-note").textContent=t("saveFail")}
+}
+
+const langLine=()=>LANG==="te"?"Write every text value in clear, simple Telugu (తెలుగు) that a rural reader understands; keep article numbers and scheme names as they are.":"Write every text value in plain English.";
+const refineKey=()=>current?[current.district,current.place,current.desc,current.sector,current.urgency,current.affected].join("|"):"";
+function refineSpeech(j){const acts=(Array.isArray(j.actions)?j.actions:[]).map((a,i)=>`${i+1}. ${a.step}. ${a.owner}. ${a.by}.`).join(" ");return `${j.summary||""} ${t("tailored")}. ${acts} ${t("evidence")}: ${(j.evidence_to_collect||[]).join(". ")}.`}
+function renderRefine(j){
+ const li=a=>(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join("");
+ const acts=(Array.isArray(j.actions)?j.actions:[]).map(a=>`<tr><td>${esc(a.step)}</td><td>${esc(a.owner)}</td><td>${esc(a.by)}</td><td>${esc(a.basis)}</td></tr>`).join("");
+ $("r-ai").innerHTML=`<p><b>${esc(j.summary)}</b></p>${j.root_causes?`<div class="block"><h3>${esc(t("rootCauses"))}</h3><ul>${li(j.root_causes)}</ul></div>`:""}${acts?`<div class="block"><h3>${esc(t("tailored"))}</h3><div class="scroll"><table><thead><tr><th>${esc(t("thStep"))}</th><th>${esc(t("thWho"))}</th><th>${esc(t("thBy"))}</th><th>${esc(t("thBasis"))}</th></tr></thead><tbody>${acts}</tbody></table></div></div>`:""}${j.evidence_to_collect?`<div class="block"><h3>${esc(t("evidence"))}</h3><ul>${li(j.evidence_to_collect)}</ul></div>`:""}${j.caution?`<p class="note">${esc(j.caution)}</p>`:""}`}
+async function refine(){
+ if(!sampleFn||!current)return;const out=$("r-ai"),btn=$("r-refine");btn.disabled=true;out.innerHTML=`<p class='note'>${esc(t("thinking"))}</p>`;
+ const r=current,s=sec(r.sector),key=refineKey();
+ const prompt=`You are a public policy adviser for Andhra Pradesh, India. Adapt an action plan to the specific situation below. Stay within the Constitution of India, central and AP laws, and basic human rights. Be concrete and practical for a citizen or local NGO. Do not invent scheme names, phone numbers or officials' names; name roles (e.g. Mandal Parishad Development Officer). ${langLine()}
+Situation: district ${r.district}; place ${r.place||"not given"}; people affected ${r.affected}; urgency ${r.urgency}.
+Description: """${r.desc}"""
+Mapped sector: ${L(S[r.sector].name)}. State departments: ${S[r.sector].ap.map(x=>x[0]).join("; ")}. Union ministries: ${S[r.sector].un.map(x=>x[0]).join("; ")}. Legal basis: ${s.law.map(x=>x[0]).join(", ")}.
+Reply with only JSON: {"summary":"one sentence","root_causes":["..."],"actions":[{"step":"...","owner":"role","by":"timeframe","basis":"law or article"}],"evidence_to_collect":["..."],"caution":"one sentence or empty"}. At most 6 actions.`;
+ try{const j=await sampleFn.json(prompt);lastRefine={key,lang:LANG,j};if(refineKey()===key)renderRefine(j)}
+ catch(e){out.innerHTML=`<p class="note">${esc(t(e&&e.code==="not_granted"?"aiDenied":e&&e.code==="rate_limited"?"aiBusy":"aiFail"))}</p>`;if(e&&(e.code==="not_granted"||e.code==="sampling_disabled"))$("r-ai-box").hidden=true}
+ btn.disabled=false;
+}
+
+// ---------- Dashboard ----------
+function renderIndic(){$("indic").innerHTML=INDIC.map(i=>`<div class="ind${i.flag?" flag":""}"><span class="v">${i.v}</span><span class="l">${esc(L(i.l))}</span><span class="s">${esc(L(i.s))}</span></div>`).join("")}
+["d-demo","d-f-district","d-f-sector","d-f-status"].forEach(id=>$(id).addEventListener("change",renderDash));
+const UW={high:3,medium:2,low:1};
+const verLabel=l=>l>=2?["ok","corroborated"]:l===1?["warn","single"]:["","unverified"];
+let dashSpeech="";
+function renderDash(){
+ const demo=$("d-demo").checked;
+ const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):reports;
+ $("d-src").textContent=demo?t("demoNote"):t("countLocal").replace("{n}",reports.length);
+ if(!data.length){$("d-summary").innerHTML=`<div class="empty"><b>${esc(t("emptyB"))}</b><span>${esc(t("emptyS"))}</span></div>`;$("d-list").innerHTML="";dashSpeech=t("emptyB")+" "+t("emptyS");return}
+ const by={};data.forEach(r=>{const k=r.sector in S?r.sector:"livelihood";by[k]=by[k]||{n:0,p:0};by[k].n++;by[k].p+=UW[r.urgency]||1});
+ const rows=Object.entries(by).sort((a,b)=>b[1].p-a[1].p);const max=Math.max(...rows.map(r=>r[1].p));
+ const bars=rows.map(([k,v])=>`<div class="bar"><span class="nm" title="${esc(L(S[k].name))}">${esc(L(S[k].name))}</span><span class="track"><span class="fill${v.p/max>.66?" hi":""}" style="width:${Math.max(6,v.p/max*100)}%"></span></span><span class="num">${v.n}</span></div>`).join("");
+ const dd={};data.forEach(r=>{dd[r.district]=dd[r.district]||{n:0,high:0,people:0};dd[r.district].n++;if(r.urgency==="high")dd[r.district].high++;dd[r.district].people+=+r.affected||0});
+ const dsorted=Object.entries(dd).sort((a,b)=>b[1].high-a[1].high||b[1].n-a[1].n).slice(0,8);
+ const drows=dsorted.map(([d,v])=>`<tr><td>${esc(dName(d))}</td><td class="n">${v.n}</td><td class="n">${v.high}</td><td class="n">${num(v.people)}</td></tr>`).join("");
+ const high=data.filter(r=>r.urgency==="high").length,res=data.filter(r=>r.status==="resolved").length;
+ $("d-summary").innerHTML=`<div class="chips"><span class="chip">${data.length} ${esc(t("needsN"))}</span><span class="chip crit">${high} ${esc(t("urgentN"))}</span><span class="chip ok">${res} ${esc(t("resolvedN"))}</span></div>
+  <div class="block"><p class="eyebrow">${esc(t("priorityEb"))}</p><div class="bars">${bars}</div></div>
+  <div class="block"><p class="eyebrow">${esc(t("distEb"))}</p><div class="scroll"><table class="dist"><thead><tr><th>${esc(t("thDistrict"))}</th><th class="n">${esc(t("thNeeds"))}</th><th class="n">${esc(t("thUrgent"))}</th><th class="n">${esc(t("thPeople"))}</th></tr></thead><tbody>${drows}</tbody></table></div></div>`;
+ dashSpeech=`${data.length} ${t("needsN")}, ${high} ${t("urgentN")}, ${res} ${t("resolvedN")}. ${t("priorityEb")}: ${rows.slice(0,3).map(([k,v])=>L(S[k].name)+" "+v.n).join(", ")}. ${t("distEb")}: ${dsorted.slice(0,3).map(([d,v])=>dName(d)+" "+v.high).join(", ")}.`;
+ const fd=$("d-f-district").value,fs=$("d-f-sector").value,ft=$("d-f-status").value;
+ const list=data.filter(r=>(!fd||r.district===fd)&&(!fs||r.sector===fs)&&(!ft||(r.status||"reported")===ft)).sort((a,b)=>(UW[b.urgency]||0)-(UW[a.urgency]||0));
+ const canEdit=!!db&&!demo;
+ $("d-list").innerHTML=list.length?list.map(r=>{const s=sec(r.sector);const [vc,vk]=verLabel(r.verify&&r.verify.level||0);const st=STATUSES.includes(r.status)?r.status:"reported";
+  return `<article class="rep u-${esc(r.urgency)}"><div class="meta"><span>${esc(dName(r.district))}</span>${r.place?`<span>· ${esc(r.place)}</span>`:""}<span>· ${num(r.affected)} ${esc(t("people"))}</span>${r.created?`<span>· ${esc(new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"))}</span>`:""}</div>
+  <h3>${esc(r.title||s.name)}</h3><p class="desc">${esc(r.desc)}</p>
+  <div class="foot"><span class="chip ind">${esc(s.name)}</span><span class="chip ${vc}">${esc(t(vk))}</span><span class="note">→ ${esc(s.ap[0])}</span>
+  ${canEdit?`<select data-id="${esc(r.id)}" aria-label="${esc(t("anyStatus"))}">${STATUSES.map(v=>`<option value="${v}"${v===st?" selected":""}>${esc(t(v))}</option>`).join("")}</select>`:`<span class="chip">${esc(t(st))}</span>`}</div></article>`}).join(""):`<div class="empty"><b>${esc(t("noMatch"))}</b></div>`;
+ if(canEdit)$("d-list").querySelectorAll("select[data-id]").forEach(sel=>sel.addEventListener("change",async()=>{sel.disabled=true;try{await db.doc("reports/"+sel.dataset.id).update({status:sel.value,updated:new Date().toISOString()});toast(t("statusUpdated"))}catch(e){toast(t(e&&e.code==="invalid_argument"?"viewOnly":"updFail"))}sel.disabled=false}));
+}
+
+// ---------- News ----------
+function autoQuery(){const txt=$("n-text").value.toLowerCase().replace(/[^a-z0-9ఀ-౿\s]/g," ");const stop=new Set("a an the of in on at to for from and or after before with by is are was were be been as into over under fall falls set up its their they them this that these those".split(" "));const words=txt.split(/\s+/).filter(w=>w.length>3&&!stop.has(w)).slice(0,6);const d=$("n-district").value;return (d?d+" ":"")+words.join(" ")}
+let queryTouched=false;
+$("n-query").addEventListener("input",()=>{queryTouched=true;renderSources()});
+$("n-text").addEventListener("input",()=>{$("n-ex").hidden=true;if(!queryTouched){$("n-query").value=autoQuery();renderSources()}});
+$("n-district").addEventListener("change",()=>{if(!queryTouched){$("n-query").value=autoQuery();renderSources()}});
+const ticked=new Set();
+function renderSources(){const q=encodeURIComponent($("n-query").value.trim()).replace(/%20/g,"+");
+ $("n-sources").innerHTML=SOURCES.map(([n,dom,url],i)=>`<div class="src"><div><a href="${url}${q}" target="_blank" rel="noopener">${esc(n)}</a><div class="k">${esc(dom)}</div></div>${i===0?`<span class="k">${esc(t("allOutlets"))}</span>`:`<label><input type="checkbox" data-i="${i}" ${ticked.has(i)?"checked":""}> ${esc(t("confirms"))}</label>`}</div>`).join("");
+ $("n-sources").querySelectorAll("input[data-i]").forEach(cb=>cb.addEventListener("change",()=>{const i=+cb.dataset.i;cb.checked?ticked.add(i):ticked.delete(i);renderVerdict()}))}
+function newsOutlets(){return [...ticked].map(i=>SOURCES[i][0])}
+function newsLevel(){const n=[...ticked].filter(i=>i!==8).length;return ticked.has(8)||n>=2?2:n===1?1:0}
+function verdictKey(){return ticked.has(8)?["ok","official"]:verLabel(newsLevel())}
+function renderVerdict(){const [c,k]=verdictKey();const v=$("n-verdict");v.className="chip "+c;v.textContent=t(k);[...$("n-meter").children].forEach((m,i)=>m.classList.toggle("on",i<Math.min(3,ticked.size)))}
+let lastNewsAI=null;
+function renderNewsAI(j){
+ const box=$("n-ai");box.hidden=false;
+ const li=a=>(Array.isArray(a)&&a.length?a:[t("noneFound")]).map(x=>`<li>${esc(x)}</li>`).join("");
+ const sk=SKEYS.includes(j.sector)?j.sector:null;
+ box.innerHTML=`<div class="introhead"><p class="eyebrow">${esc(t("aiRead"))}</p><button class="listen" type="button" id="n-ai-listen"></button></div><p><b>${esc(j.claim)}</b></p><div class="chips">${sk?`<span class="chip ind">${esc(L(S[sk].name))}</span>`:""}${j.district&&DNAMES.includes(j.district)?`<span class="chip">${esc(dName(j.district))}</span>`:""}</div>
+  <div class="grid2"><div class="block"><h3>${esc(t("redFlags"))}</h3><ul>${li(j.red_flags)}</ul></div><div class="block"><h3>${esc(t("toConfirm"))}</h3><ul>${li(j.verify)}</ul></div></div><p class="note">${esc(j.view)}</p>`;
+ box.dataset.sector=sk||"";
+ bindListen($("n-ai-listen"),()=>`${j.claim}. ${t("redFlags")}: ${(j.red_flags||[]).join(". ")||t("noneFound")}. ${t("toConfirm")}: ${(j.verify||[]).join(". ")}. ${j.view||""}`);
+}
+$("n-assess").onclick=async()=>{
+ if(!sampleFn)return;const text=$("n-text").value.trim();if(!text){toast(t("pasteFirst"));return}
+ const box=$("n-ai"),btn=$("n-assess");box.hidden=false;btn.disabled=true;box.innerHTML=`<p class='note'>${esc(t("thinking"))}</p>`;
+ const prompt=`You help citizens in Andhra Pradesh, India check news about incidents before acting on them. You cannot browse; judge only the text. The text may be in Telugu or English. ${langLine()} Text: """${text.slice(0,2500)}"""
+District selected by user: ${$("n-district").value||"unknown"}.
+Reply with only JSON: {"claim":"the core factual claim in one sentence","sector":"one of ${SKEYS.join("|")}","district":"exact English name of one of these AP districts or empty: ${DNAMES.join(", ")}","red_flags":["signs it may be misleading, sensational or unverifiable"],"verify":["specific facts to confirm in other reports"],"search_query":"4-8 English words for news search","view":"one or two sentences on how much the text alone supports the claim"}`;
+ try{const j=await sampleFn.json(prompt,{modelTier:"quick"});lastNewsAI=j;renderNewsAI(j);
+  if(j.district&&DNAMES.includes(j.district)&&!$("n-district").value)$("n-district").value=j.district;
+  if(j.search_query&&!queryTouched){$("n-query").value=String(j.search_query)+(String(j.search_query).toLowerCase().includes("andhra")?"":" Andhra Pradesh");renderSources()}
+ }catch(e){box.innerHTML=`<p class="note">${esc(t(e&&e.code==="not_granted"?"aiDenied":e&&e.code==="rate_limited"?"aiBusy":"aiFail"))}</p>`}
+ btn.disabled=false;
+};
+$("n-tolog").onclick=()=>{
+ const text=$("n-text").value.trim();if(!text){toast(t("pasteFirst"));return}
+ setForm({district:$("n-district").value||DNAMES[0],place:"",desc:text+(ticked.size?` (${t("reportedBy")}: ${newsOutlets().join(", ")})`:` (${t("fromNews")})`),affected:"",urg:"medium"});
+ const sk=$("n-ai").dataset.sector;if(sk)$("r-sector").value=sk;
+ $("ex-flag").hidden=true;show("report");$("r-result").innerHTML="";current=null;$("r-affected").focus();toast(t("moved"));
+};
+
+// ---------- Intro listen buttons ----------
+document.querySelectorAll("[data-speak]").forEach(b=>{
+ const v=b.dataset.speak;
+ bindListen(b,()=>{if(v==="report")return `${t("repH")} ${t("repLede")} ${t("descHint")}`;
+  if(v==="dash")return `${t("dashH")}. ${t("dashLede")} ${INDIC.map(i=>L(i.l)+": "+i.v.replace("%",LANG==="te"?" శాతం":" percent")).join(". ")}. ${dashSpeech}`;
+  return `${t("newsH")}. ${t("newsLede")} ${t("corrNote")}`});
+});
+
+// ---------- Voice input (Android) ----------
+const MIC_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>';
+const HASVOICE=typeof window.AndroidVoice!=="undefined";
+let micTarget=null;
+function setMic(b,busy){b.setAttribute("aria-busy",String(busy));b.innerHTML=MIC_ICON+`<span>${esc(busy?t("listening"):t("speakIn"))}</span>`}
+document.querySelectorAll("[data-mic]").forEach(b=>{
+ if(!HASVOICE)return;b.hidden=false;setMic(b,false);
+ b.onclick=()=>{stopSpeak();micTarget=b;setMic(b,true);try{AndroidVoice.listen(LANG==="te"?"te-IN":"en-IN")}catch(e){micTarget=null;setMic(b,false);toast(t("voiceUnavailable"))}};
+});
+window.mhVoiceResult=txt=>{
+ const b=micTarget;micTarget=null;if(!b)return;setMic(b,false);
+ const id=b.dataset.mic,ta=$(id);
+ const replace=(id==="r-desc"&&!$("ex-flag").hidden)||(id==="n-text"&&!$("n-ex").hidden)||!ta.value.trim();
+ ta.value=replace?txt:ta.value.trim()+" "+txt;
+ ta.dispatchEvent(new Event("input"));ta.focus();
+};
+window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;if(code==="unavailable")toast(t("voiceUnavailable"))};
+
+// ---------- Init ----------
+applyStatic();fillSelects();renderIndic();
+if(!sampleFn)$("n-assess").hidden=true;
+$("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
+renderSources();renderVerdict();
+const hashMap={report:"report",dashboard:"dash",news:"news"};
+let startView=hashMap[location.hash.slice(1)];
+if(!startView){try{startView=localStorage.getItem("mh-tab")}catch(e){}}
+show(startView&&$("v-"+startView)?startView:"report");
+setForm(EXAMPLE);$("ex-flag").hidden=false;renderResult(readForm());renderDash();
+})();
+</script>
+</body>
+</html>

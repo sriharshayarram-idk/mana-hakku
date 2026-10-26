@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="indigo">#2B3A8F</color>
+    <color name="paper">#F2F3EF</color>
+    <color name="ochre">#B97A0C</color>
+    <style name="Theme.ManaHakku" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/indigo</item>
+        <item name="android:navigationBarColor">@color/paper</item>
+        <item name="android:windowBackground">@color/paper</item>
+        <item name="android:colorAccent">@color/ochre</item>
+    </style>
+</resources>
