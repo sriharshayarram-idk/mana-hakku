@@ -281,7 +281,6 @@ body{margin:0;-webkit-text-size-adjust:100%}
   </div>
   <h1 class="brand"><span id="brand-main">మన హక్కు</span><span class="alt" id="brand-alt">Mana Hakku</span></h1>
   <p class="sub" data-t="tagline">Every need, the right department, the right law.</p>
-  <a class="getapp" id="get-app" href="https://github.com/sriharshayarram-idk/mana-hakku/releases/latest" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg><span data-t="getApp">Get the Android app</span></a>
 </div></header>
 
 <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
@@ -1138,7 +1137,6 @@ window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;i
 // ---------- Init ----------
 applyStatic();fillSelects();renderIndic();
 if(!sampleFn)$("n-assess").hidden=true;
-if(typeof window.AndroidTTS==="undefined")$("get-app").hidden=false;
 $("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
 renderSources();renderVerdict();
 const hashMap={report:"report",dashboard:"dash",news:"news"};
