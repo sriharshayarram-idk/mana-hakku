@@ -250,6 +250,8 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .vrow .here{font-size:.75rem;font-weight:700;color:var(--indigo)}
 .vrow .vdo{font-size:.9rem;font-weight:600}
 #n-verdict{cursor:pointer}
+.manual{background:var(--ochre-soft);border-left:4px solid var(--ochre);border-radius:8px;padding:10px 12px;font-size:.92rem;color:var(--ink)}
+.src label{max-width:52%;text-align:right;line-height:1.3;justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -360,6 +362,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
       <h3 data-t="searchH"></h3>
       <div class="verdict"><div class="meter" id="n-meter"><i></i><i></i><i></i></div><span class="chip" id="n-verdict"></span></div>
     </div>
+    <p class="manual" data-t="manualNote"></p>
     <div class="sources" id="n-sources"></div>
     <details class="verhelp" id="ver-help"><summary><span class="qi">i</span><span id="ver-help-q">What do these labels mean?</span></summary><div id="ver-help-body"></div></details>
     <p class="note" data-t="corrNote"></p>
@@ -394,7 +397,7 @@ emptyB:"No needs reported yet.",emptyS:"Use “Report a need” to add the first
 allDistricts:"All districts",allSectors:"All sectors",anyStatus:"Any status",noMatch:"No needs match these filters.",statusUpdated:"Status updated",viewOnly:"Your access is view-only.",updFail:"Could not update. Try again.",
 newsH:"Check a news report",newsLede:"Paste a headline or excerpt about an incident. Open the trusted outlets below to see who else reports it, tick the ones that confirm it, and log it as a need once it holds up.",
 nEx:"Example headline · replace with the one you saw",nText:"Headline or excerpt",nDistrict:"District it mentions",notSure:"Not sure",nQuery:"Search words",nQueryHint:"Edit to sharpen the search",assess:"Ask Claude to assess",toLog:"Log as a need",
-nNote:"Claude reads only the text you paste; it cannot browse news itself. The links below search live, trusted outlets.",nNoteNoAI:"The links below search live, trusted outlets.",searchH:"Search trusted outlets",confirms:"Confirms",allOutlets:"all outlets",
+nNote:"Claude reads only the text you paste; it cannot browse news itself. The links below search live, trusted outlets.",nNoteNoAI:"The links below search live, trusted outlets.",searchH:"Search trusted outlets",confirms:"I read the same news here",manualNote:"The app does not check news by itself. Open each link, read it, and tick only if that outlet reports the same incident. You are the one confirming.",allOutlets:"all outlets",
 corrNote:"Two or more independent outlets reporting the same facts counts as corroborated. A government release or PIB fact check confirms or denies officially.",
 unverified:"Unverified",single:"Single source",corroborated:"Corroborated",official:"Officially acknowledged",
 aiRead:"Claude's reading of the text",redFlags:"Red flags",toConfirm:"Confirm in other reports",noneFound:"None found",rootCauses:"Likely root causes",tailored:"Tailored actions",thStep:"Step",thWho:"Who",thBy:"By",thBasis:"Basis",evidence:"Evidence to collect",thinking:"Thinking…",
@@ -417,7 +420,7 @@ emptyB:"ఇంకా ఏ అవసరమూ నమోదు కాలేదు."
 allDistricts:"అన్ని జిల్లాలు",allSectors:"అన్ని రంగాలు",anyStatus:"ఏ స్థితి అయినా",noMatch:"ఈ ఎంపికలకు సరిపడే అవసరాలు లేవు.",statusUpdated:"స్థితి మార్చబడింది",viewOnly:"మీకు చూసే అనుమతి మాత్రమే ఉంది.",updFail:"మార్చలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
 newsH:"వార్తను నిర్ధారించండి",newsLede:"ఒక సంఘటన గురించి శీర్షిక లేదా వార్త భాగాన్ని అతికించండి. ఇంకా ఎవరు నివేదించారో చూడటానికి కింది విశ్వసనీయ వార్తా సంస్థలను తెరవండి, నిర్ధారించిన వాటిని టిక్ చేయండి, నిజమని తేలాక అవసరంగా నమోదు చేయండి.",
 nEx:"ఉదాహరణ శీర్షిక · మీరు చూసిన దానితో మార్చండి",nText:"శీర్షిక లేదా వార్త భాగం",nDistrict:"పేర్కొన్న జిల్లా",notSure:"తెలియదు",nQuery:"వెతకవలసిన పదాలు",nQueryHint:"వెతుకులాట కోసం మార్చవచ్చు",assess:"Claude తో పరిశీలించండి",toLog:"అవసరంగా నమోదు చేయండి",
-nNote:"Claude మీరు అతికించిన వచనాన్ని మాత్రమే చదువుతుంది; వార్తలను స్వయంగా వెతకదు. కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",nNoteNoAI:"కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",searchH:"విశ్వసనీయ వార్తా సంస్థల్లో వెతకండి",confirms:"నిర్ధారిస్తుంది",allOutlets:"అన్ని సంస్థలు",
+nNote:"Claude మీరు అతికించిన వచనాన్ని మాత్రమే చదువుతుంది; వార్తలను స్వయంగా వెతకదు. కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",nNoteNoAI:"కింది లింకులు విశ్వసనీయ సంస్థల్లో తాజా వార్తలు వెతుకుతాయి.",searchH:"విశ్వసనీయ వార్తా సంస్థల్లో వెతకండి",confirms:"ఈ సంస్థలో ఇదే వార్త చదివాను",manualNote:"యాప్ వార్తలను స్వయంగా తనిఖీ చేయదు. ప్రతి లింకు తెరిచి చదవండి; ఆ సంస్థ అదే సంఘటనను నివేదిస్తేనే టిక్ చేయండి. నిర్ధారించేది మీరే.",allOutlets:"అన్ని సంస్థలు",
 corrNote:"రెండు లేదా అంతకంటే ఎక్కువ స్వతంత్ర సంస్థలు ఒకే విషయాన్ని నివేదిస్తే నిర్ధారించబడినట్లు. ప్రభుత్వ ప్రకటన లేదా PIB ఫ్యాక్ట్ చెక్ అధికారికంగా నిర్ధారిస్తుంది లేదా ఖండిస్తుంది.",
 unverified:"నిర్ధారించబడలేదు",single:"ఒకే మూలం",corroborated:"నిర్ధారించబడింది",official:"అధికారికంగా అంగీకరించబడింది",
 aiRead:"వచనంపై Claude పరిశీలన",redFlags:"అనుమాన సూచనలు",toConfirm:"ఇతర వార్తల్లో నిర్ధారించవలసినవి",noneFound:"ఏమీ కనిపించలేదు",rootCauses:"సంభావ్య మూల కారణాలు",tailored:"మీ పరిస్థితికి తగిన చర్యలు",thStep:"దశ",thWho:"ఎవరు",thBy:"గడువు",thBasis:"ఆధారం",evidence:"సేకరించవలసిన ఆధారాలు",thinking:"ఆలోచిస్తోంది…",
@@ -962,7 +965,7 @@ $("n-tolog").onclick=()=>{
 
 const VH={
  q:["What do these labels mean?","ఈ గుర్తుల అర్థం ఏమిటి?"],
- how:["Open each outlet link, read the report, and tick Confirms only if it reports the same facts. The label updates from your ticks.","ప్రతి సంస్థ లింకు తెరిచి వార్త చదవండి; అదే విషయాలు ఉంటేనే “నిర్ధారిస్తుంది” టిక్ చేయండి. మీ టిక్‌ల ఆధారంగా గుర్తు మారుతుంది."],
+ how:["Open each outlet link and read the report. Tick “I read the same news here” only if it reports the same incident. The app counts your ticks; it does not check news by itself.","ప్రతి సంస్థ లింకు తెరిచి వార్త చదవండి. అదే సంఘటన ఉంటేనే “ఈ సంస్థలో ఇదే వార్త చదివాను” టిక్ చేయండి. యాప్ మీ టిక్‌లను మాత్రమే లెక్కిస్తుంది; వార్తలను స్వయంగా తనిఖీ చేయదు."],
  here:["Current label","ప్రస్తుత గుర్తు"],
  rows:[
   ["","unverified",["No trusted news outlet has confirmed this yet. It could be a rumour, an old story or a forwarded message.","ఇంకా ఏ విశ్వసనీయ వార్తా సంస్థా దీన్ని నిర్ధారించలేదు. ఇది పుకారు, పాత వార్త లేదా ఫార్వర్డ్ చేసిన సందేశం కావచ్చు."],["Do not act on it yet. Open the outlet links and check.","ఇప్పుడే దీనిపై చర్య తీసుకోవద్దు. లింకులు తెరిచి తనిఖీ చేయండి."]],
