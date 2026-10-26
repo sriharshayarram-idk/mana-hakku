@@ -1,0 +1,42 @@
+name: Update state finances
+
+# Checks RBI every month for new editions and refreshes web/data/finance.json.
+on:
+  schedule:
+    - cron: "17 3 5 * *"     # 5th of every month, 08:47 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-finance
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install
+        run: pip install -q playwright openpyxl && python -m playwright install --with-deps chromium >/dev/null
+      - name: Download and rebuild
+        run: python tools/update_finance.py
+      - name: Publish if changed
+        run: |
+          if [ -n "$(git status --porcelain web/data)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git add web/data
+            git commit -m "State finances: refresh from RBI ($(date +%Y-%m-%d))"
+            git push
+            # A push made with the workflow token does not start other workflows, so start them here.
+            curl -s -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/website.yml/dispatches" -d '{"ref":"main"}'
+            curl -s -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/build-apk.yml/dispatches" -d '{"ref":"main"}'
+          else
+            echo "No change in RBI data."
+          fi
