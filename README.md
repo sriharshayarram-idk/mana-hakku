@@ -1,10 +1,11 @@
 # Mana Hakku (మన హక్కు)
 
-An Android app for Andhra Pradesh that turns a public need into a rights-based case: the responsible state department and Union ministry, the constitutional articles and Acts that apply, a 7 / 30 / 90-day action plan, and the escalation ladder from the Grama Sachivalayam to the High Court.
+An Android app and website for Andhra Pradesh and Telangana that turns a public need into a rights-based case: the responsible state department and Union ministry, the constitutional articles and Acts that apply, a 7 / 30 / 90-day action plan, and the escalation ladder from the Grama Sachivalayam to the High Court.
 
 ## What the app does
 
-- **Telugu and English**: Telugu by default, one tap to switch. All 28 districts, 13 sectors, rights, plans and escalation steps in both languages.
+- **Two states, one at a time**: the home screen asks for Andhra Pradesh or Telangana. Departments, escalation steps, helplines, indicators, reports, history and districts follow the chosen state; rights and the Constitution are shared. Links like `…/#ts/history` open a state directly.
+- **Telugu and English**: Telugu by default, one tap to switch. All 28 Andhra Pradesh and 33 Telangana districts, 13 sectors, rights, plans and escalation steps in both languages.
 - **Read aloud**: every screen has a Listen (వినండి) button using the phone's own text-to-speech. Helpline numbers are read digit by digit.
 - **Speak a complaint**: a Speak (మాట్లాడండి) button turns spoken Telugu or English into text (uses the phone's Google voice typing).
 - **Share report**: sends a ready-made summary to WhatsApp, SMS or email for an official or NGO.
@@ -45,7 +46,9 @@ Reports can be stored in a Google Sheet so that everyone using the app or websit
 3. **Deploy → New deployment →** type **Web app**, *Execute as* **Me**, *Who has access* **Anyone** → **Deploy**, allow access.
 4. Copy the Web app URL (ends in `/exec`) and set it as `REGISTER_URL` in `app/src/main/assets/index.html`.
 
-Reports land in the **Reports** tab and suggestions in **Suggestions**. Change a report's progress by editing its `status` cell to `reported`, `acknowledged`, `progress` or `resolved`; the app shows it to everyone. Delete a row to remove a report.
+Reports land in the **Reports** tab and suggestions in **Suggestions**; the `state` column is `ap` or `ts`, and each report is public as soon as it is saved.
+
+To update the script later: paste the new `backend/Code.gs` → Save → **Deploy → Manage deployments →** edit → Version **New version** → **Deploy**. The URL stays the same. Change a report's progress by editing its `status` cell to `reported`, `acknowledged`, `progress` or `resolved`; the app shows it to everyone. Delete a row to remove a report.
 
 ## Personal details are blocked
 

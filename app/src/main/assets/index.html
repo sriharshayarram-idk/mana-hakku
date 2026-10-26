@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mana Hakku</title>
-<meta name="description" content="మన హక్కు · Report a public need in Andhra Pradesh and see the responsible department, your constitutional rights and a step-by-step action plan. Telugu and English, with read-aloud.">
+<meta name="description" content="మన హక్కు · Report a public need in Andhra Pradesh or Telangana and see the responsible department, your constitutional rights and a step-by-step action plan. Telugu and English, with read-aloud.">
 <meta name="theme-color" content="#2B3A8F">
 <meta property="og:type" content="website">
 <meta property="og:title" content="మన హక్కు · Mana Hakku">
-<meta property="og:description" content="ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం. Report a public need in Andhra Pradesh, see who is responsible and what your rights are. Free, no login, Telugu and English with read-aloud.">
+<meta property="og:description" content="ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం. Report a public need in Andhra Pradesh or Telangana, see who is responsible and what your rights are. Free, no login, Telugu and English with read-aloud.">
 <meta property="og:url" content="https://sriharshayarram-idk.github.io/mana-hakku/">
 <meta property="og:image" content="https://sriharshayarram-idk.github.io/mana-hakku/og.png">
 <meta property="og:image:width" content="1200">
@@ -313,13 +313,24 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .ptop .qt{gap:0}
 .pav{width:40px;height:40px;border-radius:50%;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:1.1rem;flex:none}
 .keyam{border:2px solid var(--indigo)}
+.stbtn{font:inherit;font-size:.82rem;font-weight:600;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--indigo);border-radius:999px;padding:5px 12px;cursor:pointer}
+.stbtn .chg{color:var(--muted);font-weight:500}.stbtn .chg::before{content:"⇄ ";}
+.stpick{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stcard{font:inherit;text-align:left;cursor:pointer;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;gap:4px;color:var(--ink);min-width:0}
+.stcard:hover,.stcard:focus-visible{border-color:var(--indigo)}
+.stcard.last{border-color:var(--indigo);background:var(--indigo-soft)}
+.stcard .stte{font-family:var(--f-display);font-weight:700;font-size:1.6rem;line-height:1.15;color:var(--indigo)}
+.stcard .sten{font-weight:600;font-size:1.05rem}
+.stcard .stn{font-size:.86rem;color:var(--muted)}
+.stcard .go{margin-top:10px;font-weight:600;color:var(--indigo);font-size:.92rem}
+@media (max-width:520px){.stpick{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <header class="top"><div class="wrap">
   <div class="toprow">
-    <p class="eyebrow" data-t="eyebrow">Andhra Pradesh · 28 districts</p>
+    <p class="eyebrow" id="home-eb" data-t="homeEb" hidden></p><button type="button" class="stbtn" id="st-btn" hidden><span id="st-name"></span><span class="chg" data-t="changeState"></span></button>
     <div class="langs" role="group" aria-label="Language / భాష">
       <button type="button" id="lang-te" aria-pressed="true" lang="te">తెలుగు</button>
       <button type="button" id="lang-en" aria-pressed="false" lang="en">English</button>
@@ -329,7 +340,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
   <p class="sub" data-t="tagline">Every need, the right department, the right law.</p>
 </div></header>
 
-<nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
+<nav class="tabs" id="tabs" aria-label="Sections"><div class="wrap" role="tablist">
   <button class="tab" role="tab" id="t-report" aria-selected="true" data-view="report" data-t="tabReport">Report a need</button>
   <button class="tab" role="tab" id="t-dash" aria-selected="false" data-view="dash" data-t="tabDash">Gap dashboard</button>
   <button class="tab" role="tab" id="t-news" aria-selected="false" data-view="news" data-t="tabNews">News check</button>
@@ -338,6 +349,17 @@ body{margin:0;-webkit-text-size-adjust:100%}
 </div></nav>
 
 <main>
+<section class="wrap" id="v-home" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="homeH"></h2><button class="listen" type="button" data-speak="home"></button></div>
+    <p class="lede" data-t="homeLede"></p>
+  </div>
+  <div class="stpick">
+    <button type="button" class="stcard" data-state="ap"><span class="stte">ఆంధ్రప్రదేశ్</span><span class="sten">Andhra Pradesh</span><span class="stn" data-t="apCount"></span><span class="go" data-t="openState"></span></button>
+    <button type="button" class="stcard" data-state="ts"><span class="stte">తెలంగాణ</span><span class="sten">Telangana</span><span class="stn" data-t="tsCount"></span><span class="go" data-t="openState"></span></button>
+  </div>
+  <p class="note" data-t="homeNote"></p>
+</section>
 <section class="wrap" id="v-report" aria-labelledby="t-report">
   <div class="intro">
     <div class="introhead"><h2 data-t="repH">What is missing in your area?</h2><button class="listen" type="button" data-speak="report"></button></div>
@@ -480,7 +502,7 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{tabRights:"Right knowledge",tabHistory:"History",rkH:"Know your rights",rkLede:"Your rights under the Constitution of India, with article numbers, explained in simple words.",rkSearchPh:"Search: education, 21, vote, women…",secFund:"Fundamental Rights",fundNote:"Part III of the Constitution. You can go to court to enforce these rights.",secOther:"Other important rights",otherNote:"Articles 39A, 41 and 47 are Directive Principles: duties of the government that guide laws and schemes. They cannot be enforced directly in court.",secLaws:"Laws that give you rights",secDuties:"Fundamental Duties",dutiesNote:"Article 51A. Rights come with duties; the main ones are:",secPre:"Preamble",preNote:"The opening statement of the Constitution, in both languages. The Telugu text is a careful rendering; the official Telugu edition is linked under Full Constitution.",secAmend:"Constitution amendments",amendLede:"The Constitution has been amended 106 times. The latest is the 106th Amendment (2023), which reserves seats for women. Each amendment is explained below in simple words.",keyAmend:"Important for everyone",apAmend:"About Andhra Pradesh",amendCount:"{n} amendments",amendMatches:"{n} amendments match",secCoi:"Full Constitution of India",coiNote:"Read or download the complete, up-to-date Constitution from the Government of India's Legislative Department.",udhrL:"Human rights (UDHR) Art.",noResults:"Nothing matches your search.",artWord:"Article",artsWord:"Articles",
+en:{homeEb:"Andhra Pradesh · Telangana",homeH:"Choose your state",homeLede:"Mana Hakku works for one state at a time. Pick your state to report a need, see the gaps, check news and read its history.",homeNote:"Departments, helplines, indicators, reports, history and districts change with the state. Your rights and the Constitution are the same everywhere.",apCount:"28 districts",tsCount:"33 districts",openState:"Open →",changeState:"Change",apName:"Andhra Pradesh",tsName:"Telangana",tabRights:"Right knowledge",tabHistory:"History",rkH:"Know your rights",rkLede:"Your rights under the Constitution of India, with article numbers, explained in simple words.",rkSearchPh:"Search: education, 21, vote, women…",secFund:"Fundamental Rights",fundNote:"Part III of the Constitution. You can go to court to enforce these rights.",secOther:"Other important rights",otherNote:"Articles 39A, 41 and 47 are Directive Principles: duties of the government that guide laws and schemes. They cannot be enforced directly in court.",secLaws:"Laws that give you rights",secDuties:"Fundamental Duties",dutiesNote:"Article 51A. Rights come with duties; the main ones are:",secPre:"Preamble",preNote:"The opening statement of the Constitution, in both languages. The Telugu text is a careful rendering; the official Telugu edition is linked under Full Constitution.",secAmend:"Constitution amendments",amendLede:"The Constitution has been amended 106 times. The latest is the 106th Amendment (2023), which reserves seats for women. Each amendment is explained below in simple words.",keyAmend:"Important for everyone",apAmend:"About Andhra Pradesh",amendCount:"{n} amendments",amendMatches:"{n} amendments match",secCoi:"Full Constitution of India",coiNote:"Read or download the complete, up-to-date Constitution from the Government of India's Legislative Department.",udhrL:"Human rights (UDHR) Art.",noResults:"Nothing matches your search.",artWord:"Article",artsWord:"Articles",
 hiH:"History of Andhra Pradesh",hiLede:"From the Satavahanas to today's 28 districts: the dynasties, people and places that shaped the state.",secTimeline:"Timeline",secPeople:"Prominent people",secDist:"Districts",distLede:"Tap a district to see what its name means, what it is known for, and how it contributes to the state.",distSearchPh:"Search a district",nameL:"Name",specL:"Known for",contribL:"Contribution to the state",hqL:"Headquarters",histNote:"Eras before British rule are shown by century; later events have exact dates.",piiTitle:"Remove personal details to continue",piiPhone:"A mobile or phone number",piiLongNum:"An Aadhaar, bank account or other long ID number",piiEmail:"An email address",piiPan:"A PAN card number",piiName:"A person's name (for example “my name is…”, “S/o…”). Describe the problem without naming anyone.",piiFix:"Remove numbers and emails for me",piiBlocked:"This report has personal details. Remove them before analysing or saving.",piiNameLeft:"Numbers removed. Please also remove the person's name.",
 registerNote:"Reports saved here are visible to everyone. Never include names, phone numbers or Aadhaar.",countShared:"{n} needs reported by everyone.",loadingShared:"Loading everyone's reports…",sharedFail:"Couldn't load everyone's reports. Check your internet and refresh.",refresh:"Refresh",sharedSaved:"Shared. Everyone can now see this need.",shareFailNet:"Couldn't share now. It is saved on this phone; try again when online.",serverPii:"The register refused this report because it looks like it has personal details.",
 suggestH:"Give a suggestion",suggestPh:"What should we improve? (no names or phone numbers)",suggestSend:"Send suggestion",suggestThanks:"Thank you. Your suggestion was sent.",suggestFail:"Couldn't send now. Try again when online.",tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
@@ -506,7 +528,7 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{tabRights:"హక్కుల జ్ఞానం",tabHistory:"చరిత్ర",rkH:"మీ హక్కులు తెలుసుకోండి",rkLede:"భారత రాజ్యాంగం మీకు ఇచ్చిన హక్కులు, ఆర్టికల్ నంబర్లతో, సరళమైన మాటల్లో.",rkSearchPh:"వెతకండి: విద్య, 21, ఓటు, మహిళలు…",secFund:"ప్రాథమిక హక్కులు",fundNote:"రాజ్యాంగంలోని భాగం III. ఈ హక్కుల అమలుకు కోర్టును ఆశ్రయించవచ్చు.",secOther:"ఇతర ముఖ్య హక్కులు",otherNote:"ఆర్టికల్ 39A, 41, 47 ఆదేశిక సూత్రాలు: చట్టాలు, పథకాలకు మార్గదర్శనం చేసే ప్రభుత్వ బాధ్యతలు. వీటిని నేరుగా కోర్టు ద్వారా అమలు చేయించలేము.",secLaws:"మీకు హక్కులు ఇచ్చే చట్టాలు",secDuties:"ప్రాథమిక విధులు",dutiesNote:"ఆర్టికల్ 51A. హక్కులతో పాటు విధులూ ఉంటాయి; ముఖ్యమైనవి:",secPre:"ప్రవేశిక",preNote:"రాజ్యాంగ ఆరంభ ప్రకటన, రెండు భాషల్లో. తెలుగు పాఠం జాగ్రత్తగా చేసిన అనువాదం; అధికారిక తెలుగు ప్రతి ‘పూర్తి భారత రాజ్యాంగం’ కింద ఉంది.",secAmend:"రాజ్యాంగ సవరణలు",amendLede:"రాజ్యాంగాన్ని ఇప్పటివరకు 106 సార్లు సవరించారు. తాజాది మహిళలకు స్థానాలు రిజర్వ్ చేసిన 106వ సవరణ (2023). ప్రతి సవరణను కింద సరళమైన మాటల్లో వివరించాం.",keyAmend:"అందరికీ ముఖ్యమైనది",apAmend:"ఆంధ్రప్రదేశ్‌కు సంబంధించినది",amendCount:"{n} సవరణలు",amendMatches:"{n} సవరణలు దొరికాయి",secCoi:"పూర్తి భారత రాజ్యాంగం",coiNote:"భారత ప్రభుత్వ శాసన విభాగం నుండి పూర్తి, తాజా రాజ్యాంగాన్ని చదవండి లేదా డౌన్‌లోడ్ చేసుకోండి.",udhrL:"మానవ హక్కుల ప్రకటన (UDHR) ఆర్టికల్",noResults:"మీ వెతుకులాటకు ఏమీ దొరకలేదు.",artWord:"ఆర్టికల్",artsWord:"ఆర్టికల్స్",
+te:{homeEb:"ఆంధ్రప్రదేశ్ · తెలంగాణ",homeH:"మీ రాష్ట్రాన్ని ఎంచుకోండి",homeLede:"మన హక్కు ఒకసారి ఒక రాష్ట్రానికే పనిచేస్తుంది. అవసరం తెలపడానికి, లోటులు చూడటానికి, వార్తలు నిర్ధారించడానికి, చరిత్ర చదవడానికి మీ రాష్ట్రాన్ని ఎంచుకోండి.",homeNote:"శాఖలు, హెల్ప్‌లైన్లు, సూచికలు, నివేదికలు, చరిత్ర, జిల్లాలు రాష్ట్రాన్ని బట్టి మారుతాయి. మీ హక్కులు, రాజ్యాంగం అంతటా ఒకటే.",apCount:"28 జిల్లాలు",tsCount:"33 జిల్లాలు",openState:"తెరవండి →",changeState:"మార్చండి",apName:"ఆంధ్రప్రదేశ్",tsName:"తెలంగాణ",tabRights:"హక్కుల జ్ఞానం",tabHistory:"చరిత్ర",rkH:"మీ హక్కులు తెలుసుకోండి",rkLede:"భారత రాజ్యాంగం మీకు ఇచ్చిన హక్కులు, ఆర్టికల్ నంబర్లతో, సరళమైన మాటల్లో.",rkSearchPh:"వెతకండి: విద్య, 21, ఓటు, మహిళలు…",secFund:"ప్రాథమిక హక్కులు",fundNote:"రాజ్యాంగంలోని భాగం III. ఈ హక్కుల అమలుకు కోర్టును ఆశ్రయించవచ్చు.",secOther:"ఇతర ముఖ్య హక్కులు",otherNote:"ఆర్టికల్ 39A, 41, 47 ఆదేశిక సూత్రాలు: చట్టాలు, పథకాలకు మార్గదర్శనం చేసే ప్రభుత్వ బాధ్యతలు. వీటిని నేరుగా కోర్టు ద్వారా అమలు చేయించలేము.",secLaws:"మీకు హక్కులు ఇచ్చే చట్టాలు",secDuties:"ప్రాథమిక విధులు",dutiesNote:"ఆర్టికల్ 51A. హక్కులతో పాటు విధులూ ఉంటాయి; ముఖ్యమైనవి:",secPre:"ప్రవేశిక",preNote:"రాజ్యాంగ ఆరంభ ప్రకటన, రెండు భాషల్లో. తెలుగు పాఠం జాగ్రత్తగా చేసిన అనువాదం; అధికారిక తెలుగు ప్రతి ‘పూర్తి భారత రాజ్యాంగం’ కింద ఉంది.",secAmend:"రాజ్యాంగ సవరణలు",amendLede:"రాజ్యాంగాన్ని ఇప్పటివరకు 106 సార్లు సవరించారు. తాజాది మహిళలకు స్థానాలు రిజర్వ్ చేసిన 106వ సవరణ (2023). ప్రతి సవరణను కింద సరళమైన మాటల్లో వివరించాం.",keyAmend:"అందరికీ ముఖ్యమైనది",apAmend:"ఆంధ్రప్రదేశ్‌కు సంబంధించినది",amendCount:"{n} సవరణలు",amendMatches:"{n} సవరణలు దొరికాయి",secCoi:"పూర్తి భారత రాజ్యాంగం",coiNote:"భారత ప్రభుత్వ శాసన విభాగం నుండి పూర్తి, తాజా రాజ్యాంగాన్ని చదవండి లేదా డౌన్‌లోడ్ చేసుకోండి.",udhrL:"మానవ హక్కుల ప్రకటన (UDHR) ఆర్టికల్",noResults:"మీ వెతుకులాటకు ఏమీ దొరకలేదు.",artWord:"ఆర్టికల్",artsWord:"ఆర్టికల్స్",
 hiH:"ఆంధ్రప్రదేశ్ చరిత్ర",hiLede:"శాతవాహనుల నుండి నేటి 28 జిల్లాల వరకు: రాష్ట్రాన్ని తీర్చిదిద్దిన రాజవంశాలు, వ్యక్తులు, ప్రాంతాలు.",secTimeline:"కాలక్రమం",secPeople:"ప్రముఖులు",secDist:"జిల్లాలు",distLede:"జిల్లా పేరు అర్థం, దాని ప్రత్యేకత, రాష్ట్రాభివృద్ధికి తోడ్పాటు చూడటానికి జిల్లాను తాకండి.",distSearchPh:"జిల్లా వెతకండి",nameL:"పేరు",specL:"ప్రత్యేకత",contribL:"రాష్ట్రానికి తోడ్పాటు",hqL:"జిల్లా కేంద్రం",histNote:"బ్రిటిష్ పాలనకు ముందు కాలాలను శతాబ్దాల వారీగా చూపాం; తర్వాతి ఘటనలకు ఖచ్చితమైన తేదీలు ఇచ్చాం.",piiTitle:"కొనసాగడానికి వ్యక్తిగత వివరాలు తొలగించండి",piiPhone:"మొబైల్ లేదా ఫోన్ నంబర్",piiLongNum:"ఆధార్, బ్యాంకు ఖాతా లేదా ఇతర పొడవైన గుర్తింపు నంబర్",piiEmail:"ఈమెయిల్ చిరునామా",piiPan:"PAN కార్డు నంబర్",piiName:"వ్యక్తి పేరు (ఉదా: “నా పేరు…”, “S/o…”). ఎవరి పేరూ లేకుండా సమస్యను వివరించండి.",piiFix:"నంబర్లు, ఈమెయిల్ తొలగించు",piiBlocked:"ఈ నివేదికలో వ్యక్తిగత వివరాలు ఉన్నాయి. విశ్లేషించే ముందు లేదా భద్రపరిచే ముందు వాటిని తొలగించండి.",piiNameLeft:"నంబర్లు తొలగించాం. వ్యక్తి పేరును కూడా తొలగించండి.",
 registerNote:"ఇక్కడ భద్రపరిచిన నివేదికలు అందరికీ కనిపిస్తాయి. పేర్లు, ఫోన్ నంబర్లు, ఆధార్ ఎప్పుడూ రాయవద్దు.",countShared:"అందరూ నమోదు చేసిన అవసరాలు: {n}.",loadingShared:"అందరి నివేదికలు లోడ్ అవుతున్నాయి…",sharedFail:"అందరి నివేదికలు లోడ్ కాలేదు. ఇంటర్నెట్ చూసి మళ్లీ ప్రయత్నించండి.",refresh:"రిఫ్రెష్",sharedSaved:"పంచుకోబడింది. ఈ అవసరం ఇప్పుడు అందరికీ కనిపిస్తుంది.",shareFailNet:"ఇప్పుడు పంచుకోలేకపోయాం. ఈ ఫోన్‌లో భద్రపరిచాం; ఇంటర్నెట్ వచ్చాక మళ్లీ ప్రయత్నించండి.",serverPii:"వ్యక్తిగత వివరాలు ఉన్నట్లు కనిపించడంతో రిజిస్టర్ ఈ నివేదికను తిరస్కరించింది.",
 suggestH:"సూచన ఇవ్వండి",suggestPh:"మేము ఏమి మెరుగుపరచాలి? (పేర్లు, ఫోన్ నంబర్లు వద్దు)",suggestSend:"సూచన పంపండి",suggestThanks:"ధన్యవాదాలు. మీ సూచన పంపబడింది.",suggestFail:"ఇప్పుడు పంపలేకపోయాం. ఇంటర్నెట్ వచ్చాక ప్రయత్నించండి.",tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
@@ -533,10 +555,16 @@ reported:"నమోదైంది",acknowledged:"అంగీకరించబ
 speakIn:"మాట్లాడండి",listening:"వింటోంది…",voiceUnavailable:"ఈ ఫోన్‌లో మాటతో టైప్ చేసే సౌకర్యం లేదు. మీ ఫిర్యాదు చెప్పడానికి Google యాప్‌ను ఇన్‌స్టాల్ లేదా అప్‌డేట్ చేయండి.",share:"నివేదిక పంపండి",
 copied:"నివేదిక కాపీ అయింది. WhatsApp, SMS లేదా ఈమెయిల్‌లో పేస్ట్ చేయండి.",voiceDenied:"మీ ఫిర్యాదు చెప్పడానికి ఈ సైట్‌కు మైక్రోఫోన్ అనుమతి ఇవ్వండి.",getApp:"Android యాప్ పొందండి",saveNoteLocal:"భద్రపరిచిన అవసరాలు ఈ ఫోన్‌లోనే ఉండి, లోటుల పట్టికలో కనిపిస్తాయి. అధికారికి లేదా స్వచ్ఛంద సంస్థకు పంపడానికి “నివేదిక పంపండి” వాడండి.",countLocal:"ఈ ఫోన్‌లో {n} అవసరాలు భద్రపరచబడ్డాయి.",shareHead:"మన హక్కు నివేదిక",whatNeeded:"అవసరం",peopleAffected:"ప్రభావితులు",urgencyL:"అత్యవసరత"}
 };
-const t=k=>(I18N[LANG]&&I18N[LANG][k])??I18N.en[k]??k;
+let ST="ap";
+// Strings that change with the state (Andhra Pradesh uses the I18N defaults)
+const STATE_STR={ts:{
+ en:{eyebrow:"Telangana · 33 districts",hiH:"History of Telangana",hiLede:"From the Assaka kingdom and the Kakatiyas to today's 33 districts: the dynasties, people and places that shaped the state.",compareL:"Telangana vs India",apL:"Telangana",indicEb:"Official indicators · Telangana",apAmend:"About Telangana (then part of Andhra Pradesh)",placePh:"e.g. Tiryani mandal, your village"},
+ te:{eyebrow:"తెలంగాణ · 33 జిల్లాలు",hiH:"తెలంగాణ చరిత్ర",hiLede:"అస్సక రాజ్యం, కాకతీయుల నుండి నేటి 33 జిల్లాల వరకు: రాష్ట్రాన్ని తీర్చిదిద్దిన రాజవంశాలు, వ్యక్తులు, ప్రాంతాలు.",compareL:"తెలంగాణ vs భారత్",apL:"తెలంగాణ",indicEb:"అధికారిక సూచికలు · తెలంగాణ",apAmend:"తెలంగాణకు సంబంధించినది (అప్పటి ఆంధ్రప్రదేశ్‌లో భాగం)",placePh:"ఉదా: తిర్యాణి మండలం, మీ గ్రామం"}}};
+const t=k=>(STATE_STR[ST]&&STATE_STR[ST][LANG]&&STATE_STR[ST][LANG][k])??(I18N[LANG]&&I18N[LANG][k])??I18N.en[k]??k;
+const stateEn=()=>ST==="ts"?"Telangana":"Andhra Pradesh";
 
-const DISTRICTS=[["Alluri Sitharama Raju","అల్లూరి సీతారామరాజు"],["Anakapalli","అనకాపల్లి"],["Ananthapuramu","అనంతపురం"],["Annamayya","అన్నమయ్య"],["Bapatla","బాపట్ల"],["Chittoor","చిత్తూరు"],["Dr. B. R. Ambedkar Konaseema","డా. బి.ఆర్. అంబేద్కర్ కోనసీమ"],["East Godavari","తూర్పు గోదావరి"],["Eluru","ఏలూరు"],["Guntur","గుంటూరు"],["Kakinada","కాకినాడ"],["Krishna","కృష్ణా"],["Kurnool","కర్నూలు"],["Markapuram","మార్కాపురం"],["Nandyal","నంద్యాల"],["NTR","ఎన్టీఆర్"],["Palnadu","పల్నాడు"],["Parvathipuram Manyam","పార్వతీపురం మన్యం"],["Polavaram","పోలవరం"],["Prakasam","ప్రకాశం"],["Sri Potti Sriramulu Nellore","శ్రీ పొట్టి శ్రీరాములు నెల్లూరు"],["Sri Sathya Sai","శ్రీ సత్యసాయి"],["Srikakulam","శ్రీకాకుళం"],["Tirupati","తిరుపతి"],["Visakhapatnam","విశాఖపట్నం"],["Vizianagaram","విజయనగరం"],["West Godavari","పశ్చిమ గోదావరి"],["YSR Kadapa","వైఎస్ఆర్ కడప"]];
-const DNAMES=DISTRICTS.map(d=>d[0]);
+const AP_DISTRICTS=[["Alluri Sitharama Raju","అల్లూరి సీతారామరాజు"],["Anakapalli","అనకాపల్లి"],["Ananthapuramu","అనంతపురం"],["Annamayya","అన్నమయ్య"],["Bapatla","బాపట్ల"],["Chittoor","చిత్తూరు"],["Dr. B. R. Ambedkar Konaseema","డా. బి.ఆర్. అంబేద్కర్ కోనసీమ"],["East Godavari","తూర్పు గోదావరి"],["Eluru","ఏలూరు"],["Guntur","గుంటూరు"],["Kakinada","కాకినాడ"],["Krishna","కృష్ణా"],["Kurnool","కర్నూలు"],["Markapuram","మార్కాపురం"],["Nandyal","నంద్యాల"],["NTR","ఎన్టీఆర్"],["Palnadu","పల్నాడు"],["Parvathipuram Manyam","పార్వతీపురం మన్యం"],["Polavaram","పోలవరం"],["Prakasam","ప్రకాశం"],["Sri Potti Sriramulu Nellore","శ్రీ పొట్టి శ్రీరాములు నెల్లూరు"],["Sri Sathya Sai","శ్రీ సత్యసాయి"],["Srikakulam","శ్రీకాకుళం"],["Tirupati","తిరుపతి"],["Visakhapatnam","విశాఖపట్నం"],["Vizianagaram","విజయనగరం"],["West Godavari","పశ్చిమ గోదావరి"],["YSR Kadapa","వైఎస్ఆర్ కడప"]];
+let DISTRICTS=AP_DISTRICTS,DNAMES=DISTRICTS.map(d=>d[0]);
 const dName=en=>{const d=DISTRICTS.find(x=>x[0]===en);return d?(LANG==="te"?d[1]:d[0]):en};
 
 // Sector data. Each text field: [english, telugu]
@@ -669,9 +697,11 @@ const S={
 };
 const SKEYS=Object.keys(S);
 const L=v=>Array.isArray(v)?(LANG==="te"?v[1]:v[0]):v;
-function sec(k){const s=S[k]||S.livelihood;return {name:L(s.name),ap:s.ap.map(L),un:s.un.map(L),law:s.law.map(x=>[x[0],LANG==="te"?x[2]:x[1]]),hr:L(s.hr),sch:s.sch,plan:{now:s.plan.now.map(L),d30:s.plan.d30.map(L),d90:s.plan.d90.map(L)}}}
+function stDept(k){const kk=S[k]?k:"livelihood";return ST==="ts"&&TS_DEPT[kk]?TS_DEPT[kk]:S[kk].ap}
+function stPlanNow(k){const kk=S[k]?k:"livelihood";const n=S[kk].plan.now;return ST==="ts"&&TS_PLAN_NOW[kk]?[TS_PLAN_NOW[kk],...n.slice(1)]:n}
+function sec(k){const s=S[k]||S.livelihood;return {name:L(s.name),ap:stDept(k).map(L),un:s.un.map(L),law:s.law.map(x=>[x[0],LANG==="te"?x[2]:x[1]]),hr:L(s.hr),sch:s.sch,plan:{now:stPlanNow(k).map(L),d30:s.plan.d30.map(L),d90:s.plan.d90.map(L)}}}
 
-const LADDER=[
+const AP_LADDER=[
  [["Grama / Ward Sachivalayam","గ్రామ / వార్డు సచివాలయం"],["Register the need in writing and keep the acknowledgement","అవసరాన్ని రాతపూర్వకంగా నమోదు చేసి, రసీదు ఉంచుకోండి"],""],
  [["PGRS grievance","PGRS ఫిర్యాదు"],["Online at pgrs.ap.gov.in or the PGRS app","pgrs.ap.gov.in లేదా PGRS యాప్‌లో"],"1100"],
  [["District Collector · PGRS Monday","జిల్లా కలెక్టర్ · సోమవారం PGRS"],["Go in person with the grievance number if the deadline passes","గడువు దాటితే ఫిర్యాదు నంబర్‌తో స్వయంగా వెళ్లండి"],""],
@@ -722,11 +752,11 @@ const SOURCES=[
 ];
 const STATUSES=["reported","acknowledged","progress","resolved"];
 
-const EXAMPLE={en:{place:"Hukumpeta mandal, tribal habitation",desc:"Our habitation of about 60 families has no working handpump since July. Women walk 3 km to a stream and the water is muddy. Children have had diarrhoea twice this month and the PHC is 18 km away."},
+const AP_EXAMPLE={en:{place:"Hukumpeta mandal, tribal habitation",desc:"Our habitation of about 60 families has no working handpump since July. Women walk 3 km to a stream and the water is muddy. Children have had diarrhoea twice this month and the PHC is 18 km away."},
  te:{place:"హుకుంపేట మండలం, గిరిజన ఆవాసం",desc:"సుమారు 60 కుటుంబాలున్న మా ఆవాసంలో జూలై నుండి ఒక్క చేతి పంపు కూడా పనిచేయడం లేదు. మహిళలు 3 కి.మీ. నడిచి వాగు నుండి నీళ్లు తెస్తున్నారు, ఆ నీరు బురదగా ఉంటుంది. ఈ నెలలో పిల్లలకు రెండుసార్లు విరేచనాలు అయ్యాయి, PHC 18 కి.మీ. దూరంలో ఉంది."},
  district:"Alluri Sitharama Raju",affected:280,urg:"high"};
-const NEWS_EX={en:"Villagers in a tribal hamlet of Alluri Sitharama Raju district fall ill after drinking contaminated stream water; health camp set up",te:"అల్లూరి సీతారామరాజు జిల్లాలోని గిరిజన గ్రామంలో కలుషిత వాగు నీరు తాగి గ్రామస్తులు అస్వస్థత; వైద్య శిబిరం ఏర్పాటు"};
-const DEMO=[
+const AP_NEWS_EX={en:"Villagers in a tribal hamlet of Alluri Sitharama Raju district fall ill after drinking contaminated stream water; health camp set up",te:"అల్లూరి సీతారామరాజు జిల్లాలోని గిరిజన గ్రామంలో కలుషిత వాగు నీరు తాగి గ్రామస్తులు అస్వస్థత; వైద్య శిబిరం ఏర్పాటు"};
+const AP_DEMO=[
  {district:"Alluri Sitharama Raju",place:["Hukumpeta mandal","హుకుంపేట మండలం"],sector:"water",title:["No working handpump; children ill","పనిచేసే చేతి పంపు లేదు; పిల్లలకు అనారోగ్యం"],desc:["60 families walk 3 km to a stream; diarrhoea cases this month.","60 కుటుంబాలు 3 కి.మీ. నడిచి వాగు నీళ్లు తెస్తున్నాయి; ఈ నెల విరేచనాల కేసులు."],affected:280,urgency:"high",status:"acknowledged",verify:{level:2}},
  {district:"Kurnool",place:["Adoni rural","ఆదోని గ్రామీణం"],sector:"nutrition",title:["Anganwadi closed for two months","రెండు నెలలుగా అంగన్‌వాడీ మూతపడింది"],desc:["No take-home ration for pregnant women and young children.","గర్భిణులు, చిన్న పిల్లలకు ఇంటికి రేషన్ అందడం లేదు."],affected:120,urgency:"high",status:"reported",verify:{level:0}},
  {district:"Parvathipuram Manyam",place:["Seethampeta","సీతంపేట"],sector:"health",title:["PHC without doctor at night","రాత్రి వేళ PHCలో డాక్టర్ లేరు"],desc:["Snakebite victims referred 40 km away after dark.","చీకటి పడ్డాక పాము కాటు బాధితులను 40 కి.మీ. దూరం పంపుతున్నారు."],affected:5000,urgency:"high",status:"progress",verify:{level:1}},
@@ -781,7 +811,7 @@ function applyStatic(){
  $("brand-main").textContent=LANG==="te"?"మన హక్కు":"Mana Hakku";
  $("brand-alt").textContent=LANG==="te"?"Mana Hakku":"మన హక్కు";
  $("lang-te").setAttribute("aria-pressed",String(LANG==="te"));$("lang-en").setAttribute("aria-pressed",String(LANG==="en"));
- $("r-place").placeholder=t("placePh");
+ $("r-place").placeholder=t("placePh");$("st-name").textContent=t(ST+"Name");$("st-btn").setAttribute("aria-label",t(ST+"Name")+" · "+(LANG==="te"?"రాష్ట్రం మార్చండి":"Change state"));
  if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
  document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
  document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
@@ -815,7 +845,11 @@ $("lang-te").onclick=()=>setLang("te");$("lang-en").onclick=()=>setLang("en");
 
 // ---------- Tabs ----------
 const tabs=[...document.querySelectorAll(".tab")];
-function show(view){stopSpeak();tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["report","dash","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);try{localStorage.setItem("mh-tab",view)}catch(e){}}
+function show(view){stopSpeak();const home=view==="home";tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["home","report","dash","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);
+ $("tabs").hidden=home;$("st-btn").hidden=home;$("home-eb").hidden=!home;if(SHARED)$("suggest").hidden=home;
+ if(home){let last="";try{last=localStorage.getItem("mh-state")||""}catch(e){}document.querySelectorAll(".stcard").forEach(c=>c.classList.toggle("last",c.dataset.state===last))}
+ else{try{localStorage.setItem("mh-tab",view)}catch(e){}}
+ window.scrollTo(0,0)}
 tabs.forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
 
 // ---------- Classifier ----------
@@ -894,6 +928,12 @@ const TERMS=[
  [/UDHR/,"UDHR","Universal Declaration of Human Rights, adopted by the United Nations","ఐక్యరాజ్యసమితి ఆమోదించిన సార్వత్రిక మానవ హక్కుల ప్రకటన"],
  [/ICESCR/,"ICESCR","UN treaty on economic, social and cultural rights, signed by India","భారత్ సంతకం చేసిన ఆర్థిక, సామాజిక, సాంస్కృతిక హక్కుల ఐరాస ఒడంబడిక"],
  [/\bPoA\b/,"PoA Act","Law that punishes atrocities against SC and ST communities","SC, ST వర్గాలపై అత్యాచారాలను శిక్షించే చట్టం"],
+ [/Prajavani|ప్రజావాణి/,"Prajavani","Telangana government's public grievance hearing, held at the Collectorate every Monday","కలెక్టరేట్‌లో ప్రతి సోమవారం జరిగే తెలంగాణ ప్రభుత్వ ప్రజా ఫిర్యాదుల స్వీకరణ"],
+ [/MPDO|ఎంపీడీఓ/,"MPDO","Mandal Parishad Development Officer, head of the mandal office for rural development","మండల పరిషత్ అభివృద్ధి అధికారి, గ్రామీణాభివృద్ధికి మండల కార్యాలయ అధిపతి"],
+ [/Tahsildar|తహసీల్దార్/,"Tahsildar","Head of the mandal revenue office (land and certificates)","మండల రెవెన్యూ కార్యాలయ అధిపతి (భూమి, సర్టిఫికెట్లు)"],
+ [/Mee Seva|మీ సేవ/,"Mee Seva","Government service centres for certificates, applications and status checks","సర్టిఫికెట్లు, దరఖాస్తులు, స్థితి తనిఖీ కోసం ప్రభుత్వ సేవా కేంద్రాలు"],
+ [/Mission Bhagiratha|మిషన్ భగీరథ/,"Mission Bhagiratha","Telangana's piped drinking water programme","తెలంగాణ ఇంటింటికీ నల్లా నీటి పథకం"],
+ [/SERP|సెర్ప్/,"SERP","Society for Elimination of Rural Poverty; it runs pensions and women's self-help groups","గ్రామీణ పేదరిక నిర్మూలన సంస్థ; పెన్షన్లు, మహిళా సంఘాలను నిర్వహిస్తుంది"],
  [/\bJJ Act|POCSO/,"JJ Act · POCSO","Laws that protect children from neglect and sexual abuse","నిర్లక్ష్యం, లైంగిక వేధింపుల నుండి పిల్లలను రక్షించే చట్టాలు"]
 ];
 const artL=a=>LANG==="te"?a.replace(/\bArt /g,"ఆర్టికల్ "):a.replace(/\bArt /g,"Article ");
@@ -916,7 +956,7 @@ function buildSpeech(r){
   help:`${R("helpQ")}. ${helps.map(n=>L(HELP[n])+", "+n).join(". ")}.`
  };
 }
-function helpList(r){const k=r.sector;const list=[...(SECTOR_HELP[k]||[])];if(r.urgency==="high"&&!list.includes("112"))list.unshift("112");["1100","15100"].forEach(n=>{if(!list.includes(n))list.push(n)});return list}
+function helpList(r){const k=r.sector;const list=[...(SECTOR_HELP[k]||[])];if(r.urgency==="high"&&!list.includes("112"))list.unshift("112");(ST==="ts"?["15100"]:["1100","15100"]).forEach(n=>{if(!list.includes(n))list.push(n)});return list}
 function summaryLine(r,s){const place=r.place?` (${r.place})`:"";return LANG==="te"?`${dName(r.district)}${place}లో ${s.name} సమస్య. ${num(r.affected)} మంది ప్రభావితులు.`:`${s.name} problem in ${dName(r.district)}${place}. ${num(r.affected)} people affected.`}
 function resultSpeech(r){const sp=buildSpeech(r);return [sp.head,sp.first,sp.who,sp.right,sp.todo,sp.esc,sp.help].join("\n")}
 
@@ -1011,7 +1051,7 @@ function persist(){try{localStorage.setItem(STORE,JSON.stringify(reports));retur
 const db={local:true,
  doc:p=>({update:async patch=>{const id=p.split("/")[1];const r=reports.find(x=>x.id===id);if(!r)throw {code:"not_found"};Object.assign(r,patch);if(!persist())throw {code:"storage"};renderDash()}})};
 
-function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\nPGRS: 1100`}
+function shareText(r){const s=sec(r.sector);return `${t("shareHead")}\n${dName(r.district)}${r.place?", "+r.place:""}\n${t("whatNeeded")}: ${r.desc}\n${t("peopleAffected")}: ${num(r.affected)}\n${t("urgencyL")}: ${t(URG[r.urgency][1])}\n${t("stateDept")}: ${s.ap.join("; ")}\n${t("union")}: ${s.un.join("; ")}\n${t("legal")}: ${s.law.map(x=>x[0]).join(", ")}\n${t("d7")}: ${s.plan.now.join("; ")}\n${ST==="ts"?"Prajavani: District Collectorate, Mondays":"PGRS: 1100"}`}
 
 
 // ---------- Shared register (Google Sheet web app). Empty = reports stay on this phone. ----------
@@ -1019,9 +1059,9 @@ const REGISTER_URL="https://script.google.com/macros/s/AKfycbx6zeyFjjPTv1etA14Kj
 const SHARED=/^https:\/\/script\.google\.com\//.test(REGISTER_URL);
 let sharedLoaded=false,sharedError=false,sharedReports=[];
 async function loadShared(){
- if(!SHARED)return;sharedError=false;renderDash();
- try{const res=await fetch(REGISTER_URL+"?t="+Date.now(),{method:"GET"});const j=await res.json();if(!j.ok)throw 0;
-  sharedReports=(j.reports||[]).filter(r=>r&&r.id&&DNAMES.includes(r.district)&&r.sector in S);sharedLoaded=true}
+ if(!SHARED)return;const want=ST;sharedError=false;renderDash();
+ try{const res=await fetch(REGISTER_URL+"?state="+ST+"&t="+Date.now(),{method:"GET"});const j=await res.json();if(!j.ok)throw 0;
+  if(want!==ST)return;sharedReports=(j.reports||[]).filter(r=>r&&r.id&&(r.state||"ap")===ST&&DNAMES.includes(r.district)&&r.sector in S);sharedLoaded=true}
  catch(e){sharedError=true}
  renderDash();
 }
@@ -1035,7 +1075,7 @@ async function save(){
  if(!piiCheckForm()||piiFound(current.desc+" "+current.place).length){toast(t("piiBlocked"));return}
  const btn=$("r-save");btn.disabled=true;
  const r=current;const title=r.desc.split(/[.!?।]/)[0].slice(0,90);
- const rec={id:"r"+Date.now().toString(36),district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:newsLevel(),outlets:newsOutlets()},created:new Date().toISOString()};
+ const rec={id:"r"+Date.now().toString(36),state:ST,district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:newsLevel(),outlets:newsOutlets()},created:new Date().toISOString()};
  reports.unshift(rec);
  if(!persist()){reports.shift();btn.disabled=false;$("r-save-note").textContent=t("saveFail");return}
  if(!SHARED){btn.textContent=t("saved");$("r-save-note").textContent=t("savedNote");toast(t("saved"));renderDash();return}
@@ -1055,10 +1095,10 @@ function renderRefine(j){
 async function refine(){
  if(!sampleFn||!current)return;const out=$("r-ai"),btn=$("r-refine");btn.disabled=true;out.innerHTML=`<p class='note'>${esc(t("thinking"))}</p>`;
  const r=current,s=sec(r.sector),key=refineKey();
- const prompt=`You are a public policy adviser for Andhra Pradesh, India. Adapt an action plan to the specific situation below. Stay within the Constitution of India, central and AP laws, and basic human rights. Be concrete and practical for a citizen or local NGO. Do not invent scheme names, phone numbers or officials' names; name roles (e.g. Mandal Parishad Development Officer). ${langLine()}
+ const prompt=`You are a public policy adviser for ${stateEn()}, India. Adapt an action plan to the specific situation below. Stay within the Constitution of India, central and ${stateEn()} laws, and basic human rights. Be concrete and practical for a citizen or local NGO. Do not invent scheme names, phone numbers or officials' names; name roles (e.g. Mandal Parishad Development Officer). ${langLine()}
 Situation: district ${r.district}; place ${r.place||"not given"}; people affected ${r.affected}; urgency ${r.urgency}.
 Description: """${r.desc}"""
-Mapped sector: ${L(S[r.sector].name)}. State departments: ${S[r.sector].ap.map(x=>x[0]).join("; ")}. Union ministries: ${S[r.sector].un.map(x=>x[0]).join("; ")}. Legal basis: ${s.law.map(x=>x[0]).join(", ")}.
+Mapped sector: ${L(S[r.sector].name)}. State departments: ${stDept(r.sector).map(x=>x[0]).join("; ")}. Union ministries: ${S[r.sector].un.map(x=>x[0]).join("; ")}. Legal basis: ${s.law.map(x=>x[0]).join(", ")}.
 Reply with only JSON: {"summary":"one sentence","root_causes":["..."],"actions":[{"step":"...","owner":"role","by":"timeframe","basis":"law or article"}],"evidence_to_collect":["..."],"caution":"one sentence or empty"}. At most 6 actions.`;
  try{const j=await sampleFn.json(prompt);lastRefine={key,lang:LANG,j};if(refineKey()===key)renderRefine(j)}
  catch(e){out.innerHTML=`<p class="note">${esc(t(e&&e.code==="not_granted"?"aiDenied":e&&e.code==="rate_limited"?"aiBusy":"aiFail"))}</p>`;if(e&&(e.code==="not_granted"||e.code==="sampling_disabled"))$("r-ai-box").hidden=true}
@@ -1105,7 +1145,7 @@ const verLabel=l=>l>=2?["ok","corroborated"]:l===1?["warn","single"]:["","unveri
 let dashSpeech="";let dashState={list:[],demo:false,fd:"",fs:"",ft:""};
 function renderDash(){
  const demo=$("d-demo").checked;
- const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):(SHARED?sharedReports:reports);
+ const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):(SHARED?sharedReports:reports.filter(r=>(r.state||"ap")===ST));
  $("d-src").textContent=demo?t("demoNote"):SHARED?(sharedError?t("sharedFail"):!sharedLoaded?t("loadingShared"):t("countShared").replace("{n}",sharedReports.length)):t("countLocal").replace("{n}",reports.length);
  if(!data.length){$("d-summary").innerHTML=`<div class="empty"><b>${esc(t("emptyB"))}</b><span>${esc(t("emptyS"))}</span></div>`;$("d-list").innerHTML="";dashSpeech=t("emptyB")+" "+t("emptyS");dashState={list:[],demo,fd:"",fs:"",ft:""};return}
  const by={};data.forEach(r=>{const k=r.sector in S?r.sector:"livelihood";by[k]=by[k]||{n:0,p:0};by[k].n++;by[k].p+=UW[r.urgency]||1});
@@ -1158,12 +1198,12 @@ function renderNewsAI(j){
 $("n-assess").onclick=async()=>{
  if(!sampleFn)return;const text=$("n-text").value.trim();if(!text){toast(t("pasteFirst"));return}
  const box=$("n-ai"),btn=$("n-assess");box.hidden=false;btn.disabled=true;box.innerHTML=`<p class='note'>${esc(t("thinking"))}</p>`;
- const prompt=`You help citizens in Andhra Pradesh, India check news about incidents before acting on them. You cannot browse; judge only the text. The text may be in Telugu or English. ${langLine()} Text: """${text.slice(0,2500)}"""
+ const prompt=`You help citizens in ${stateEn()}, India check news about incidents before acting on them. You cannot browse; judge only the text. The text may be in Telugu or English. ${langLine()} Text: """${text.slice(0,2500)}"""
 District selected by user: ${$("n-district").value||"unknown"}.
-Reply with only JSON: {"claim":"the core factual claim in one sentence","sector":"one of ${SKEYS.join("|")}","district":"exact English name of one of these AP districts or empty: ${DNAMES.join(", ")}","red_flags":["signs it may be misleading, sensational or unverifiable"],"verify":["specific facts to confirm in other reports"],"search_query":"4-8 English words for news search","view":"one or two sentences on how much the text alone supports the claim"}`;
+Reply with only JSON: {"claim":"the core factual claim in one sentence","sector":"one of ${SKEYS.join("|")}","district":"exact English name of one of these ${stateEn()} districts or empty: ${DNAMES.join(", ")}","red_flags":["signs it may be misleading, sensational or unverifiable"],"verify":["specific facts to confirm in other reports"],"search_query":"4-8 English words for news search","view":"one or two sentences on how much the text alone supports the claim"}`;
  try{const j=await sampleFn.json(prompt,{modelTier:"quick"});lastNewsAI=j;renderNewsAI(j);
   if(j.district&&DNAMES.includes(j.district)&&!$("n-district").value)$("n-district").value=j.district;
-  if(j.search_query&&!queryTouched){$("n-query").value=String(j.search_query)+(String(j.search_query).toLowerCase().includes("andhra")?"":" Andhra Pradesh");renderSources()}
+  if(j.search_query&&!queryTouched){$("n-query").value=String(j.search_query)+(String(j.search_query).toLowerCase().includes(stateEn().toLowerCase().split(" ")[0])?"":" "+stateEn());renderSources()}
  }catch(e){box.innerHTML=`<p class="note">${esc(t(e&&e.code==="not_granted"?"aiDenied":e&&e.code==="rate_limited"?"aiBusy":"aiFail"))}</p>`}
  btn.disabled=false;
 };
@@ -1221,7 +1261,7 @@ h1{font-size:20pt;margin:0;color:#26337F}h2{font-size:13pt;margin:18px 0 6px;col
 .meta{color:#596173;font-size:9.5pt;margin:4px 0 12px}.kpis{display:flex;gap:10px;margin:8px 0}.kpi{border:1px solid #D6D9D2;border-radius:6px;padding:6px 12px}.kpi b{display:block;font-size:15pt;color:#26337F}
 table{border-collapse:collapse;width:100%;font-size:9.5pt}th,td{border:1px solid #D6D9D2;padding:5px 6px;text-align:left;vertical-align:top}th{background:#E4E7F6}td.n{text-align:right;white-space:nowrap}tr{page-break-inside:avoid}small{color:#596173}
 .foot{margin-top:16px;font-size:8.5pt;color:#596173}</style></head><body>
-<h1>మన హక్కు · Mana Hakku</h1><div><b>${e(t("reportTitle"))}</b> · Andhra Pradesh</div>
+<h1>మన హక్కు · Mana Hakku</h1><div><b>${e(t("reportTitle"))}</b> · ${e(t(ST+"Name"))}</div>
 <div class="meta">${e(t("generated"))}: ${new Date().toLocaleString(LANG==="te"?"te-IN":"en-IN")} · ${e(t("filtersL"))}: ${e(filterText())}${dashState.demo?" · "+e(t("exampleNote")):""}</div>
 <div class="kpis"><div class="kpi"><b>${total}</b>${e(t("needsN"))}</div><div class="kpi"><b>${urgent}</b>${e(t("urgentN"))}</div><div class="kpi"><b>${num(people)}</b>${e(t("thPeople"))}</div></div>
 <h2>${e(t("indicEb"))}</h2><table><thead><tr><th></th><th class="n">${e(t("apL"))}</th><th class="n">${e(t("indiaL"))}</th><th>${e(t("srcL"))}</th></tr></thead><tbody>${ind}</tbody></table>
@@ -1245,6 +1285,148 @@ $("x-pdf").onclick=exportPDF;$("x-csv").onclick=exportCSV;
 
 // ---------- Right knowledge data ----------
 // Each right: [article, [title en, title te], [plain meaning en, te], UDHR article(s) or ""]
+// ---------- Telangana data ----------
+const TS_DISTRICTS=[["Adilabad","ఆదిలాబాద్"],["Bhadradri Kothagudem","భద్రాద్రి కొత్తగూడెం"],["Hanumakonda","హనుమకొండ"],["Hyderabad","హైదరాబాద్"],["Jagtial","జగిత్యాల"],["Jangaon","జనగామ"],["Jayashankar Bhupalpally","జయశంకర్ భూపాలపల్లి"],["Jogulamba Gadwal","జోగులాంబ గద్వాల"],["Kamareddy","కామారెడ్డి"],["Karimnagar","కరీంనగర్"],["Khammam","ఖమ్మం"],["Kumuram Bheem Asifabad","కుమురం భీం ఆసిఫాబాద్"],["Mahabubabad","మహబూబాబాద్"],["Mahabubnagar","మహబూబ్‌నగర్"],["Mancherial","మంచిర్యాల"],["Medak","మెదక్"],["Medchal–Malkajgiri","మేడ్చల్–మల్కాజ్‌గిరి"],["Mulugu","ములుగు"],["Nagarkurnool","నాగర్‌కర్నూల్"],["Nalgonda","నల్గొండ"],["Narayanpet","నారాయణపేట"],["Nirmal","నిర్మల్"],["Nizamabad","నిజామాబాద్"],["Peddapalli","పెద్దపల్లి"],["Rajanna Sircilla","రాజన్న సిరిసిల్ల"],["Ranga Reddy","రంగారెడ్డి"],["Sangareddy","సంగారెడ్డి"],["Siddipet","సిద్దిపేట"],["Suryapet","సూర్యాపేట"],["Vikarabad","వికారాబాద్"],["Wanaparthy","వనపర్తి"],["Warangal","వరంగల్"],["Yadadri Bhuvanagiri","యాదాద్రి భువనగిరి"]];
+
+// State departments by sector (the Union ministries, laws and schemes are the same for every state)
+const TS_DEPT={
+ water:[["Panchayat Raj & Rural Development (Mission Bhagiratha, rural water supply)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (మిషన్ భగీరథ, గ్రామీణ నీటి సరఫరా)"],["Municipal Administration & Urban Development (towns and cities)","పురపాలక పరిపాలన & పట్టణాభివృద్ధి (పట్టణాలు, నగరాలు)"]],
+ health:[["Health, Medical & Family Welfare","ఆరోగ్య, వైద్య & కుటుంబ సంక్షేమం"]],
+ nutrition:[["Women Development & Child Welfare (anganwadi)","మహిళాభివృద్ధి & శిశు సంక్షేమం (అంగన్‌వాడీ)"],["Consumer Affairs, Food & Civil Supplies (ration)","వినియోగదారుల వ్యవహారాలు, ఆహార & పౌర సరఫరాలు (రేషన్)"]],
+ education:[["School Education","పాఠశాల విద్య"],["Higher Education","ఉన్నత విద్య"]],
+ child:[["Women Development & Child Welfare","మహిళాభివృద్ధి & శిశు సంక్షేమం"],["Home (police)","హోం (పోలీసు)"]],
+ women:[["Women Development & Child Welfare","మహిళాభివృద్ధి & శిశు సంక్షేమం"],["Home (police)","హోం (పోలీసు)"]],
+ elderly:[["Welfare of Disabled & Senior Citizens","దివ్యాంగులు & వయోవృద్ధుల సంక్షేమం"],["Panchayat Raj & Rural Development (SERP, social security pensions)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (సెర్ప్, సామాజిక భద్రతా పెన్షన్లు)"]],
+ livelihood:[["Panchayat Raj & Rural Development (MGNREGS)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (ఉపాధి హామీ)"],["Labour, Employment, Training & Factories","కార్మిక, ఉపాధి, శిక్షణ & కర్మాగారాలు"]],
+ housing:[["Housing","గృహ నిర్మాణం"],["Revenue (house sites and land records)","రెవెన్యూ (ఇంటి స్థలాలు, భూ రికార్డులు)"],["Municipal Administration & Urban Development","పురపాలక పరిపాలన & పట్టణాభివృద్ధి"]],
+ roads:[["Roads & Buildings","రోడ్లు & భవనాలు"],["Transport (TGSRTC buses)","రవాణా (టీజీఎస్ఆర్టీసీ బస్సులు)"],["Panchayat Raj & Rural Development (rural roads)","పంచాయతీ రాజ్ & గ్రామీణాభివృద్ధి (గ్రామీణ రోడ్లు)"]],
+ power:[["Energy","ఇంధన శాఖ"]],
+ social:[["Scheduled Castes Development","షెడ్యూల్డ్ కులాల అభివృద్ధి"],["Tribal Welfare","గిరిజన సంక్షేమం"],["Backward Classes Welfare","బీసీ సంక్షేమం"],["Minorities Welfare","మైనారిటీల సంక్షేమం"]],
+ agri:[["Agriculture & Co-operation","వ్యవసాయం & సహకారం"],["Irrigation & Command Area Development","నీటిపారుదల & ఆయకట్టు అభివృద్ధి"]]
+};
+// First step of the 0–7 day plan where Andhra Pradesh names the Sachivalayam
+const TS_PLAN_NOW={
+ water:["Request tanker supply and chlorination through the Gram Panchayat Secretary or municipal ward office","గ్రామ పంచాయతీ కార్యదర్శి లేదా మున్సిపల్ వార్డు కార్యాలయం ద్వారా ట్యాంకర్ సరఫరా, క్లోరినేషన్ కోరండి"],
+ elderly:["Check pension status at the MPDO office or a Mee Seva centre and get pending amounts released","ఎంపీడీఓ కార్యాలయం లేదా మీ సేవ కేంద్రంలో పెన్షన్ స్థితి తనిఖీ చేసి, పెండింగ్ మొత్తాలు విడుదల చేయించండి"]
+};
+const TS_LADDER=[
+ [["Gram Panchayat / Ward office","గ్రామ పంచాయతీ / వార్డు కార్యాలయం"],["Give the need in writing to the Panchayat Secretary or ward officer and keep the acknowledgement","అవసరాన్ని పంచాయతీ కార్యదర్శి లేదా వార్డు అధికారికి రాతపూర్వకంగా ఇచ్చి, రసీదు ఉంచుకోండి"],""],
+ [["Mandal office · MPDO / Tahsildar","మండల కార్యాలయం · ఎంపీడీఓ / తహసీల్దార్"],["Escalate in writing with your acknowledgement if nothing moves","పని జరగకపోతే రసీదుతో రాతపూర్వకంగా పై స్థాయికి తెలపండి"],""],
+ [["District Collector · Prajavani Monday","జిల్లా కలెక్టర్ · సోమవారం ప్రజావాణి"],["Go to the Collectorate's Prajavani with your earlier acknowledgements","మునుపటి రసీదులతో కలెక్టరేట్‌లో జరిగే ప్రజావాణికి వెళ్లండి"],""],
+ [["Department head · CM Prajavani","శాఖాధిపతి · ముఖ్యమంత్రి ప్రజావాణి"],["Write to the state department named above, or submit at the CM's Prajavani, Praja Bhavan, Hyderabad","పైన పేర్కొన్న రాష్ట్ర శాఖకు రాతపూర్వకంగా తెలపండి, లేదా హైదరాబాద్ ప్రజాభవన్‌లో ముఖ్యమంత్రి ప్రజావాణిలో ఇవ్వండి"],""],
+ [["Legal aid / Human rights body","న్యాయ సహాయం / మానవ హక్కుల సంస్థ"],["Free legal aid (NALSA) or the Telangana State Human Rights Commission","ఉచిత న్యాయ సహాయం (NALSA) లేదా తెలంగాణ రాష్ట్ర మానవ హక్కుల కమిషన్"],"15100"],
+ [["High Court · Art 226","హైకోర్టు · ఆర్టికల్ 226"],["Writ petition or PIL when rights remain denied","హక్కులు నిరాకరిస్తూనే ఉంటే రిట్ పిటిషన్ లేదా ప్రజాహిత వ్యాజ్యం"],""]
+];
+// NFHS-5 (2019–21) fact sheet for Telangana; NITI Aayog MPI 2023; SDG India Index 2023–24
+const TS_INDIC_VALUES=[33.1,21.7,70.0,31.8,5.88,74];
+const TS_EXAMPLE={en:{place:"Tiryani mandal, tribal habitation",desc:"Our habitation of about 60 families has no working handpump since July. Women walk 3 km to a stream and the water is muddy. Children have had diarrhoea twice this month and the PHC is 18 km away."},
+ te:{place:"తిర్యాణి మండలం, గిరిజన ఆవాసం",desc:"సుమారు 60 కుటుంబాలున్న మా ఆవాసంలో జూలై నుండి ఒక్క చేతి పంపు కూడా పనిచేయడం లేదు. మహిళలు 3 కి.మీ. నడిచి వాగు నుండి నీళ్లు తెస్తున్నారు, ఆ నీరు బురదగా ఉంటుంది. ఈ నెలలో పిల్లలకు రెండుసార్లు విరేచనాలు అయ్యాయి, PHC 18 కి.మీ. దూరంలో ఉంది."},
+ district:"Kumuram Bheem Asifabad",affected:280,urg:"high"};
+const TS_NEWS_EX={en:"Villagers in a tribal hamlet of Kumuram Bheem Asifabad district fall ill after drinking contaminated stream water; health camp set up",te:"కుమురం భీం ఆసిఫాబాద్ జిల్లాలోని గిరిజన గ్రామంలో కలుషిత వాగు నీరు తాగి గ్రామస్తులు అస్వస్థత; వైద్య శిబిరం ఏర్పాటు"};
+const TS_DEMO=[
+ {district:"Kumuram Bheem Asifabad",place:["Tiryani mandal","తిర్యాణి మండలం"],sector:"water",title:["No working handpump; children ill","పనిచేసే చేతి పంపు లేదు; పిల్లలకు అనారోగ్యం"],desc:["60 families walk 3 km to a stream; diarrhoea cases this month.","60 కుటుంబాలు 3 కి.మీ. నడిచి వాగు నీళ్లు తెస్తున్నాయి; ఈ నెల విరేచనాల కేసులు."],affected:280,urgency:"high",status:"acknowledged",verify:{level:2}},
+ {district:"Jogulamba Gadwal",place:["Aiza rural","అయిజ గ్రామీణం"],sector:"nutrition",title:["Anganwadi closed for two months","రెండు నెలలుగా అంగన్‌వాడీ మూతపడింది"],desc:["No take-home ration for pregnant women and young children.","గర్భిణులు, చిన్న పిల్లలకు ఇంటికి రేషన్ అందడం లేదు."],affected:120,urgency:"high",status:"reported",verify:{level:0}},
+ {district:"Mulugu",place:["Eturnagaram","ఏటూరునాగారం"],sector:"health",title:["PHC without doctor at night","రాత్రి వేళ PHCలో డాక్టర్ లేరు"],desc:["Snakebite victims referred 40 km away after dark.","చీకటి పడ్డాక పాము కాటు బాధితులను 40 కి.మీ. దూరం పంపుతున్నారు."],affected:5000,urgency:"high",status:"progress",verify:{level:1}},
+ {district:"Nalgonda",place:["Marriguda","మర్రిగూడ"],sector:"water",title:["High fluoride in borewell water","బోరు నీటిలో ఫ్లోరైడ్ ఎక్కువ"],desc:["Dental mottling seen in school children.","బడి పిల్లల పళ్లపై మచ్చలు కనిపిస్తున్నాయి."],affected:1500,urgency:"medium",status:"reported",verify:{level:2}},
+ {district:"Narayanpet",place:["Kosgi","కోస్గి"],sector:"livelihood",title:["MGNREGS wages pending 7 weeks","7 వారాలుగా ఉపాధి హామీ వేతనాలు పెండింగ్"],desc:["Workers have job cards; demand submitted in August.","కార్మికులకు జాబ్ కార్డులు ఉన్నాయి; ఆగస్టులో పని కోరారు."],affected:340,urgency:"medium",status:"reported",verify:{level:0}},
+ {district:"Hyderabad",place:["Ward 41","వార్డు 41"],sector:"housing",title:["Families without house sites","ఇంటి స్థలాలు లేని కుటుంబాలు"],desc:["Living in rented rooms; applications pending.","అద్దె గదుల్లో ఉంటున్నారు; దరఖాస్తులు పెండింగ్‌లో ఉన్నాయి."],affected:90,urgency:"low",status:"reported",verify:{level:0}},
+ {district:"Bhadradri Kothagudem",place:["Charla mandal","చర్ల మండలం"],sector:"roads",title:["Causeway washed away; village cut off","కాజ్‌వే కొట్టుకుపోయింది; గ్రామానికి దారి లేదు"],desc:["Children cannot reach school and the sick cannot reach the PHC after rain.","వర్షం తర్వాత పిల్లలు బడికి, రోగులు PHCకి వెళ్లలేకపోతున్నారు."],affected:900,urgency:"medium",status:"acknowledged",verify:{level:2}},
+ {district:"Vikarabad",place:["Tandur rural","తాండూరు గ్రామీణం"],sector:"education",title:["Single-teacher primary school","ఒకే ఉపాధ్యాయుడున్న ప్రాథమిక పాఠశాల"],desc:["84 children across five classes with one teacher.","ఐదు తరగతుల్లో 84 మంది పిల్లలకు ఒక్కరే ఉపాధ్యాయుడు."],affected:84,urgency:"medium",status:"reported",verify:{level:0}}
+];
+
+const TS_TIMELINE=[
+ [["6th – 4th century BCE","క్రీ.పూ. 6వ – 4వ శతాబ్దం"],["Assaka kingdom","అస్సక (అశ్మక) రాజ్యం"],["Assaka, one of the sixteen great kingdoms (mahajanapadas) named in Buddhist texts, lay on the Godavari around Bodhan (Podana) in today's Nizamabad.","బౌద్ధ గ్రంథాల్లో పేర్కొన్న పదహారు మహాజనపదాల్లో ఒకటైన అస్సక, నేటి నిజామాబాద్‌లోని బోధన్ (పోదన) చుట్టూ గోదావరి తీరంలో ఉండేది."]],
+ [["2nd century BCE – 3rd century CE","క్రీ.పూ. 2వ శతాబ్దం – క్రీ.శ. 3వ శతాబ్దం"],["Satavahanas","శాతవాహనులు"],["One of their earliest centres was Kotilingala in Karimnagar, where early Satavahana coins were found. Buddhist stupas rose at Dhulikatta and Phanigiri.","వారి తొలి కేంద్రాల్లో ఒకటి కరీంనగర్‌లోని కోటిలింగాల; అక్కడ తొలి శాతవాహన నాణేలు దొరికాయి. ధూళికట్ట, ఫణిగిరిలో బౌద్ధ స్తూపాలు వెలిశాయి."]],
+ [["5th – 6th century","5వ – 6వ శతాబ్దం"],["Vishnukundins","విష్ణుకుండినులు"],["A dynasty that rose in Telangana, with Indrapalanagara (in today's Yadadri Bhuvanagiri) among its early seats; Keesaragutta is linked to them.","తెలంగాణలో పుట్టిన రాజవంశం; నేటి యాదాద్రి భువనగిరిలోని ఇంద్రపాలనగరం వారి తొలి కేంద్రాల్లో ఒకటి; కీసరగుట్ట వారితో ముడిపడి ఉంది."]],
+ [["7th – 10th century","7వ – 10వ శతాబ్దం"],["Chalukyas, Rashtrakutas and the Vemulawada Chalukyas","చాళుక్యులు, రాష్ట్రకూటులు, వేములవాడ చాళుక్యులు"],["The Deccan passed between the Badami Chalukyas and the Rashtrakutas. Their feudatories, the Vemulawada Chalukyas, patronised poets; the Kurkyala inscription carries some of the earliest Telugu verse.","దక్కన్ బాదామి చాళుక్యులు, రాష్ట్రకూటుల మధ్య చేతులు మారింది. వారి సామంతులైన వేములవాడ చాళుక్యులు కవులను ఆదరించారు; కుర్క్యాల శాసనంలో తొలి తెలుగు పద్యాలు ఉన్నాయి."]],
+ [["10th – 12th century","10వ – 12వ శతాబ్దం"],["Kalyani Chalukyas","కళ్యాణి చాళుక్యులు"],["The Western Chalukyas of Kalyani ruled the region; the Kakatiyas began as their governors around Hanumakonda.","కళ్యాణి పశ్చిమ చాళుక్యులు ఈ ప్రాంతాన్ని పాలించారు; కాకతీయులు హనుమకొండ చుట్టూ వారి సామంతులుగా ఎదిగారు."]],
+ [["12th – 14th century","12వ – 14వ శతాబ్దం"],["Kakatiyas","కాకతీయులు"],["From Orugallu (Warangal) they united the Telugu lands. They built the Thousand Pillar Temple and the Ramappa Temple, now a UNESCO World Heritage Site, and great irrigation tanks like Pakhal, Ramappa and Laknavaram. Rudrama Devi ruled in her own right.","ఓరుగల్లు (వరంగల్) నుండి తెలుగు నేలను ఏకం చేశారు. వేయి స్తంభాల గుడి, నేడు యునెస్కో ప్రపంచ వారసత్వ ప్రదేశమైన రామప్ప దేవాలయం, పాకాల, రామప్ప, లక్నవరం వంటి గొప్ప చెరువులు నిర్మించారు. రుద్రమదేవి స్వయంగా పాలించారు."]],
+ [["14th – 15th century","14వ – 15వ శతాబ్దం"],["Musunuri and Recherla Nayakas","ముసునూరి, రేచర్ల నాయకులు"],["After the fall of Warangal to the Delhi Sultanate, the Musunuri Nayaks freed the region. The Recherla Padma Nayakas then ruled from the hill forts of Rachakonda and Devarakonda.","వరంగల్ ఢిల్లీ సుల్తానుల వశమైన తర్వాత ముసునూరి నాయకులు ఈ ప్రాంతాన్ని విముక్తి చేశారు. తర్వాత రేచర్ల పద్మనాయకులు రాచకొండ, దేవరకొండ కొండకోటల నుండి పాలించారు."]],
+ [["14th – 16th century","14వ – 16వ శతాబ్దం"],["Bahmani Sultanate","బహమనీ సుల్తానులు"],["The Bahmani Sultans of the Deccan took over Telangana; when their kingdom broke up, Golconda became the seat of a new dynasty.","దక్కన్ బహమనీ సుల్తానులు తెలంగాణను ఆక్రమించారు; వారి రాజ్యం చీలిపోయాక గోల్కొండ కొత్త రాజవంశానికి కేంద్రమైంది."]],
+ [["16th – 17th century","16వ – 17వ శతాబ్దం"],["Qutb Shahis of Golconda","గోల్కొండ కుతుబ్‌షాహీలు"],["They founded the city of Hyderabad and built the Charminar. Golconda was famous for its diamonds. Ibrahim Qutb Shah patronised Telugu poets, and Bhakta Ramadasu built the Bhadrachalam temple in this period.","హైదరాబాద్ నగరాన్ని స్థాపించి చార్మినార్ నిర్మించారు. గోల్కొండ వజ్రాలకు ప్రసిద్ధి. ఇబ్రహీం కుతుబ్‌షా తెలుగు కవులను ఆదరించారు; ఈ కాలంలోనే భక్త రామదాసు భద్రాచలం ఆలయాన్ని నిర్మించారు."]],
+ [["17th – 18th century","17వ – 18వ శతాబ్దం"],["Mughal rule","మొఘల్ పాలన"],["Aurangzeb conquered Golconda and the Deccan was governed by Mughal subahdars.","ఔరంగజేబు గోల్కొండను జయించాడు; దక్కన్‌ను మొఘల్ సుబేదార్లు పాలించారు."]],
+ [["18th – 20th century","18వ – 20వ శతాబ్దం"],["Asaf Jahi Nizams","అసఫ్ జాహీ నిజాములు"],["The Nizams ruled Hyderabad State, the largest princely state in India, which was not part of British India. Salar Jung I modernised the administration, railways came, and Osmania University (1918) began teaching in Urdu.","భారతదేశంలో అతిపెద్ద సంస్థానమైన హైదరాబాద్ రాజ్యాన్ని నిజాములు పాలించారు; ఇది బ్రిటిష్ ఇండియాలో భాగం కాదు. సాలార్‌జంగ్ I పరిపాలనను ఆధునికీకరించారు, రైల్వేలు వచ్చాయి, ఉస్మానియా విశ్వవిద్యాలయం (1918) ఉర్దూలో బోధన మొదలుపెట్టింది."]],
+ [["1920s – 1940s","1920లు – 1940లు"],["Andhra Mahasabha and the awakening","ఆంధ్ర మహాసభ, ప్రజా చైతన్యం"],["Library and Telugu-language movements grew into the Andhra Mahasabha, which demanded rights for people under feudal landlords. The Arya Samaj and the State Congress also campaigned for responsible government.","గ్రంథాలయ, తెలుగు భాషా ఉద్యమాలు ఆంధ్ర మహాసభగా ఎదిగి, భూస్వాముల కింద నలిగిన ప్రజల హక్కుల కోసం పోరాడాయి. ఆర్య సమాజం, స్టేట్ కాంగ్రెస్ కూడా బాధ్యతాయుత ప్రభుత్వం కోసం ఉద్యమించాయి."]],
+ [["1946 – 1951","1946 – 1951"],["Telangana armed struggle","తెలంగాణ సాయుధ పోరాటం"],["Peasants rose against forced labour (vetti), feudal landlords and the Razakars. Chakali Ilamma's stand for her land and the death of Doddi Komaraiah became its symbols.","వెట్టిచాకిరీ, భూస్వాములు, రజాకార్లకు వ్యతిరేకంగా రైతులు తిరగబడ్డారు. తన భూమి కోసం చాకలి ఐలమ్మ చేసిన పోరాటం, దొడ్డి కొమరయ్య బలిదానం దీనికి ప్రతీకలయ్యాయి."]],
+ [["17 September 1948","17 సెప్టెంబర్ 1948"],["Hyderabad joins India","హైదరాబాద్ భారత్‌లో విలీనం"],["After the police action (Operation Polo), the Nizam surrendered and Hyderabad State became part of India.","పోలీసు చర్య (ఆపరేషన్ పోలో) తర్వాత నిజాం లొంగిపోయాడు; హైదరాబాద్ రాజ్యం భారతదేశంలో భాగమైంది."]],
+ [["1952","1952"],["First elected government and the Mulki agitation","తొలి ఎన్నికైన ప్రభుత్వం, ముల్కీ ఉద్యమం"],["Burgula Ramakrishna Rao became the first elected Chief Minister of Hyderabad State. Students protested for jobs to be kept for locals (Mulkis).","బూర్గుల రామకృష్ణారావు హైదరాబాద్ రాష్ట్ర తొలి ఎన్నికైన ముఖ్యమంత్రి అయ్యారు. ఉద్యోగాలు స్థానికులకే (ముల్కీలు) ఇవ్వాలని విద్యార్థులు ఉద్యమించారు."]],
+ [["1 November 1956","1 నవంబర్ 1956"],["Andhra Pradesh formed","ఆంధ్రప్రదేశ్ ఏర్పాటు"],["The Telugu-speaking Telangana region merged with Andhra State to form Andhra Pradesh, with Hyderabad as capital. The Gentlemen's Agreement promised safeguards for Telangana.","తెలుగు మాట్లాడే తెలంగాణ ప్రాంతం ఆంధ్ర రాష్ట్రంతో కలిసి హైదరాబాద్ రాజధానిగా ఆంధ్రప్రదేశ్ ఏర్పడింది. పెద్దమనుషుల ఒప్పందం తెలంగాణకు రక్షణలు హామీ ఇచ్చింది."]],
+ [["1969","1969"],["Jai Telangana movement","జై తెలంగాణ ఉద్యమం"],["Students and employees agitated over unfulfilled safeguards and demanded a separate state; many young lives were lost.","హామీలు అమలు కాకపోవడంపై విద్యార్థులు, ఉద్యోగులు ఉద్యమించి ప్రత్యేక రాష్ట్రం కోరారు; ఎంతో మంది యువకులు ప్రాణాలు కోల్పోయారు."]],
+ [["2001 – 2014","2001 – 2014"],["Statehood movement","ప్రత్యేక రాష్ట్ర ఉద్యమం"],["A renewed movement of students, employees, writers, artists and political parties, with mass protests like the Sakala Janula Samme (general strike), pressed for statehood.","విద్యార్థులు, ఉద్యోగులు, రచయితలు, కళాకారులు, రాజకీయ పార్టీలు కలిసి సకల జనుల సమ్మె వంటి భారీ నిరసనలతో ప్రత్యేక రాష్ట్రం కోసం ఉద్యమించారు."]],
+ [["2 June 2014","2 జూన్ 2014"],["Telangana State","తెలంగాణ రాష్ట్రం"],["Telangana became India's 29th state with 10 districts. Hyderabad served as the shared capital with Andhra Pradesh until 2 June 2024.","తెలంగాణ 10 జిల్లాలతో భారతదేశంలో 29వ రాష్ట్రంగా ఏర్పడింది. 2 జూన్ 2024 వరకు హైదరాబాద్ ఆంధ్రప్రదేశ్‌తో ఉమ్మడి రాజధానిగా ఉంది."]],
+ [["2016 – 2019","2016 – 2019"],["New districts","కొత్త జిల్లాలు"],["Districts were reorganised from 10 to 31 in October 2016 and to 33 in February 2019 with Mulugu and Narayanpet.","అక్టోబర్ 2016లో జిల్లాలను 10 నుండి 31కి, ఫిబ్రవరి 2019లో ములుగు, నారాయణపేటతో 33కి పునర్వ్యవస్థీకరించారు."]]
+];
+
+const TS_PEOPLE=[
+ ["Rudrama Devi","రుద్రమదేవి",["13th century","13వ శతాబ్దం"],"Kakatiya queen who ruled from Warangal in her own right and defended the kingdom in battle.","వరంగల్ నుండి స్వయంగా పాలించి యుద్ధాల్లో రాజ్యాన్ని రక్షించిన కాకతీయ రాణి."],
+ ["Palkuriki Somanatha","పాల్కురికి సోమనాథుడు",["13th century","13వ శతాబ్దం"],"Poet from today's Jangaon who wrote the Basava Puranam in the native dwipada metre.","నేటి జనగామకు చెందిన కవి; దేశీ ద్విపద ఛందస్సులో బసవపురాణం రాశారు."],
+ ["Bammera Pothana","బమ్మెర పోతన",["15th century","15వ శతాబ్దం"],"Poet of Bammera village who rendered the Bhagavatam into Telugu verse, loved for its devotion.","బమ్మెర గ్రామానికి చెందిన కవి; భక్తిరసంతో నిండిన తెలుగు భాగవతం రచించారు."],
+ ["Muhammad Quli Qutb Shah","మహమ్మద్ కులీ కుతుబ్‌షా",["16th century","16వ శతాబ్దం"],"Golconda king who founded Hyderabad and built the Charminar; a poet in Dakhni and Persian.","హైదరాబాద్‌ను స్థాపించి చార్మినార్ నిర్మించిన గోల్కొండ రాజు; దక్కనీ, పారసీ కవి."],
+ ["Bhakta Ramadasu","భక్త రామదాసు",["17th century","17వ శతాబ్దం"],"Kancherla Gopanna, who built the Bhadrachalam temple and composed Rama kirtanas.","భద్రాచలం ఆలయాన్ని నిర్మించి, రామ కీర్తనలు రచించిన కంచర్ల గోపన్న."],
+ ["Salar Jung I","సాలార్‌జంగ్ I",["19th century","19వ శతాబ్దం"],"Prime Minister of Hyderabad State who reformed revenue, courts and administration.","రెవెన్యూ, న్యాయస్థానాలు, పరిపాలనను సంస్కరించిన హైదరాబాద్ రాజ్య ప్రధాని."],
+ ["Sarojini Naidu","సరోజినీ నాయుడు","1879–1949","Poet and freedom fighter from Hyderabad, the Nightingale of India and the first woman Governor of an Indian state.","హైదరాబాద్‌కు చెందిన కవయిత్రి, స్వాతంత్ర్య సమరయోధురాలు; భారత కోకిల, దేశంలో తొలి మహిళా గవర్నర్."],
+ ["Chakali Ilamma","చాకలి ఐలమ్మ","1895–1985","Washerwoman of Palakurthi whose defiance of a landlord to keep her land inspired the armed struggle.","తన భూమి కోసం భూస్వామిని ఎదిరించి సాయుధ పోరాటానికి స్ఫూర్తినిచ్చిన పాలకుర్తి వీరనారి."],
+ ["Suravaram Pratapa Reddy","సురవరం ప్రతాపరెడ్డి","1896–1953","Editor of Golconda Patrika and author of the social history of the Andhras; voice of Telugu awakening under the Nizam.","గోల్కొండ పత్రిక సంపాదకుడు, ఆంధ్రుల సాంఘిక చరిత్ర రచయిత; నిజాం పాలనలో తెలుగు చైతన్యానికి గొంతుక."],
+ ["Burgula Ramakrishna Rao","బూర్గుల రామకృష్ణారావు","1899–1967","First elected Chief Minister of Hyderabad State (1952).","హైదరాబాద్ రాష్ట్ర తొలి ఎన్నికైన ముఖ్యమంత్రి (1952)."],
+ ["Komaram Bheem","కొమురం భీం","1901–1940","Gond leader who fought the Nizam's rule for tribal land and forest rights with the call Jal, Jangal, Zameen.","జల్, జంగల్, జమీన్ నినాదంతో గిరిజనుల భూమి, అడవి హక్కుల కోసం నిజాం పాలనను ఎదిరించిన గోండు నాయకుడు."],
+ ["Ravi Narayana Reddy","రావి నారాయణరెడ్డి","1908–1991","Leader of the Andhra Mahasabha and the armed struggle; later topped the 1952 Lok Sabha poll by votes.","ఆంధ్ర మహాసభ, సాయుధ పోరాట నాయకుడు; 1952 లోక్‌సభ ఎన్నికల్లో అత్యధిక ఓట్లతో గెలిచారు."],
+ ["Kaloji Narayana Rao","కాళోజీ నారాయణరావు","1914–2002","People's poet (Praja Kavi) who wrote in the spoken Telangana Telugu; his birthday is Telangana Language Day.","తెలంగాణ వ్యవహారిక భాషలో రాసిన ప్రజాకవి; ఆయన జన్మదినం తెలంగాణ భాషా దినోత్సవం."],
+ ["P. V. Narasimha Rao","పి.వి. నరసింహారావు","1921–2004","Born in Warangal district; Prime Minister of India (1991–96) who opened up the economy; Bharat Ratna.","వరంగల్ జిల్లాలో జన్మించారు; ఆర్థిక సంస్కరణలు తెచ్చిన భారత ప్రధాని (1991–96); భారతరత్న."],
+ ["Dasarathi Krishnamacharyulu","దాశరథి కృష్ణమాచార్యులు","1925–1987","Poet jailed under the Nizam who wrote “Naa Telangana koti ratnala veena”.","నిజాం జైలులో ఉంటూ “నా తెలంగాణ కోటి రతనాల వీణ” అని రాసిన కవి."],
+ ["Prof. K. Jayashankar","ఆచార్య కొత్తపల్లి జయశంకర్","1934–2011","Economist and teacher, the guiding thinker of the Telangana statehood movement.","తెలంగాణ ప్రత్యేక రాష్ట్ర ఉద్యమానికి సిద్ధాంతకర్త అయిన ఆర్థికవేత్త, ఉపాధ్యాయుడు."]
+];
+
+// [headquarters en, headquarters te, [name meaning], [known for], [contribution]]
+const TS_DIST_INFO={
+ "Adilabad":["Adilabad","ఆదిలాబాద్",["Traditionally linked to Ali Adil Shah, the Bijapur Sultan.","బీజాపూర్ సుల్తాన్ అలీ ఆదిల్ షా పేరుతో ముడిపడిందని ప్రతీతి."],["Kuntala and Pochera waterfalls, Gond culture and the Nagoba Jatara at Keslapur.","కుంటాల, పొచ్చెర జలపాతాలు, గోండు సంస్కృతి, కేస్లాపూర్ నాగోబా జాతర."],["Cotton, forests and tribal crafts.","పత్తి, అటవీ సంపద, గిరిజన హస్తకళలు."]],
+ "Bhadradri Kothagudem":["Kothagudem","కొత్తగూడెం",["Bhadradri is the hill of Bhadrachalam, named after the sage Bhadra; Kothagudem is the headquarters town.","భద్రాద్రి అంటే భద్రుడనే మహర్షి పేరుగల భద్రాచలం కొండ; కొత్తగూడెం జిల్లా కేంద్రం."],["Sita Ramachandra Swamy temple at Bhadrachalam, the Godavari and Kinnerasani forests.","భద్రాచలం సీతారామచంద్రస్వామి ఆలయం, గోదావరి, కిన్నెరసాని అడవులు."],["Coal from Singareni Collieries (headquartered here), thermal power and paper.","సింగరేణి కాలరీస్ (ఇక్కడే ప్రధాన కార్యాలయం) బొగ్గు, థర్మల్ విద్యుత్, కాగితం."]],
+ "Hanumakonda":["Hanumakonda","హనుమకొండ",["Named after the hill town of Hanumakonda (Anumakonda), the first capital of the Kakatiyas.","కాకతీయుల తొలి రాజధాని హనుమకొండ (అనుమకొండ) పేరు."],["Thousand Pillar Temple, Bhadrakali temple and NIT Warangal.","వేయి స్తంభాల గుడి, భద్రకాళి ఆలయం, ఎన్ఐటీ వరంగల్."],["An education and health hub for northern Telangana.","ఉత్తర తెలంగాణకు విద్య, వైద్య కేంద్రం."]],
+ "Hyderabad":["Hyderabad","హైదరాబాద్",["The city founded by the Qutb Shahis; its name is usually linked to Haidar.","కుతుబ్‌షాహీలు స్థాపించిన నగరం; పేరు హైదర్‌తో ముడిపడిందని చెబుతారు."],["Charminar, Golconda Fort, Salar Jung Museum, Hyderabadi biryani and haleem, pearls.","చార్మినార్, గోల్కొండ కోట, సాలార్‌జంగ్ మ్యూజియం, హైదరాబాదీ బిర్యానీ, హలీమ్, ముత్యాలు."],["The state capital and its largest economic centre: IT, pharma, services and trade.","రాష్ట్ర రాజధాని, అతిపెద్ద ఆర్థిక కేంద్రం: ఐటీ, ఫార్మా, సేవలు, వ్యాపారం."]],
+ "Jagtial":["Jagtial","జగిత్యాల",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Jagtial fort, Kondagattu Anjaneya temple and Dharmapuri Narasimha temple on the Godavari.","జగిత్యాల కోట, కొండగట్టు ఆంజనేయ ఆలయం, గోదావరి తీరాన ధర్మపురి నరసింహ ఆలయం."],["Paddy, maize and mangoes; remittances from Gulf migrant workers.","వరి, మొక్కజొన్న, మామిడి; గల్ఫ్ వలస కార్మికుల ఆదాయం."]],
+ "Jangaon":["Jangaon","జనగామ",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Home region of the poets Bammera Pothana and Palkuriki Somanatha; Pembarthi brassware.","బమ్మెర పోతన, పాల్కురికి సోమనాథుల స్వస్థల ప్రాంతం; పెంబర్తి ఇత్తడి కళాకృతులు."],["Brass and metal crafts, cotton and paddy.","ఇత్తడి, లోహ హస్తకళలు, పత్తి, వరి."]],
+ "Jayashankar Bhupalpally":["Bhupalpally","భూపాలపల్లి",["Named after Prof. K. Jayashankar, thinker of the Telangana movement.","తెలంగాణ ఉద్యమ సిద్ధాంతకర్త ఆచార్య జయశంకర్ పేరు."],["Kaleshwaram temple at the meeting of the Godavari and Pranahita; dense forests.","గోదావరి, ప్రాణహిత సంగమంలోని కాళేశ్వరం ఆలయం; దట్టమైన అడవులు."],["Coal, the Kakatiya Thermal Power Project and the Kaleshwaram irrigation works.","బొగ్గు, కాకతీయ థర్మల్ విద్యుత్ ప్రాజెక్టు, కాళేశ్వరం నీటిపారుదల పనులు."]],
+ "Jogulamba Gadwal":["Gadwal","గద్వాల",["Named after the goddess Jogulamba of Alampur and the town of Gadwal.","అలంపూర్ జోగులాంబ అమ్మవారు, గద్వాల పట్టణం పేరు."],["Jogulamba temple, one of the Shakti Peethas; Gadwal sarees.","శక్తిపీఠాల్లో ఒకటైన జోగులాంబ ఆలయం; గద్వాల చీరలు."],["Handloom, cotton seed production and power from the Jurala project.","చేనేత, పత్తి విత్తనాల ఉత్పత్తి, జూరాల ప్రాజెక్టు విద్యుత్."]],
+ "Kamareddy":["Kamareddy","కామారెడ్డి",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Nizam Sagar, one of the oldest large dams in the state.","రాష్ట్రంలోని పురాతన భారీ ఆనకట్టల్లో ఒకటైన నిజాంసాగర్."],["Paddy, maize and sugarcane under Nizam Sagar irrigation.","నిజాంసాగర్ నీటితో వరి, మొక్కజొన్న, చెరకు."]],
+ "Karimnagar":["Karimnagar","కరీంనగర్",["Named after Syed Karimuddin, a Nizam-era official, according to tradition.","నిజాం కాలపు అధికారి సయ్యద్ కరీముద్దీన్ పేరు అని ప్రతీతి."],["Silver filigree work, Elgandal fort and the Lower Manair Dam.","వెండి నగిషీ (ఫిలిగ్రీ), ఎలగందల్ కోట, దిగువ మానేరు ఆనకట్ట."],["Granite, rice and agriculture; a centre of the statehood movement.","గ్రానైట్, బియ్యం, వ్యవసాయం; ప్రత్యేక రాష్ట్ర ఉద్యమ కేంద్రం."]],
+ "Khammam":["Khammam","ఖమ్మం",["Linked to Stambhadri, the hill with the Narasimha temple (stambha = pillar).","నరసింహస్వామి ఆలయం ఉన్న స్తంభాద్రి కొండతో ముడిపడిన పేరు (స్తంభం)."],["Khammam fort and large chilli and cotton markets.","ఖమ్మం కోట, పెద్ద మిర్చి, పత్తి మార్కెట్లు."],["Chillies, cotton, granite and paddy.","మిర్చి, పత్తి, గ్రానైట్, వరి."]],
+ "Kumuram Bheem Asifabad":["Asifabad","ఆసిఫాబాద్",["Named after the Gond hero Komaram Bheem; Asifabad recalls the Asaf Jahi rulers.","గోండు వీరుడు కొమురం భీం పేరు; ఆసిఫాబాద్ అసఫ్ జాహీ పాలకులను గుర్తుచేస్తుంది."],["Jodeghat, where Komaram Bheem fell, and Gond and Kolam culture.","కొమురం భీం అమరుడైన జోడేఘాట్, గోండు, కోలాం సంస్కృతి."],["Forests, cotton, coal and the paper industry at Kagaznagar.","అడవులు, పత్తి, బొగ్గు, కాగజ్‌నగర్ కాగితం పరిశ్రమ."]],
+ "Mahabubabad":["Mahabubabad","మహబూబాబాద్",["Named after Nizam Mahbub Ali Khan; earlier called Manukota.","నిజాం మహబూబ్ అలీ ఖాన్ పేరు; పూర్వం మానుకోట."],["Tribal communities and the Bayyaram lake.","గిరిజన సమాజాలు, బయ్యారం చెరువు."],["Cotton, chillies and forest produce.","పత్తి, మిర్చి, అటవీ ఉత్పత్తులు."]],
+ "Mahabubnagar":["Mahabubnagar","మహబూబ్‌నగర్",["Named after Nizam Mahbub Ali Khan; earlier known as Palamuru.","నిజాం మహబూబ్ అలీ ఖాన్ పేరు; పూర్వం పాలమూరు."],["Pillalamarri, a banyan tree centuries old, and the Koilsagar project.","శతాబ్దాల నాటి మర్రిచెట్టు పిల్లలమర్రి, కోయిల్‌సాగర్ ప్రాజెక్టు."],["Palamuru's migrant workers built roads, dams and cities across India.","పాలమూరు వలస కార్మికులు దేశమంతటా రోడ్లు, ఆనకట్టలు, నగరాలు నిర్మించారు."]],
+ "Mancherial":["Mancherial","మంచిర్యాల",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Singareni coal mines and the Godavari; part of the Kawal Tiger Reserve.","సింగరేణి బొగ్గు గనులు, గోదావరి; కవ్వాల్ పులుల అభయారణ్యంలో భాగం."],["Coal and power from the Singareni thermal plant at Jaipur.","బొగ్గు, జైపూర్‌లోని సింగరేణి థర్మల్ కేంద్రం విద్యుత్."]],
+ "Medak":["Medak","మెదక్",["Traditionally from Methukudurgam, the old name of its fort.","కోట పాత పేరు మెతుకుదుర్గం నుండి వచ్చిందని ప్రతీతి."],["Medak Cathedral, Medak fort, Edupayala Vana Durga temple and Pocharam sanctuary.","మెదక్ చర్చి, మెదక్ కోట, ఏడుపాయల వనదుర్గ ఆలయం, పోచారం అభయారణ్యం."],["Paddy, sugarcane and industry near Hyderabad.","వరి, చెరకు, హైదరాబాద్ సమీప పరిశ్రమలు."]],
+ "Medchal–Malkajgiri":["Shamirpet","శామీర్‌పేట",["Named after the towns of Medchal and Malkajgiri.","మేడ్చల్, మల్కాజ్‌గిరి పట్టణాల పేర్లు."],["Shamirpet lake, Keesaragutta temple and the Genome Valley biotech cluster.","శామీర్‌పేట చెరువు, కీసరగుట్ట ఆలయం, జీనోమ్ వ్యాలీ బయోటెక్ కేంద్రం."],["Industry, life sciences and fast-growing suburbs of Hyderabad.","పరిశ్రమలు, లైఫ్ సైన్సెస్, హైదరాబాద్ వేగంగా పెరిగే శివారు ప్రాంతాలు."]],
+ "Mulugu":["Mulugu","ములుగు",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Ramappa Temple (UNESCO World Heritage Site), the Sammakka–Saralamma Jatara at Medaram and Laknavaram lake.","రామప్ప దేవాలయం (యునెస్కో ప్రపంచ వారసత్వ ప్రదేశం), మేడారం సమ్మక్క–సారలమ్మ జాతర, లక్నవరం చెరువు."],["Heritage and eco-tourism, forests and tribal livelihoods.","వారసత్వ, పర్యావరణ పర్యాటకం, అడవులు, గిరిజన జీవనోపాధి."]],
+ "Nagarkurnool":["Nagarkurnool","నాగర్‌కర్నూల్",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Nallamala forest, the Amrabad Tiger Reserve and the Chenchu people.","నల్లమల అడవి, అమ్రాబాద్ పులుల అభయారణ్యం, చెంచులు."],["Forests and wildlife, and hydel power on the Krishna.","అడవులు, వన్యప్రాణులు, కృష్ణా నదిపై జల విద్యుత్."]],
+ "Nalgonda":["Nalgonda","నల్గొండ",["From Nallagonda, meaning black hill.","నల్లగొండ అంటే నల్లని కొండ."],["Nagarjuna Sagar dam and the long fight for fluoride-free drinking water.","నాగార్జునసాగర్ ఆనకట్ట, ఫ్లోరైడ్ లేని తాగునీటి కోసం సుదీర్ఘ పోరాటం."],["Rice from the Sagar canals, cement and hydel power.","సాగర్ కాలువల బియ్యం, సిమెంట్, జల విద్యుత్."]],
+ "Narayanpet":["Narayanpet","నారాయణపేట",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Narayanpet handloom sarees.","నారాయణపేట చేనేత చీరలు."],["Handloom weaving and dryland farming.","చేనేత నేత, వర్షాధార వ్యవసాయం."]],
+ "Nirmal":["Nirmal","నిర్మల్",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Nirmal toys and paintings, and the Gnana Saraswati temple at Basara.","నిర్మల్ బొమ్మలు, చిత్రాలు, బాసర జ్ఞాన సరస్వతి ఆలయం."],["Crafts, the Kadem project and agriculture.","హస్తకళలు, కడెం ప్రాజెక్టు, వ్యవసాయం."]],
+ "Nizamabad":["Nizamabad","నిజామాబాద్",["Named after the Nizam; earlier called Indur.","నిజాం పేరు; పూర్వం ఇందూరు."],["Turmeric, the Sriram Sagar (Pochampad) project and Bodhan, the old Assaka capital.","పసుపు, శ్రీరాంసాగర్ (పోచంపాడు) ప్రాజెక్టు, పురాతన అస్సక రాజధాని బోధన్."],["One of India's biggest turmeric markets; rice and sugarcane.","దేశంలోని అతిపెద్ద పసుపు మార్కెట్లలో ఒకటి; బియ్యం, చెరకు."]],
+ "Peddapalli":["Peddapalli","పెద్దపల్లి",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["NTPC Ramagundam, the Ramagundam fertiliser plant and Singareni mines.","ఎన్టీపీసీ రామగుండం, రామగుండం ఎరువుల కర్మాగారం, సింగరేణి గనులు."],["Power, fertiliser and coal for the state and the country.","రాష్ట్రానికి, దేశానికి విద్యుత్, ఎరువులు, బొగ్గు."]],
+ "Rajanna Sircilla":["Sircilla","సిరిసిల్ల",["Rajanna is Sri Raja Rajeshwara Swamy of Vemulawada; Sircilla is the headquarters town.","రాజన్న అంటే వేములవాడ శ్రీ రాజరాజేశ్వరస్వామి; సిరిసిల్ల జిల్లా కేంద్రం."],["Vemulawada temple and Sircilla's power looms.","వేములవాడ ఆలయం, సిరిసిల్ల మరమగ్గాలు."],["Textiles and weaving, and the Mid Manair reservoir.","వస్త్రాలు, నేత, మధ్య మానేరు జలాశయం."]],
+ "Ranga Reddy":["Kongara Kalan","కొంగరకలాన్",["Named after K. V. Ranga Reddy, freedom fighter and former Deputy Chief Minister.","స్వాతంత్ర్య సమరయోధుడు, మాజీ ఉపముఖ్యమంత్రి కె.వి. రంగారెడ్డి పేరు."],["Rajiv Gandhi International Airport, the Financial District and Chilkur Balaji temple.","రాజీవ్ గాంధీ అంతర్జాతీయ విమానాశ్రయం, ఫైనాన్షియల్ డిస్ట్రిక్ట్, చిలుకూరు బాలాజీ ఆలయం."],["IT, finance, aviation and industry around Hyderabad.","హైదరాబాద్ చుట్టూ ఐటీ, ఆర్థిక, విమానయాన, పరిశ్రమలు."]],
+ "Sangareddy":["Sangareddy","సంగారెడ్డి",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["IIT Hyderabad, ICRISAT and the Patancheru industrial belt.","ఐఐటీ హైదరాబాద్, ఇక్రిశాట్, పటాన్‌చెరు పారిశ్రామిక ప్రాంతం."],["Pharma and manufacturing; farm research for dry regions.","ఫార్మా, తయారీ పరిశ్రమలు; పొడి ప్రాంతాల వ్యవసాయ పరిశోధన."]],
+ "Siddipet":["Siddipet","సిద్దిపేట",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Komuravelli Mallanna temple, Komati Cheruvu and Gollabhama sarees.","కొమురవెల్లి మల్లన్న ఆలయం, కోమటి చెరువు, గొల్లభామ చీరలు."],["Agriculture and large reservoirs like Mallanna Sagar.","వ్యవసాయం, మల్లన్నసాగర్ వంటి పెద్ద జలాశయాలు."]],
+ "Suryapet":["Suryapet","సూర్యాపేట",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["The Buddhist site at Phanigiri and the Krishna river border.","ఫణిగిరి బౌద్ధ క్షేత్రం, కృష్ణా నది సరిహద్దు."],["Rice, cement and trade on the Hyderabad–Vijayawada highway.","బియ్యం, సిమెంట్, హైదరాబాద్–విజయవాడ రహదారిపై వ్యాపారం."]],
+ "Vikarabad":["Vikarabad","వికారాబాద్",["Named after its headquarters town.","జిల్లా కేంద్ర పట్టణం పేరు."],["Ananthagiri hills, where the Musi river begins.","మూసీ నది పుట్టే అనంతగిరి కొండలు."],["Agriculture, Tandur stone and eco-tourism.","వ్యవసాయం, తాండూరు రాయి, పర్యావరణ పర్యాటకం."]],
+ "Wanaparthy":["Wanaparthy","వనపర్తి",["Named after its headquarters town, seat of the old Wanaparthy samsthanam.","పాత వనపర్తి సంస్థానం కేంద్రమైన జిల్లా కేంద్ర పట్టణం పేరు."],["Wanaparthy palace and the Ranganayaka Swamy temple at Srirangapur.","వనపర్తి రాజభవనం, శ్రీరంగాపూర్ రంగనాయకస్వామి ఆలయం."],["Agriculture under Jurala and lift irrigation schemes.","జూరాల, ఎత్తిపోతల పథకాల కింద వ్యవసాయం."]],
+ "Warangal":["Warangal","వరంగల్",["From Orugallu, “single rock”, the Kakatiya capital.","కాకతీయ రాజధాని ఓరుగల్లు, అంటే “ఒకే రాయి”."],["Warangal fort and the Kakatiya Kala Thoranam (on the state emblem), Warangal durries.","వరంగల్ కోట, రాష్ట్ర చిహ్నంలోని కాకతీయ కళాతోరణం, వరంగల్ తివాచీలు."],["Textiles, the Enumamula market and chillies.","వస్త్రాలు, ఏనుమాముల మార్కెట్, మిర్చి."]],
+ "Yadadri Bhuvanagiri":["Bhuvanagiri","భువనగిరి",["Yadadri is the hill of the sage Yada, with the Lakshmi Narasimha temple; Bhuvanagiri is the fort town.","యాదాద్రి అంటే యాదర్షి కొండ, లక్ష్మీనరసింహ ఆలయం; భువనగిరి కోట పట్టణం."],["Yadagirigutta temple, Bhuvanagiri fort, Pochampally ikat and the Kolanupaka Jain temple.","యాదగిరిగుట్ట ఆలయం, భువనగిరి కోట, పోచంపల్లి ఇకత్, కొలనుపాక జైన ఆలయం."],["Handloom weaving and pilgrimage tourism; the Bhoodan movement began at Pochampally.","చేనేత, తీర్థయాత్ర పర్యాటకం; భూదానోద్యమం పోచంపల్లిలో మొదలైంది."]]
+};
+
+// ---------- State switch: only the chosen state's data is active ----------
+const AP_INDIC_VALUES=[31.2,16.1,63.2,29.6,6.06,74];
+let LADDER,EXAMPLE,NEWS_EX,DEMO,TIMELINE,PEOPLE,DIST_INFO;   // set by applyStateData()
+const HC226={ap:null,ts:["The High Court for the State of Telangana at Hyderabad can issue writs to enforce fundamental rights and other legal rights.","ప్రాథమిక హక్కులు, ఇతర చట్టపరమైన హక్కుల అమలుకు హైదరాబాద్‌లోని తెలంగాణ రాష్ట్ర హైకోర్టు రిట్లు జారీ చేయగలదు."]};
+function applyStateData(){
+ const ts=ST==="ts";
+ DISTRICTS=ts?TS_DISTRICTS:AP_DISTRICTS;DNAMES=DISTRICTS.map(d=>d[0]);
+ LADDER=ts?TS_LADDER:AP_LADDER;EXAMPLE=ts?TS_EXAMPLE:AP_EXAMPLE;NEWS_EX=ts?TS_NEWS_EX:AP_NEWS_EX;DEMO=ts?TS_DEMO:AP_DEMO;
+ TIMELINE=ts?TS_TIMELINE:AP_TIMELINE;PEOPLE=ts?TS_PEOPLE:AP_PEOPLE;DIST_INFO=ts?TS_DIST_INFO:AP_DIST_INFO;
+ const vals=ts?TS_INDIC_VALUES:AP_INDIC_VALUES;
+ INDIC.forEach((i,n)=>{INDIC_MORE[n].ap=vals[n];i.v=INDIC_MORE[n].max?String(vals[n]):vals[n].toFixed(n===4?2:1)+"%"});
+ [...RIGHT_GROUPS.flatMap(g=>g.rights),...OTHER_RIGHTS].forEach(r=>{if(r[0]==="226"){if(!HC226.ap)HC226.ap=r[2];r[2]=HC226[ST]}});
+}
+
 const RIGHT_GROUPS=[
  {k:"equality",t:["Right to Equality","సమానత్వ హక్కు"],arts:"14–18",rights:[
   ["14",["Equality before law","చట్టం ముందు అందరూ సమానం"],["The State must treat every person equally under the law and give everyone equal protection of the law.","ప్రభుత్వం ప్రతి వ్యక్తినీ చట్టం ముందు సమానంగా చూడాలి, అందరికీ సమాన రక్షణ ఇవ్వాలి."],"7"],
@@ -1309,7 +1491,7 @@ const COI_LINKS=[
 
 // ---------- History data ----------
 // [period, [era en, te], [text en, te]]
-const TIMELINE=[
+const AP_TIMELINE=[
  [["2nd century BCE – 3rd century CE","క్రీ.పూ. 2వ శతాబ్దం – క్రీ.శ. 3వ శతాబ్దం"],["Satavahanas","శాతవాహనులు"],["Ruled the Deccan with Dhanyakataka (Amaravati) as a major centre. Amaravati became a great Buddhist centre, famous for its stupa.","ధాన్యకటకం (అమరావతి) ముఖ్య కేంద్రంగా దక్కన్‌ను పాలించారు. అమరావతి స్తూపంతో ప్రసిద్ధ బౌద్ధ కేంద్రంగా వెలిసింది."]],
  [["3rd – 4th century CE","క్రీ.శ. 3వ – 4వ శతాబ్దం"],["Ikshvakus","ఇక్ష్వాకులు"],["Ruled from Vijayapuri in the Krishna valley (Nagarjunakonda), a centre of Buddhist learning.","కృష్ణా లోయలోని విజయపురి (నాగార్జునకొండ) నుండి పాలించారు; ఇది బౌద్ధ విద్యా కేంద్రం."]],
  [["7th – 11th century","7వ – 11వ శతాబ్దం"],["Eastern Chalukyas of Vengi","వేంగి తూర్పు చాళుక్యులు"],["Founded by Kubja Vishnuvardhana at Vengi near Eluru. In the court of Rajaraja Narendra, Nannaya began the Telugu Mahabharatam, the first great work of Telugu literature.","ఏలూరు సమీపంలోని వేంగి కేంద్రంగా కుబ్జ విష్ణువర్ధనుడు స్థాపించాడు. రాజరాజ నరేంద్రుని ఆస్థానంలో నన్నయ తెలుగు మహాభారతాన్ని ప్రారంభించారు; ఇది తెలుగు సాహిత్యంలో తొలి మహా కావ్యం."]],
@@ -1329,7 +1511,7 @@ const TIMELINE=[
  ["2022 – 2025",["New districts","కొత్త జిల్లాలు"],["13 new districts came into force on 4 April 2022, making 26. Markapuram and Polavaram districts were added on 31 December 2025, making 28.","2022 ఏప్రిల్ 4న 13 కొత్త జిల్లాలు ఏర్పడి మొత్తం 26 అయ్యాయి. 2025 డిసెంబర్ 31న మార్కాపురం, పోలవరం జిల్లాలు చేరి మొత్తం 28 అయ్యాయి."]]
 ];
 // [name en, name te, years, role en, role te]
-const PEOPLE=[
+const AP_PEOPLE=[
  ["Nannaya","నన్నయ",["11th century","11వ శతాబ్దం"],"Adikavi, the first poet of Telugu, who began the Telugu Mahabharatam.","ఆదికవి; తెలుగు మహాభారతాన్ని ప్రారంభించిన తొలి తెలుగు కవి."],
  ["Rudrama Devi","రుద్రమదేవి",["13th century","13వ శతాబ్దం"],"Kakatiya queen who ruled in her own right and defended the kingdom in battle.","స్వయంగా పాలించి యుద్ధాల్లో రాజ్యాన్ని రక్షించిన కాకతీయ రాణి."],
  ["Annamacharya","అన్నమాచార్యులు",["15th century","15వ శతాబ్దం"],"Saint-composer from Tallapaka who wrote thousands of keertanas on Lord Venkateswara.","వేంకటేశ్వర స్వామిపై వేలాది కీర్తనలు రచించిన తాళ్లపాక వాగ్గేయకారుడు."],
@@ -1348,7 +1530,7 @@ const PEOPLE=[
  ["N. T. Rama Rao","నందమూరి తారక రామారావు","1923–1996","Film legend who founded the Telugu Desam Party in 1982 and became Chief Minister.","1982లో తెలుగుదేశం పార్టీని స్థాపించి ముఖ్యమంత్రి అయిన సినీ దిగ్గజం."]
 ];
 // district: [name en (matches DISTRICTS), HQ en, HQ te, [name story en, te], [speciality en, te], [contribution en, te]]
-const DIST_INFO={
+const AP_DIST_INFO={
  "Alluri Sitharama Raju":["Paderu","పాడేరు",["Named after Alluri Sitarama Raju, the hero of the Rampa rebellion.","రంప పోరాట వీరుడు అల్లూరి సీతారామరాజు పేరు పెట్టారు."],["Araku Valley, Borra Caves, tribal culture and hill coffee.","అరకు లోయ, బొర్రా గుహలు, గిరిజన సంస్కృతి, కొండ కాఫీ."],["Araku coffee grown by tribal farmers and eco-tourism.","గిరిజన రైతులు పండించే అరకు కాఫీ, పర్యావరణ పర్యాటకం."]],
  "Anakapalli":["Anakapalli","అనకాపల్లి",["Named after its headquarters town, a historic trading centre.","చారిత్రక వ్యాపార కేంద్రమైన జిల్లా కేంద్రం పేరు."],["One of India's biggest jaggery (bellam) markets; Bojjannakonda Buddhist caves.","దేశంలోని అతిపెద్ద బెల్లం మార్కెట్లలో ఒకటి; బొజ్జన్నకొండ బౌద్ధ గుహలు."],["Pharma and industrial hubs near Parawada and Atchutapuram.","పరవాడ, అచ్యుతాపురం వద్ద ఫార్మా, పారిశ్రామిక కేంద్రాలు."]],
  "Ananthapuramu":["Anantapuram","అనంతపురం",["Traditionally linked to the Anantasagaram tank of the Vijayanagara era.","విజయనగర కాలం నాటి అనంతసాగరం చెరువుతో ఈ పేరు ముడిపడి ఉందని చెబుతారు."],["Gooty fort; groundnut country and one of the driest districts in India.","గుత్తి కోట; వేరుశనగ సాగు ప్రాంతం, దేశంలోని అత్యంత పొడి జిల్లాల్లో ఒకటి."],["Groundnut, fruit orchards and large solar power parks.","వేరుశనగ, పండ్ల తోటలు, భారీ సౌర విద్యుత్ పార్కులు."]],
@@ -1569,7 +1751,8 @@ let hiTimer=0;$("hi-search").addEventListener("input",e=>{clearTimeout(hiTimer);
 // ---------- Intro listen buttons ----------
 document.querySelectorAll("[data-speak]").forEach(b=>{
  const v=b.dataset.speak;
- bindListen(b,()=>{if(v==="report")return `${t("repH")} ${t("repLede")} ${t("descHint")}`;
+ bindListen(b,()=>{if(v==="home")return `${t("homeH")}. ${t("homeLede")} ${t("apName")}, ${t("apCount")}. ${t("tsName")}, ${t("tsCount")}.`;
+  if(v==="report")return `${t("repH")} ${t("repLede")} ${t("descHint")}`;
   if(v==="dash")return `${t("dashH")}. ${t("dashLede")} ${INDIC.map(i=>L(i.l)+": "+i.v.replace("%",LANG==="te"?" శాతం":" percent")).join(". ")}. ${dashSpeech}`;
   if(v==="rights")return `${t("rkH")}. ${t("rkLede")} ${t("amendLede")}`;
   if(v==="history")return `${t("hiH")}. ${t("hiLede")} `+TIMELINE.map(([p,e])=>`${L(p)}: ${L(e)}`).join(". ");
@@ -1602,20 +1785,33 @@ window.mhVoiceResult=txt=>{
 window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;if(code==="unavailable")toast(t("voiceUnavailable"));if(code==="denied")toast(t("voiceDenied"))};
 
 // ---------- Init ----------
-applyStatic();fillSelects();renderIndic();
+try{const ls=localStorage.getItem("mh-state");if(ls==="ts")ST="ts"}catch(e){}
+applyStateData();applyStatic();fillSelects();renderIndic();
 renderRights();renderHistory();
 if(!sampleFn)$("n-assess").hidden=true;
-if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;loadShared();
+if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;
  $("sg-send").onclick=async()=>{const tx=$("sg-text").value.trim();if(!tx)return;if(piiFound(tx).length){$("sg-note").textContent=t("piiBlocked");return}
-  $("sg-send").disabled=true;try{const j=await postRegister({type:"suggestion",text:tx,lang:LANG});if(j&&j.ok){$("sg-text").value="";$("sg-note").textContent=t("suggestThanks")}else $("sg-note").textContent=t(j&&j.error==="pii"?"serverPii":"suggestFail")}catch(e){$("sg-note").textContent=t("suggestFail")}$("sg-send").disabled=false}}
+  $("sg-send").disabled=true;try{const j=await postRegister({type:"suggestion",text:tx,lang:LANG,state:ST});if(j&&j.ok){$("sg-text").value="";$("sg-note").textContent=t("suggestThanks")}else $("sg-note").textContent=t(j&&j.error==="pii"?"serverPii":"suggestFail")}catch(e){$("sg-note").textContent=t("suggestFail")}$("sg-send").disabled=false}}
 
-$("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
-renderSources();renderVerdict();
+function enterState(code,view){
+ stopSpeak();ST=code==="ts"?"ts":"ap";try{localStorage.setItem("mh-state",ST)}catch(e){}
+ applyStateData();document.body.dataset.state=ST;
+ current=null;lastRefine=null;lastNewsAI=null;$("n-ai").hidden=true;$("n-ai").innerHTML="";
+ $("r-district").innerHTML="";$("n-district").innerHTML="";$("d-f-district").innerHTML="";
+ applyStatic();fillSelects();openIndic=-1;renderIndic();renderRights();
+ hiQuery="";$("hi-search").value="";renderHistory();
+ queryTouched=false;ticked.clear();$("n-text").value=NEWS_EX[LANG];$("n-ex").hidden=false;$("n-district").value=EXAMPLE.district;$("n-query").value=autoQuery();renderSources();renderVerdict();
+ setForm(EXAMPLE);$("ex-flag").hidden=false;$("pii-warn").hidden=true;renderResult(readForm());
+ $("d-demo").checked=false;sharedReports=[];sharedLoaded=false;renderDash();if(SHARED)loadShared();
+ show(view&&$("v-"+view)&&view!=="home"?view:"report");
+}
+document.querySelectorAll(".stcard").forEach(c=>c.onclick=()=>{let v=null;try{v=localStorage.getItem("mh-tab")}catch(e){}enterState(c.dataset.state,v)});
+$("st-btn").onclick=()=>show("home");
 const hashMap={report:"report",dashboard:"dash",news:"news",rights:"rights",history:"history"};
-let startView=hashMap[location.hash.slice(1)];
-if(!startView){try{startView=localStorage.getItem("mh-tab")}catch(e){}}
-show(startView&&$("v-"+startView)?startView:"report");
-setForm(EXAMPLE);$("ex-flag").hidden=false;renderResult(readForm());renderDash();
+const hp=location.hash.slice(1).split("/");
+const hashState=["ap","ts","telangana","andhra"].includes(hp[0])?(hp[0].startsWith("t")?"ts":"ap"):null;
+const hashView=hashMap[hashState?hp[1]:hp[0]];
+if(hashState)enterState(hashState,hashView);else{applyStatic();show("home")}
 })();
 </script>
 </body>
