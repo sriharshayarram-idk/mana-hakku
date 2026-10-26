@@ -271,6 +271,48 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .pii .piit{font-weight:700;color:var(--crit)}
 .pii ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:3px;font-size:.93rem}
 .suggest .card textarea{min-height:90px}
+.subnav{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.subnav button{flex:0 0 auto;font:inherit;font-size:.86rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--indigo);border-radius:999px;padding:6px 12px;cursor:pointer}
+.sech{font-size:1.2rem;padding-top:6px;border-top:1px solid var(--line)}
+#rk-search,#hi-search{font-size:16px}
+.rlist{display:flex;flex-direction:column;gap:12px}
+.rrow{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.rrow .badge{min-width:76px;text-align:center}
+.badge.law{min-width:0;background:var(--ochre);color:var(--surface)}
+.rtx{min-width:0;display:flex;flex-direction:column;gap:2px}
+.rtx p{margin:0}
+.gnum{font-family:var(--f-display);font-weight:700;font-size:1.1rem}
+.alist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.arow{display:grid;grid-template-columns:40px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.arow:first-child{border-top:0}
+.anum{width:36px;height:36px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-weight:700;font-size:.9rem;font-variant-numeric:tabular-nums}
+.arow.key .anum{background:var(--indigo);color:var(--surface)}
+.ah{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.decade,.dist{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.decade summary,.dist summary{cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.decade summary::-webkit-details-marker,.dist summary::-webkit-details-marker{display:none}
+.decade summary::after,.dist summary::after{content:"+";margin-left:auto;font-size:1.3rem;color:var(--muted)}
+.decade[open] summary::after,.dist[open] summary::after{content:"−"}
+.dbody{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
+.dn{display:flex;flex-direction:column;min-width:0}
+.dfacts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.dfacts dt{font-weight:700;color:var(--indigo)}
+.dfacts dd{margin:0}
+@media (max-width:480px){.dfacts{grid-template-columns:1fr}.dfacts dd{margin-bottom:6px}}
+.duties{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.pre{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.pre{grid-template-columns:1fr}}
+.pre blockquote{margin:0;padding:12px 14px;background:var(--bg);border-left:4px solid var(--ochre);border-radius:8px;line-height:1.7}
+.coi{display:flex;flex-wrap:wrap;gap:10px}
+.coi a{text-decoration:none}
+.htl .era{display:block;font-family:var(--f-display);font-size:1.05rem;margin-bottom:2px}
+.htl p{margin:0}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.person{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ptop{display:flex;gap:10px;align-items:center}
+.ptop .qt{gap:0}
+.pav{width:40px;height:40px;border-radius:50%;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:1.1rem;flex:none}
+.keyam{border:2px solid var(--indigo)}
 </style>
 </head>
 <body>
@@ -291,6 +333,8 @@ body{margin:0;-webkit-text-size-adjust:100%}
   <button class="tab" role="tab" id="t-report" aria-selected="true" data-view="report" data-t="tabReport">Report a need</button>
   <button class="tab" role="tab" id="t-dash" aria-selected="false" data-view="dash" data-t="tabDash">Gap dashboard</button>
   <button class="tab" role="tab" id="t-news" aria-selected="false" data-view="news" data-t="tabNews">News check</button>
+  <button class="tab" role="tab" id="t-rights" aria-selected="false" data-view="rights" data-t="tabRights">Right knowledge</button>
+  <button class="tab" role="tab" id="t-history" aria-selected="false" data-view="history" data-t="tabHistory">History</button>
 </div></nav>
 
 <main>
@@ -390,6 +434,35 @@ body{margin:0;-webkit-text-size-adjust:100%}
     <p class="note" data-t="corrNote"></p>
   </div>
 </section>
+<section class="wrap" id="v-rights" aria-labelledby="t-rights" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="rkH"></h2><button class="listen" type="button" data-speak="rights"></button></div>
+    <p class="lede" data-t="rkLede"></p>
+  </div>
+  <input id="rk-search" type="search" autocomplete="off">
+  <div class="subnav" role="navigation">
+    <button type="button" data-jump="rk-fund" data-t="secFund"></button><button type="button" data-jump="rk-other" data-t="secOther"></button><button type="button" data-jump="rk-amend" data-t="secAmend"></button><button type="button" data-jump="rk-laws" data-t="secLaws"></button><button type="button" data-jump="rk-duties" data-t="secDuties"></button><button type="button" data-jump="rk-pre" data-t="secPre"></button><button type="button" data-jump="rk-coi" data-t="secCoi"></button>
+  </div>
+  <div class="stack" id="rk-fund"><h2 class="sech" data-t="secFund"></h2><p class="note" data-t="fundNote"></p><div class="stack" id="rk-fund-body"></div></div>
+  <div class="stack" id="rk-other"><h2 class="sech" data-t="secOther"></h2><div class="card" id="rk-other-body"></div><p class="note" data-t="otherNote"></p></div>
+  <div class="stack" id="rk-amend"><h2 class="sech" data-t="secAmend"></h2><p class="lede" data-t="amendLede"></p><div class="stack" id="rk-amend-body"></div></div>
+  <div class="stack" id="rk-laws"><h2 class="sech" data-t="secLaws"></h2><div class="card" id="rk-laws-body"></div></div>
+  <div class="stack" id="rk-duties"><h2 class="sech" data-t="secDuties"></h2><div class="card" id="rk-duties-body"></div></div>
+  <div class="stack" id="rk-pre"><h2 class="sech" data-t="secPre"></h2><div class="card" id="rk-pre-body"></div><p class="note" data-t="preNote"></p></div>
+  <div class="stack" id="rk-coi"><h2 class="sech" data-t="secCoi"></h2><div class="card" id="rk-coi-body"></div></div>
+  <p class="note" id="rk-empty" hidden data-t="noResults"></p>
+</section>
+
+<section class="wrap" id="v-history" aria-labelledby="t-history" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="hiH"></h2><button class="listen" type="button" data-speak="history"></button></div>
+    <p class="lede" data-t="hiLede"></p>
+  </div>
+  <div class="subnav" role="navigation"><button type="button" data-jump="hi-tl" data-t="secTimeline"></button><button type="button" data-jump="hi-people" data-t="secPeople"></button><button type="button" data-jump="hi-dist" data-t="secDist"></button></div>
+  <div class="stack" id="hi-tl"><h2 class="sech" data-t="secTimeline"></h2><div class="card"><ol class="tl htl" id="hi-tl-body"></ol></div><p class="note" data-t="histNote"></p></div>
+  <div class="stack" id="hi-people"><h2 class="sech" data-t="secPeople"></h2><div class="people" id="hi-people-body"></div></div>
+  <div class="stack" id="hi-dist"><h2 class="sech" data-t="secDist"></h2><p class="lede" data-t="distLede"></p><input id="hi-search" type="search" autocomplete="off"><div class="stack" id="hi-dist-body"></div></div>
+</section>
 </main>
 
 <section class="wrap suggest" id="suggest" hidden><div class="card"><h3 data-t="suggestH"></h3><textarea id="sg-text" maxlength="1500" aria-label="Suggestion"></textarea><div class="btns"><button class="btn" type="button" id="sg-send" data-t="suggestSend"></button></div><p class="note" id="sg-note"></p></div></section>
@@ -407,7 +480,8 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{piiTitle:"Remove personal details to continue",piiPhone:"A mobile or phone number",piiLongNum:"An Aadhaar, bank account or other long ID number",piiEmail:"An email address",piiPan:"A PAN card number",piiName:"A person's name (for example “my name is…”, “S/o…”). Describe the problem without naming anyone.",piiFix:"Remove numbers and emails for me",piiBlocked:"This report has personal details. Remove them before analysing or saving.",piiNameLeft:"Numbers removed. Please also remove the person's name.",
+en:{tabRights:"Right knowledge",tabHistory:"History",rkH:"Know your rights",rkLede:"Your rights under the Constitution of India, with article numbers, explained in simple words.",rkSearchPh:"Search: education, 21, vote, women…",secFund:"Fundamental Rights",fundNote:"Part III of the Constitution. You can go to court to enforce these rights.",secOther:"Other important rights",otherNote:"Articles 39A, 41 and 47 are Directive Principles: duties of the government that guide laws and schemes. They cannot be enforced directly in court.",secLaws:"Laws that give you rights",secDuties:"Fundamental Duties",dutiesNote:"Article 51A. Rights come with duties; the main ones are:",secPre:"Preamble",preNote:"The opening statement of the Constitution, in both languages. The Telugu text is a careful rendering; the official Telugu edition is linked under Full Constitution.",secAmend:"Constitution amendments",amendLede:"The Constitution has been amended 106 times. The latest is the 106th Amendment (2023), which reserves seats for women. Each amendment is explained below in simple words.",keyAmend:"Important for everyone",apAmend:"About Andhra Pradesh",amendCount:"{n} amendments",amendMatches:"{n} amendments match",secCoi:"Full Constitution of India",coiNote:"Read or download the complete, up-to-date Constitution from the Government of India's Legislative Department.",udhrL:"Human rights (UDHR) Art.",noResults:"Nothing matches your search.",artWord:"Article",artsWord:"Articles",
+hiH:"History of Andhra Pradesh",hiLede:"From the Satavahanas to today's 28 districts: the dynasties, people and places that shaped the state.",secTimeline:"Timeline",secPeople:"Prominent people",secDist:"Districts",distLede:"Tap a district to see what its name means, what it is known for, and how it contributes to the state.",distSearchPh:"Search a district",nameL:"Name",specL:"Known for",contribL:"Contribution to the state",hqL:"Headquarters",histNote:"Dates for the early dynasties are approximate.",piiTitle:"Remove personal details to continue",piiPhone:"A mobile or phone number",piiLongNum:"An Aadhaar, bank account or other long ID number",piiEmail:"An email address",piiPan:"A PAN card number",piiName:"A person's name (for example “my name is…”, “S/o…”). Describe the problem without naming anyone.",piiFix:"Remove numbers and emails for me",piiBlocked:"This report has personal details. Remove them before analysing or saving.",piiNameLeft:"Numbers removed. Please also remove the person's name.",
 registerNote:"Reports saved here are visible to everyone. Never include names, phone numbers or Aadhaar.",countShared:"{n} needs reported by everyone.",loadingShared:"Loading everyone's reports…",sharedFail:"Couldn't load everyone's reports. Check your internet and refresh.",refresh:"Refresh",sharedSaved:"Shared. Everyone can now see this need.",shareFailNet:"Couldn't share now. It is saved on this phone; try again when online.",serverPii:"The register refused this report because it looks like it has personal details.",
 suggestH:"Give a suggestion",suggestPh:"What should we improve? (no names or phone numbers)",suggestSend:"Send suggestion",suggestThanks:"Thank you. Your suggestion was sent.",suggestFail:"Couldn't send now. Try again when online.",tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
 repH:"What is missing in your area?",repLede:"Describe one problem in plain words. You will see which department is responsible, which rights and laws apply, and what should happen step by step.",
@@ -432,7 +506,8 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{piiTitle:"కొనసాగడానికి వ్యక్తిగత వివరాలు తొలగించండి",piiPhone:"మొబైల్ లేదా ఫోన్ నంబర్",piiLongNum:"ఆధార్, బ్యాంకు ఖాతా లేదా ఇతర పొడవైన గుర్తింపు నంబర్",piiEmail:"ఈమెయిల్ చిరునామా",piiPan:"PAN కార్డు నంబర్",piiName:"వ్యక్తి పేరు (ఉదా: “నా పేరు…”, “S/o…”). ఎవరి పేరూ లేకుండా సమస్యను వివరించండి.",piiFix:"నంబర్లు, ఈమెయిల్ తొలగించు",piiBlocked:"ఈ నివేదికలో వ్యక్తిగత వివరాలు ఉన్నాయి. విశ్లేషించే ముందు లేదా భద్రపరిచే ముందు వాటిని తొలగించండి.",piiNameLeft:"నంబర్లు తొలగించాం. వ్యక్తి పేరును కూడా తొలగించండి.",
+te:{tabRights:"హక్కుల జ్ఞానం",tabHistory:"చరిత్ర",rkH:"మీ హక్కులు తెలుసుకోండి",rkLede:"భారత రాజ్యాంగం మీకు ఇచ్చిన హక్కులు, ఆర్టికల్ నంబర్లతో, సరళమైన మాటల్లో.",rkSearchPh:"వెతకండి: విద్య, 21, ఓటు, మహిళలు…",secFund:"ప్రాథమిక హక్కులు",fundNote:"రాజ్యాంగంలోని భాగం III. ఈ హక్కుల అమలుకు కోర్టును ఆశ్రయించవచ్చు.",secOther:"ఇతర ముఖ్య హక్కులు",otherNote:"ఆర్టికల్ 39A, 41, 47 ఆదేశిక సూత్రాలు: చట్టాలు, పథకాలకు మార్గదర్శనం చేసే ప్రభుత్వ బాధ్యతలు. వీటిని నేరుగా కోర్టు ద్వారా అమలు చేయించలేము.",secLaws:"మీకు హక్కులు ఇచ్చే చట్టాలు",secDuties:"ప్రాథమిక విధులు",dutiesNote:"ఆర్టికల్ 51A. హక్కులతో పాటు విధులూ ఉంటాయి; ముఖ్యమైనవి:",secPre:"ప్రవేశిక",preNote:"రాజ్యాంగ ఆరంభ ప్రకటన, రెండు భాషల్లో. తెలుగు పాఠం జాగ్రత్తగా చేసిన అనువాదం; అధికారిక తెలుగు ప్రతి ‘పూర్తి భారత రాజ్యాంగం’ కింద ఉంది.",secAmend:"రాజ్యాంగ సవరణలు",amendLede:"రాజ్యాంగాన్ని ఇప్పటివరకు 106 సార్లు సవరించారు. తాజాది మహిళలకు స్థానాలు రిజర్వ్ చేసిన 106వ సవరణ (2023). ప్రతి సవరణను కింద సరళమైన మాటల్లో వివరించాం.",keyAmend:"అందరికీ ముఖ్యమైనది",apAmend:"ఆంధ్రప్రదేశ్‌కు సంబంధించినది",amendCount:"{n} సవరణలు",amendMatches:"{n} సవరణలు దొరికాయి",secCoi:"పూర్తి భారత రాజ్యాంగం",coiNote:"భారత ప్రభుత్వ శాసన విభాగం నుండి పూర్తి, తాజా రాజ్యాంగాన్ని చదవండి లేదా డౌన్‌లోడ్ చేసుకోండి.",udhrL:"మానవ హక్కుల ప్రకటన (UDHR) ఆర్టికల్",noResults:"మీ వెతుకులాటకు ఏమీ దొరకలేదు.",artWord:"ఆర్టికల్",artsWord:"ఆర్టికల్స్",
+hiH:"ఆంధ్రప్రదేశ్ చరిత్ర",hiLede:"శాతవాహనుల నుండి నేటి 28 జిల్లాల వరకు: రాష్ట్రాన్ని తీర్చిదిద్దిన రాజవంశాలు, వ్యక్తులు, ప్రాంతాలు.",secTimeline:"కాలక్రమం",secPeople:"ప్రముఖులు",secDist:"జిల్లాలు",distLede:"జిల్లా పేరు అర్థం, దాని ప్రత్యేకత, రాష్ట్రాభివృద్ధికి తోడ్పాటు చూడటానికి జిల్లాను తాకండి.",distSearchPh:"జిల్లా వెతకండి",nameL:"పేరు",specL:"ప్రత్యేకత",contribL:"రాష్ట్రానికి తోడ్పాటు",hqL:"జిల్లా కేంద్రం",histNote:"తొలి రాజవంశాల తేదీలు సుమారుగా ఇచ్చినవి.",piiTitle:"కొనసాగడానికి వ్యక్తిగత వివరాలు తొలగించండి",piiPhone:"మొబైల్ లేదా ఫోన్ నంబర్",piiLongNum:"ఆధార్, బ్యాంకు ఖాతా లేదా ఇతర పొడవైన గుర్తింపు నంబర్",piiEmail:"ఈమెయిల్ చిరునామా",piiPan:"PAN కార్డు నంబర్",piiName:"వ్యక్తి పేరు (ఉదా: “నా పేరు…”, “S/o…”). ఎవరి పేరూ లేకుండా సమస్యను వివరించండి.",piiFix:"నంబర్లు, ఈమెయిల్ తొలగించు",piiBlocked:"ఈ నివేదికలో వ్యక్తిగత వివరాలు ఉన్నాయి. విశ్లేషించే ముందు లేదా భద్రపరిచే ముందు వాటిని తొలగించండి.",piiNameLeft:"నంబర్లు తొలగించాం. వ్యక్తి పేరును కూడా తొలగించండి.",
 registerNote:"ఇక్కడ భద్రపరిచిన నివేదికలు అందరికీ కనిపిస్తాయి. పేర్లు, ఫోన్ నంబర్లు, ఆధార్ ఎప్పుడూ రాయవద్దు.",countShared:"అందరూ నమోదు చేసిన అవసరాలు: {n}.",loadingShared:"అందరి నివేదికలు లోడ్ అవుతున్నాయి…",sharedFail:"అందరి నివేదికలు లోడ్ కాలేదు. ఇంటర్నెట్ చూసి మళ్లీ ప్రయత్నించండి.",refresh:"రిఫ్రెష్",sharedSaved:"పంచుకోబడింది. ఈ అవసరం ఇప్పుడు అందరికీ కనిపిస్తుంది.",shareFailNet:"ఇప్పుడు పంచుకోలేకపోయాం. ఈ ఫోన్‌లో భద్రపరిచాం; ఇంటర్నెట్ వచ్చాక మళ్లీ ప్రయత్నించండి.",serverPii:"వ్యక్తిగత వివరాలు ఉన్నట్లు కనిపించడంతో రిజిస్టర్ ఈ నివేదికను తిరస్కరించింది.",
 suggestH:"సూచన ఇవ్వండి",suggestPh:"మేము ఏమి మెరుగుపరచాలి? (పేర్లు, ఫోన్ నంబర్లు వద్దు)",suggestSend:"సూచన పంపండి",suggestThanks:"ధన్యవాదాలు. మీ సూచన పంపబడింది.",suggestFail:"ఇప్పుడు పంపలేకపోయాం. ఇంటర్నెట్ వచ్చాక ప్రయత్నించండి.",tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
 repH:"మీ ప్రాంతంలో ఏమి లోపించింది?",repLede:"ఒక సమస్యను సరళమైన మాటల్లో వివరించండి. దానికి బాధ్యత వహించే శాఖ, వర్తించే హక్కులు, చట్టాలు, దశలవారీగా ఏమి జరగాలో మీకు కనిపిస్తుంది.",
@@ -710,6 +785,7 @@ function applyStatic(){
  if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
  document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
  document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
+ $("rk-search").placeholder=t("rkSearchPh");$("hi-search").placeholder=t("distSearchPh");
  const dr=$("d-refresh");if(dr)dr.textContent=t("refresh");const sgt=$("sg-text");if(sgt)sgt.placeholder=t("suggestPh");if(!$("pii-warn").hidden)piiCheckForm();
  const xp=$("x-pdf"),xc=$("x-csv");if(xp){xp.textContent=t("exportPdf");xc.textContent=t("exportCsv")}
 }
@@ -732,14 +808,14 @@ function setLang(l){
  if(exReport){setForm(EXAMPLE);$("ex-flag").hidden=false}
  if(exNews){$("n-text").value=NEWS_EX[LANG];$("n-ex").hidden=false;if(!queryTouched)$("n-query").value=autoQuery()}
  if(current){current=readForm();renderResult(current)}
- renderIndic();renderDash();renderSources();renderVerdict();
+ renderIndic();renderDash();renderSources();renderVerdict();renderRights();renderHistory();
  if(lastNewsAI)renderNewsAI(lastNewsAI);
 }
 $("lang-te").onclick=()=>setLang("te");$("lang-en").onclick=()=>setLang("en");
 
 // ---------- Tabs ----------
 const tabs=[...document.querySelectorAll(".tab")];
-function show(view){stopSpeak();tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["report","dash","news"].forEach(v=>$("v-"+v).hidden=v!==view);try{localStorage.setItem("mh-tab",view)}catch(e){}}
+function show(view){stopSpeak();tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["report","dash","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);try{localStorage.setItem("mh-tab",view)}catch(e){}}
 tabs.forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
 
 // ---------- Classifier ----------
@@ -1167,11 +1243,336 @@ function exportPDF(){
 }
 $("x-pdf").onclick=exportPDF;$("x-csv").onclick=exportCSV;
 
+// ---------- Right knowledge data ----------
+// Each right: [article, [title en, title te], [plain meaning en, te], UDHR article(s) or ""]
+const RIGHT_GROUPS=[
+ {k:"equality",t:["Right to Equality","సమానత్వ హక్కు"],arts:"14–18",rights:[
+  ["14",["Equality before law","చట్టం ముందు అందరూ సమానం"],["The State must treat every person equally under the law and give everyone equal protection of the law.","ప్రభుత్వం ప్రతి వ్యక్తినీ చట్టం ముందు సమానంగా చూడాలి, అందరికీ సమాన రక్షణ ఇవ్వాలి."],"7"],
+  ["15",["No discrimination","వివక్ష నిషేధం"],["No discrimination on grounds of religion, race, caste, sex or place of birth, including in using shops, wells, tanks, roads and public places.","మతం, జాతి, కులం, లింగం, జన్మస్థలం ఆధారంగా వివక్ష చూపకూడదు. దుకాణాలు, బావులు, చెరువులు, రోడ్లు, బహిరంగ ప్రదేశాల వినియోగంలో కూడా."],"2"],
+  ["16",["Equal opportunity in government jobs","ప్రభుత్వ ఉద్యోగాల్లో సమాన అవకాశం"],["Every citizen has an equal chance in public employment. The State may reserve posts for backward classes.","ప్రభుత్వ ఉద్యోగాల్లో ప్రతి పౌరుడికీ సమాన అవకాశం. వెనుకబడిన వర్గాలకు రిజర్వేషన్ కల్పించవచ్చు."],"21"],
+  ["17",["Untouchability abolished","అంటరానితనం రద్దు"],["Untouchability is abolished. Practising it in any form is a punishable offence.","అంటరానితనం రద్దు చేయబడింది. ఏ రూపంలో పాటించినా అది శిక్షార్హమైన నేరం."],"1"],
+  ["18",["Titles abolished","బిరుదుల రద్దు"],["The State does not give titles, except military and academic honours.","సైనిక, విద్యా గౌరవాలు తప్ప ప్రభుత్వం బిరుదులు ఇవ్వదు."],""]]},
+ {k:"freedom",t:["Right to Freedom","స్వేచ్ఛా హక్కు"],arts:"19–22",rights:[
+  ["19",["Six freedoms","ఆరు స్వేచ్ఛలు"],["Freedom of speech and expression; to assemble peacefully without arms; to form associations or unions; to move freely anywhere in India; to live and settle anywhere in India; to practise any profession, trade or business. Reasonable limits can apply.","వాక్ స్వాతంత్ర్యం, భావ ప్రకటన; ఆయుధాలు లేకుండా శాంతియుతంగా సమావేశం కావడం; సంఘాలు, యూనియన్లు ఏర్పాటు చేయడం; దేశమంతటా స్వేచ్ఛగా తిరగడం; దేశంలో ఎక్కడైనా నివసించడం; ఏ వృత్తి, వ్యాపారమైనా చేయడం. సహేతుక పరిమితులు వర్తిస్తాయి."],"13, 19, 20, 23"],
+  ["20",["Protection when accused of a crime","నేరారోపణలో రక్షణ"],["No punishment under a law made after the act; no punishment twice for the same offence; no one can be forced to be a witness against themselves.","నేరం జరిగిన తర్వాత చేసిన చట్టం కింద శిక్ష లేదు; ఒకే నేరానికి రెండుసార్లు శిక్ష లేదు; తనకు వ్యతిరేకంగా సాక్ష్యం చెప్పమని ఎవరినీ బలవంతం చేయకూడదు."],"11"],
+  ["21",["Life and personal liberty","జీవించే హక్కు, వ్యక్తిగత స్వేచ్ఛ"],["No one can lose their life or liberty except through a fair procedure set by law. Courts have held that it includes living with dignity, livelihood, shelter, health care, safe drinking water, a clean environment and privacy.","చట్టం నిర్ణయించిన న్యాయమైన ప్రక్రియ ద్వారా తప్ప ఎవరి ప్రాణాన్నీ, స్వేచ్ఛనూ హరించకూడదు. గౌరవంగా జీవించడం, జీవనోపాధి, నివాసం, వైద్యం, సురక్షిత తాగునీరు, పరిశుభ్రమైన పర్యావరణం, గోప్యత కూడా ఇందులో భాగమని కోర్టులు తెలిపాయి."],"3, 12, 25"],
+  ["21A",["Right to education","విద్యా హక్కు"],["Free and compulsory education for every child aged 6 to 14.","6 నుండి 14 ఏళ్ల ప్రతి బిడ్డకూ ఉచిత, నిర్బంధ విద్య."],"26"],
+  ["22",["Protection against arrest","అరెస్టు సమయంలో రక్షణ"],["An arrested person must be told why, may consult a lawyer of their choice, and must be produced before a magistrate within 24 hours.","అరెస్టయిన వ్యక్తికి కారణం చెప్పాలి; నచ్చిన న్యాయవాదిని సంప్రదించవచ్చు; 24 గంటల్లో మేజిస్ట్రేట్ ముందు హాజరుపరచాలి."],"9"]]},
+ {k:"exploitation",t:["Right against Exploitation","దోపిడీకి వ్యతిరేక హక్కు"],arts:"23–24",rights:[
+  ["23",["No trafficking or forced labour","మనుషుల అక్రమ రవాణా, వెట్టి చాకిరి నిషేధం"],["Human trafficking, begar (unpaid forced work) and other forced labour are banned and punishable.","మనుషుల అక్రమ రవాణా, వెట్టి చాకిరి, ఇతర బలవంతపు పనులు నిషేధం; శిక్షార్హం."],"4"],
+  ["24",["No child labour in hazardous work","ప్రమాదకర పనుల్లో బాల కార్మికులు వద్దు"],["No child below 14 may be employed in a factory, mine or any other hazardous work.","14 ఏళ్లలోపు పిల్లలను కర్మాగారాలు, గనులు, ఇతర ప్రమాదకర పనుల్లో పెట్టకూడదు."],""]]},
+ {k:"religion",t:["Right to Freedom of Religion","మత స్వేచ్ఛా హక్కు"],arts:"25–28",rights:[
+  ["25",["Freedom of conscience and religion","మనస్సాక్షి, మత స్వేచ్ఛ"],["Everyone may freely believe in, practise and spread their religion, subject to public order, morality and health.","ప్రజా శాంతి, నైతికత, ఆరోగ్యానికి లోబడి ప్రతి ఒక్కరూ స్వేచ్ఛగా మతాన్ని నమ్మవచ్చు, ఆచరించవచ్చు, ప్రచారం చేయవచ్చు."],"18"],
+  ["26",["Manage religious affairs","మత వ్యవహారాల నిర్వహణ"],["Religious groups may manage their own affairs and run institutions for religious and charitable purposes.","మత వర్గాలు తమ వ్యవహారాలను నిర్వహించుకోవచ్చు; మత, ధర్మ సంస్థలను నడపవచ్చు."],""],
+  ["27",["No tax to promote a religion","మత ప్రచారానికి పన్ను లేదు"],["No one can be made to pay a tax that is used to promote a particular religion.","ఒక ప్రత్యేక మతం ప్రచారానికి వాడే పన్ను కట్టమని ఎవరినీ బలవంతం చేయకూడదు."],""],
+  ["28",["No forced religious instruction","బలవంతపు మత బోధన లేదు"],["No religious instruction in institutions fully funded by the State, and no one can be forced to attend it in State-aided ones.","పూర్తిగా ప్రభుత్వ నిధులతో నడిచే సంస్థల్లో మత బోధన ఉండదు; ప్రభుత్వ సహాయం పొందే సంస్థల్లో కూడా బలవంతంగా హాజరుపరచకూడదు."],""]]},
+ {k:"culture",t:["Cultural and Educational Rights","సాంస్కృతిక, విద్యా హక్కులు"],arts:"29–30",rights:[
+  ["29",["Protect your language, script and culture","భాష, లిపి, సంస్కృతి రక్షణ"],["Any group of citizens with a distinct language, script or culture has the right to preserve it.","ప్రత్యేక భాష, లిపి, సంస్కృతి ఉన్న ఏ పౌర వర్గానికైనా వాటిని కాపాడుకునే హక్కు ఉంది."],"27"],
+  ["30",["Minorities' educational institutions","మైనారిటీల విద్యా సంస్థలు"],["Religious and linguistic minorities may set up and run educational institutions of their choice.","మత, భాషా మైనారిటీలు తమకు నచ్చిన విద్యా సంస్థలను స్థాపించి నడపవచ్చు."],"26"]]},
+ {k:"remedies",t:["Right to Constitutional Remedies","రాజ్యాంగ పరిహారాల హక్కు"],arts:"32, 226",rights:[
+  ["32",["Go to the Supreme Court","సుప్రీంకోర్టును ఆశ్రయించే హక్కు"],["Anyone can approach the Supreme Court directly to enforce these rights. Dr. B. R. Ambedkar called this article the heart and soul of the Constitution.","ఈ హక్కుల అమలు కోసం ఎవరైనా నేరుగా సుప్రీంకోర్టును ఆశ్రయించవచ్చు. డా. బి.ఆర్. అంబేద్కర్ ఈ ఆర్టికల్‌ను రాజ్యాంగానికి హృదయం, ఆత్మ అన్నారు."],"8"],
+  ["226",["Go to the High Court","హైకోర్టును ఆశ్రయించే హక్కు"],["The High Court of Andhra Pradesh at Amaravati can issue writs to enforce fundamental rights and other legal rights.","ప్రాథమిక హక్కులు, ఇతర చట్టపరమైన హక్కుల అమలుకు అమరావతిలోని ఆంధ్రప్రదేశ్ హైకోర్టు రిట్లు జారీ చేయగలదు."],"8"]]}
+];
+const OTHER_RIGHTS=[
+ ["300A",["Right to property","ఆస్తి హక్కు"],["No one can be deprived of their property except by authority of law. This is a legal right, not a fundamental right.","చట్టం అనుమతి లేకుండా ఎవరి ఆస్తినీ తీసుకోకూడదు. ఇది ప్రాథమిక హక్కు కాదు, చట్టపరమైన హక్కు."],"17"],
+ ["326",["Right to vote","ఓటు హక్కు"],["Every citizen aged 18 or above can vote in elections.","18 ఏళ్లు నిండిన ప్రతి పౌరుడికీ ఎన్నికల్లో ఓటు వేసే హక్కు ఉంది."],"21"],
+ ["39A",["Free legal aid","ఉచిత న్యాయ సహాయం"],["Justice must not be denied because someone is poor. Free legal aid is given through Legal Services Authorities (helpline 15100).","పేదరికం కారణంగా న్యాయం నిరాకరించకూడదు. న్యాయ సేవల అధికార సంస్థల ద్వారా ఉచిత న్యాయ సహాయం లభిస్తుంది (హెల్ప్‌లైన్ 15100)."],"8"],
+ ["41",["Work, education and public assistance","పని, విద్య, ప్రజా సహాయం"],["The State should help people find work and education, and support them in old age, sickness, disability and unemployment.","ప్రజలకు పని, విద్య అందేలా చూడాలి; వృద్ధాప్యం, అనారోగ్యం, వైకల్యం, నిరుద్యోగంలో ప్రభుత్వం సహాయం చేయాలి."],"22, 23, 25"],
+ ["47",["Nutrition, living standards and public health","పోషణ, జీవన ప్రమాణం, ప్రజారోగ్యం"],["Raising nutrition and living standards and improving public health are among the State's primary duties.","పోషణ, జీవన ప్రమాణాలు పెంచడం, ప్రజారోగ్యాన్ని మెరుగుపరచడం ప్రభుత్వ ప్రాథమిక బాధ్యతలు."],"25"]
+];
+const RIGHTS_LAWS=[
+ [["Right to Information Act, 2005","సమాచార హక్కు చట్టం, 2005"],["Ask any government office for information; it must reply within 30 days.","ఏ ప్రభుత్వ కార్యాలయాన్నైనా సమాచారం అడగవచ్చు; 30 రోజుల్లో సమాధానం ఇవ్వాలి."]],
+ [["Right to Education Act, 2009","విద్యా హక్కు చట్టం, 2009"],["Free schooling for ages 6 to 14, with norms for teachers, classrooms and toilets.","6–14 ఏళ్ల పిల్లలకు ఉచిత విద్య; ఉపాధ్యాయులు, తరగతి గదులు, మరుగుదొడ్లకు నిబంధనలు."]],
+ [["MGNREGA, 2005","ఉపాధి హామీ చట్టం, 2005"],["100 days of paid work a year for rural households that ask for it, with wages within 15 days.","అడిగిన గ్రామీణ కుటుంబాలకు ఏడాదికి 100 రోజుల పని; 15 రోజుల్లో వేతనం."]],
+ [["National Food Security Act, 2013","జాతీయ ఆహార భద్రతా చట్టం, 2013"],["Subsidised grain for eligible families, and meals for children and pregnant women.","అర్హులైన కుటుంబాలకు సబ్సిడీ ధాన్యం; పిల్లలు, గర్భిణులకు భోజనం."]],
+ [["Consumer Protection Act, 2019","వినియోగదారుల రక్షణ చట్టం, 2019"],["Complain about defective goods, poor services or unfair trade at a consumer commission.","నాసిరకం వస్తువులు, సేవలు, అన్యాయ వ్యాపారంపై వినియోగదారుల కమిషన్‌లో ఫిర్యాదు చేయవచ్చు."]],
+ [["Protection of Women from Domestic Violence Act, 2005","గృహ హింస నుండి మహిళల రక్షణ చట్టం, 2005"],["Protection orders, shelter and support for women facing violence at home.","ఇంట్లో హింస ఎదుర్కొనే మహిళలకు రక్షణ ఉత్తర్వులు, ఆశ్రయం, సహాయం."]],
+ [["SC/ST (Prevention of Atrocities) Act, 1989","SC/ST అత్యాచారాల నిరోధక చట్టం, 1989"],["Strict punishment for caste atrocities, with relief and compensation for victims.","కుల ఆధారిత అత్యాచారాలకు కఠిన శిక్ష; బాధితులకు సహాయం, నష్టపరిహారం."]],
+ [["Rights of Persons with Disabilities Act, 2016","దివ్యాంగుల హక్కుల చట్టం, 2016"],["Equal rights, accessibility and reservation in education and jobs for persons with disabilities.","దివ్యాంగులకు సమాన హక్కులు, అందుబాటు, విద్య, ఉద్యోగాల్లో రిజర్వేషన్."]],
+ [["Maintenance and Welfare of Parents and Senior Citizens Act, 2007","తల్లిదండ్రులు, వయోవృద్ధుల పోషణ, సంక్షేమ చట్టం, 2007"],["Parents and senior citizens can claim maintenance from their children.","తల్లిదండ్రులు, వయోవృద్ధులు తమ పిల్లల నుండి పోషణ ఖర్చు పొందవచ్చు."]]
+];
+const DUTIES=[
+ ["Respect the Constitution, the National Flag and the National Anthem.","రాజ్యాంగాన్ని, జాతీయ పతాకాన్ని, జాతీయ గీతాన్ని గౌరవించాలి."],
+ ["Uphold the sovereignty, unity and integrity of India, and defend the country when called upon.","భారత సార్వభౌమత్వం, ఐక్యత, సమగ్రతను కాపాడాలి; అవసరమైనప్పుడు దేశ రక్షణకు ముందుకు రావాలి."],
+ ["Promote harmony and brotherhood among all people, and respect the dignity of women.","ప్రజలందరిలో సామరస్యం, సోదరభావం పెంపొందించాలి; మహిళల గౌరవాన్ని కాపాడాలి."],
+ ["Value our composite culture; protect forests, lakes, rivers and wildlife.","మన మిశ్రమ సంస్కృతిని విలువైనదిగా చూడాలి; అడవులు, సరస్సులు, నదులు, వన్యప్రాణులను కాపాడాలి."],
+ ["Develop a scientific temper and the spirit of inquiry; safeguard public property and reject violence.","శాస్త్రీయ దృక్పథం, ప్రశ్నించే తత్వం అలవరచుకోవాలి; ప్రజా ఆస్తిని కాపాడాలి, హింసను విడనాడాలి."],
+ ["Parents and guardians must give their children aged 6 to 14 the opportunity to go to school.","6–14 ఏళ్ల పిల్లలకు చదువుకునే అవకాశం కల్పించడం తల్లిదండ్రులు, సంరక్షకుల బాధ్యత."]
+];
+const PREAMBLE_EN="WE, THE PEOPLE OF INDIA, having solemnly resolved to constitute India into a SOVEREIGN SOCIALIST SECULAR DEMOCRATIC REPUBLIC and to secure to all its citizens: JUSTICE, social, economic and political; LIBERTY of thought, expression, belief, faith and worship; EQUALITY of status and of opportunity; and to promote among them all FRATERNITY assuring the dignity of the individual and the unity and integrity of the Nation; IN OUR CONSTITUENT ASSEMBLY this twenty-sixth day of November, 1949, do HEREBY ADOPT, ENACT AND GIVE TO OURSELVES THIS CONSTITUTION.";
+const PREAMBLE_TE="భారత ప్రజలమైన మేము, భారతదేశాన్ని సర్వసత్తాక సామ్యవాద లౌకిక ప్రజాస్వామ్య గణతంత్ర రాజ్యంగా నిర్మించుకోవడానికి, పౌరులందరికీ సామాజిక, ఆర్థిక, రాజకీయ న్యాయాన్ని; ఆలోచన, భావ ప్రకటన, విశ్వాసం, ధర్మం, ఆరాధనలలో స్వేచ్ఛను; హోదాలోనూ అవకాశాలలోనూ సమానత్వాన్ని చేకూర్చడానికి; వ్యక్తి గౌరవాన్ని, దేశ ఐక్యతను, సమగ్రతను కాపాడే సౌభ్రాతృత్వాన్ని వారందరిలో పెంపొందించడానికి సత్యనిష్ఠతో తీర్మానించుకొని, మన రాజ్యాంగ పరిషత్తులో 1949 నవంబర్ 26వ తేదీన ఈ రాజ్యాంగాన్ని ఆమోదించి, శాసనంగా రూపొందించుకొని, మాకు మేమే సమర్పించుకుంటున్నాము.";
+const COI_LINKS=[
+ ["https://legislative.gov.in/constitution-of-india",["Constitution of India · English","భారత రాజ్యాంగం · ఇంగ్లీష్"]],
+ ["https://legislative.gov.in/document-category/the-constitution-of-india-in-telugu-language",["Constitution of India · Telugu","భారత రాజ్యాంగం · తెలుగు"]],
+ ["https://legislative.gov.in/document-category/constitution-of-india-in-regional-languages",["All Indian languages","అన్ని భారతీయ భాషల్లో"]]
+];
+
+// ---------- History data ----------
+// [period, [era en, te], [text en, te]]
+const TIMELINE=[
+ ["c. 2nd century BCE – 3rd century CE",["Satavahanas","శాతవాహనులు"],["Ruled the Deccan with Dhanyakataka (Amaravati) as a major centre. Amaravati became a great Buddhist centre, famous for its stupa.","ధాన్యకటకం (అమరావతి) ముఖ్య కేంద్రంగా దక్కన్‌ను పాలించారు. అమరావతి స్తూపంతో ప్రసిద్ధ బౌద్ధ కేంద్రంగా వెలిసింది."]],
+ ["3rd – 4th century CE",["Ikshvakus","ఇక్ష్వాకులు"],["Ruled from Vijayapuri in the Krishna valley (Nagarjunakonda), a centre of Buddhist learning.","కృష్ణా లోయలోని విజయపురి (నాగార్జునకొండ) నుండి పాలించారు; ఇది బౌద్ధ విద్యా కేంద్రం."]],
+ ["624 – c. 1070 CE",["Eastern Chalukyas of Vengi","వేంగి తూర్పు చాళుక్యులు"],["Founded by Kubja Vishnuvardhana at Vengi near Eluru. In the court of Rajaraja Narendra, Nannaya began the Telugu Mahabharatam, the first great work of Telugu literature.","ఏలూరు సమీపంలోని వేంగి కేంద్రంగా కుబ్జ విష్ణువర్ధనుడు స్థాపించాడు. రాజరాజ నరేంద్రుని ఆస్థానంలో నన్నయ తెలుగు మహాభారతాన్ని ప్రారంభించారు; ఇది తెలుగు సాహిత్యంలో తొలి మహా కావ్యం."]],
+ ["10th – 12th century",["Cholas and the Chola–Chalukyas","చోళులు, చోళ–చాళుక్యులు"],["The Cholas of the Tamil country bound themselves to the Eastern Chalukyas through marriages, and in 1070 Kulottunga I united the two lines. Telugu Choda chiefs ruled the Nellore region.","తమిళ ప్రాంత చోళులు వివాహ సంబంధాల ద్వారా తూర్పు చాళుక్యులతో కలిశారు; 1070లో కులోత్తుంగ చోళుడు I రెండు వంశాలనూ ఏకం చేశాడు. నెల్లూరు ప్రాంతాన్ని తెలుగు చోడ రాజులు పాలించారు."]],
+ ["c. 5th – 15th century",["Eastern Gangas and Gajapatis of Kalinga","కళింగ తూర్పు గంగులు, గజపతులు"],["The Eastern Gangas ruled the Kalinga coast, including today's Srikakulam, with an early capital at Mukhalingam (Kalinganagara). The Gajapatis of Odisha later held coastal Andhra until the 16th century.","నేటి శ్రీకాకుళంతో సహా కళింగ తీరాన్ని తూర్పు గంగులు పాలించారు; తొలి రాజధాని ముఖలింగం (కళింగనగరం). తర్వాత ఒడిశా గజపతులు 16వ శతాబ్దం వరకు తీరాంధ్రను పాలించారు."]],
+ ["c. 1163 – 1323",["Kakatiyas","కాకతీయులు"],["Ruled from Orugallu (Warangal) and united most Telugu-speaking lands, building tanks for farming. Rudrama Devi was one of India's few women rulers. The dynasty ended when Prataparudra was defeated by the Delhi Sultanate in 1323.","ఓరుగల్లు (వరంగల్) నుండి పాలించి తెలుగు ప్రాంతాలను చాలావరకు ఏకం చేశారు; సాగు కోసం చెరువులు నిర్మించారు. రుద్రమదేవి భారతదేశంలోని అరుదైన మహిళా పాలకుల్లో ఒకరు. 1323లో ఢిల్లీ సుల్తానుల చేతిలో ప్రతాపరుద్రుని ఓటమితో వంశం ముగిసింది."]],
+ ["1325 – 1448",["Musunuri Nayaks and the Reddy kingdom","ముసునూరి నాయకులు, రెడ్డి రాజ్యం"],["After the Kakatiyas, the Musunuri Nayaks drove out the Sultanate's forces. The Reddy kings ruled coastal Andhra from Addanki and Kondaveedu and patronised poets such as Srinatha.","కాకతీయుల తర్వాత ముసునూరి నాయకులు సుల్తానుల సేనలను తరిమికొట్టారు. రెడ్డి రాజులు అద్దంకి, కొండవీడు నుండి తీరాంధ్రను పాలించి శ్రీనాథుడు వంటి కవులను పోషించారు."]],
+ ["1336 – 1646",["Vijayanagara Empire","విజయనగర సామ్రాజ్యం"],["Founded by Harihara and Bukka. Sri Krishnadevaraya (1509–1529) made his court a golden age of Telugu literature with the Ashtadiggajas, including Allasani Peddana and Tenali Ramakrishna, and wrote that Telugu is the finest of the languages. After the Battle of Talikota (1565) the empire moved its capital to Penukonda and later Chandragiri.","హరిహర, బుక్కరాయలు స్థాపించారు. శ్రీకృష్ణదేవరాయలు (1509–1529) అల్లసాని పెద్దన, తెనాలి రామకృష్ణ వంటి అష్టదిగ్గజాలతో తెలుగు సాహిత్యానికి స్వర్ణయుగం తెచ్చారు; “దేశ భాషలందు తెలుగు లెస్స” అని రాశారు. 1565 తళ్లికోట యుద్ధం తర్వాత రాజధాని పెనుకొండకు, ఆ తర్వాత చంద్రగిరికి మారింది."]],
+ ["1518 – 1687",["Qutb Shahis of Golconda","గోల్కొండ కుతుబ్ షాహీలు"],["Ruled from Golconda and built the city of Hyderabad (Charminar, 1591). Telugu was valued at court, and Bhakta Ramadasu built the Bhadrachalam temple in this period.","గోల్కొండ నుండి పాలించి హైదరాబాద్ నగరాన్ని నిర్మించారు (చార్మినార్, 1591). ఆస్థానంలో తెలుగుకు ఆదరణ ఉండేది; ఈ కాలంలోనే భక్త రామదాసు భద్రాచలం ఆలయాన్ని నిర్మించారు."]],
+ ["1687 – 1948",["Mughals and the Nizams","మొఘలులు, నిజాములు"],["Aurangzeb took Golconda in 1687. From 1724 the Asaf Jahi Nizams ruled from Hyderabad and later handed the coastal and Rayalaseema districts to the British. Hyderabad State joined India in 1948.","1687లో ఔరంగజేబు గోల్కొండను జయించాడు. 1724 నుండి అసఫ్ జాహీ నిజాములు హైదరాబాద్ నుండి పాలించారు; తర్వాత తీర, రాయలసీమ జిల్లాలను బ్రిటిష్ వారికి అప్పగించారు. 1948లో హైదరాబాద్ సంస్థానం భారతదేశంలో విలీనమైంది."]],
+ ["1757 – 1947",["British rule","బ్రిటిష్ పాలన"],["After the Battle of Bobbili (1757), the Northern Circars (coastal Andhra) passed to the East India Company in 1765–66 and the Ceded Districts (Rayalaseema) in 1800, both in the Madras Presidency. Sir Arthur Cotton's anicut on the Godavari (1852) turned the delta into a rice bowl.","బొబ్బిలి యుద్ధం (1757) తర్వాత ఉత్తర సర్కారులు (తీరాంధ్ర) 1765–66లో, దత్త మండలాలు (రాయలసీమ) 1800లో ఈస్టిండియా కంపెనీకి వెళ్లి మద్రాసు ప్రెసిడెన్సీలో భాగమయ్యాయి. సర్ ఆర్థర్ కాటన్ గోదావరిపై నిర్మించిన ఆనకట్ట (1852) డెల్టాను అన్నపూర్ణగా మార్చింది."]],
+ ["1913 – 1947",["Freedom struggle and the Andhra movement","స్వాతంత్ర్య పోరాటం, ఆంధ్రోద్యమం"],["The Andhra Mahasabha (1913) began the call for a Telugu state. Pingali Venkayya designed the flag that became the basis of the National Flag; Duggirala Gopalakrishnayya led the Chirala–Perala movement (1921); Alluri Sitarama Raju led the Rampa rebellion (1922–24); Tanguturi Prakasam defied police guns at a Simon Commission protest in Madras (1928).","ఆంధ్ర మహాసభ (1913) తెలుగు రాష్ట్ర డిమాండ్‌ను ప్రారంభించింది. జాతీయ పతాకానికి ఆధారమైన జెండాను పింగళి వెంకయ్య రూపొందించారు; దుగ్గిరాల గోపాలకృష్ణయ్య చీరాల–పేరాల ఉద్యమాన్ని (1921) నడిపారు; అల్లూరి సీతారామరాజు రంప పోరాటం (1922–24) సాగించారు; మద్రాసులో సైమన్ కమిషన్ వ్యతిరేక నిరసనలో (1928) టంగుటూరి ప్రకాశం పోలీసు తుపాకులకు ఎదురు నిలిచారు."]],
+ ["19 Oct – 15 Dec 1952",["Potti Sriramulu's sacrifice","పొట్టి శ్రీరాములు ఆత్మార్పణ"],["Potti Sriramulu fasted for 58 days in Madras demanding a separate state for Telugu people, and died on 15 December 1952. He is remembered as Amarajeevi (immortal soul).","తెలుగు ప్రజలకు ప్రత్యేక రాష్ట్రం కోసం పొట్టి శ్రీరాములు మద్రాసులో 58 రోజులు నిరాహార దీక్ష చేసి 1952 డిసెంబర్ 15న అసువులు బాశారు. ఆయనను “అమరజీవి”గా స్మరిస్తారు."]],
+ ["1 October 1953",["Andhra State","ఆంధ్ర రాష్ట్రం"],["Andhra State was formed from the Telugu districts of Madras State, with Kurnool as capital and Tanguturi Prakasam as Chief Minister. It was the first Indian state formed on the basis of language.","మద్రాసు రాష్ట్రంలోని తెలుగు జిల్లాలతో ఆంధ్ర రాష్ట్రం ఏర్పడింది; రాజధాని కర్నూలు, ముఖ్యమంత్రి టంగుటూరి ప్రకాశం. భాషా ప్రాతిపదికన ఏర్పడిన తొలి భారతీయ రాష్ట్రం ఇదే."]],
+ ["1 November 1956",["Andhra Pradesh","ఆంధ్రప్రదేశ్"],["Andhra State merged with the Telugu-speaking Telangana region of Hyderabad State to form Andhra Pradesh, with Hyderabad as capital. Neelam Sanjiva Reddy became the first Chief Minister.","ఆంధ్ర రాష్ట్రం, హైదరాబాద్ సంస్థానంలోని తెలుగు మాట్లాడే తెలంగాణ ప్రాంతం కలిసి ఆంధ్రప్రదేశ్ ఏర్పడింది; రాజధాని హైదరాబాద్. నీలం సంజీవరెడ్డి తొలి ముఖ్యమంత్రి అయ్యారు."]],
+ ["2 June 2014",["Bifurcation","రాష్ట్ర విభజన"],["Telangana became a separate state. Andhra Pradesh kept 13 districts and began building Amaravati as its new capital.","తెలంగాణ ప్రత్యేక రాష్ట్రమైంది. ఆంధ్రప్రదేశ్‌కు 13 జిల్లాలు మిగిలాయి; అమరావతిని కొత్త రాజధానిగా నిర్మించడం ప్రారంభించింది."]],
+ ["2022 – 2025",["New districts","కొత్త జిల్లాలు"],["13 new districts came into force on 4 April 2022, making 26. Markapuram and Polavaram districts were added on 31 December 2025, making 28.","2022 ఏప్రిల్ 4న 13 కొత్త జిల్లాలు ఏర్పడి మొత్తం 26 అయ్యాయి. 2025 డిసెంబర్ 31న మార్కాపురం, పోలవరం జిల్లాలు చేరి మొత్తం 28 అయ్యాయి."]]
+];
+// [name en, name te, years, role en, role te]
+const PEOPLE=[
+ ["Nannaya","నన్నయ","11th century","Adikavi, the first poet of Telugu, who began the Telugu Mahabharatam.","ఆదికవి; తెలుగు మహాభారతాన్ని ప్రారంభించిన తొలి తెలుగు కవి."],
+ ["Rudrama Devi","రుద్రమదేవి","13th century","Kakatiya queen who ruled in her own right and defended the kingdom in battle.","స్వయంగా పాలించి యుద్ధాల్లో రాజ్యాన్ని రక్షించిన కాకతీయ రాణి."],
+ ["Annamacharya","అన్నమాచార్యులు","1408–1503","Saint-composer from Tallapaka who wrote thousands of keertanas on Lord Venkateswara.","వేంకటేశ్వర స్వామిపై వేలాది కీర్తనలు రచించిన తాళ్లపాక వాగ్గేయకారుడు."],
+ ["Sri Krishnadevaraya","శ్రీకృష్ణదేవరాయలు","reigned 1509–1529","Vijayanagara emperor and poet (Amuktamalyada), patron of the Ashtadiggajas.","విజయనగర చక్రవర్తి, కవి (ఆముక్తమాల్యద); అష్టదిగ్గజాల పోషకుడు."],
+ ["Tenali Ramakrishna","తెనాలి రామకృష్ణ","16th century","Poet at Krishnadevaraya's court, loved for his wit and stories.","కృష్ణదేవరాయల ఆస్థాన కవి; చమత్కారం, కథలతో ప్రజల మనసు గెలిచారు."],
+ ["Vemana","వేమన","c. 17th century","Folk poet whose short verses teach everyday wisdom and question social evils.","నిత్య జీవిత జ్ఞానాన్ని బోధిస్తూ సామాజిక దురాచారాలను ప్రశ్నించిన ప్రజాకవి."],
+ ["Bhakta Ramadasu","భక్త రామదాసు","17th century","Built the Sri Rama temple at Bhadrachalam and composed devotional keertanas.","భద్రాచలం శ్రీరామ ఆలయాన్ని నిర్మించి భక్తి కీర్తనలు రచించారు."],
+ ["Sir Arthur Cotton","సర్ ఆర్థర్ కాటన్","1803–1899","British engineer whose Godavari anicut made the delta prosperous; still honoured in the Godavari districts.","గోదావరి ఆనకట్టతో డెల్టాను సస్యశ్యామలం చేసిన బ్రిటిష్ ఇంజనీర్; గోదావరి జిల్లాల్లో నేటికీ పూజ్యుడు."],
+ ["Kandukuri Veeresalingam","కందుకూరి వీరేశలింగం","1848–1919","Social reformer of Rajahmundry who championed widow remarriage and women's education.","వితంతు పునర్వివాహం, స్త్రీ విద్య కోసం పోరాడిన రాజమండ్రి సంఘ సంస్కర్త."],
+ ["Gurajada Apparao","గురజాడ అప్పారావు","1862–1915","Writer from Vizianagaram whose play Kanyasulkam brought spoken Telugu into literature.","కన్యాశుల్కం నాటకంతో వాడుక తెలుగును సాహిత్యంలోకి తెచ్చిన విజయనగరం రచయిత."],
+ ["Pingali Venkayya","పింగళి వెంకయ్య","1876–1963","Freedom fighter from the Krishna region who designed the flag that became the basis of India's National Flag.","భారత జాతీయ పతాకానికి ఆధారమైన జెండాను రూపొందించిన కృష్ణా ప్రాంత స్వాతంత్ర్య సమరయోధుడు."],
+ ["Tanguturi Prakasam","టంగుటూరి ప్రకాశం","1872–1957","Andhra Kesari, freedom fighter and the first Chief Minister of Andhra State (1953).","ఆంధ్రకేసరి; స్వాతంత్ర్య సమరయోధుడు, ఆంధ్ర రాష్ట్ర తొలి ముఖ్యమంత్రి (1953)."],
+ ["Alluri Sitarama Raju","అల్లూరి సీతారామరాజు","1897–1924","Led the Rampa rebellion of tribal people against British rule in the Eastern Ghats.","తూర్పు కనుమల్లో బ్రిటిష్ పాలనకు వ్యతిరేకంగా గిరిజనులతో రంప పోరాటం నడిపిన వీరుడు."],
+ ["Potti Sriramulu","పొట్టి శ్రీరాములు","1901–1952","Amarajeevi, who gave his life fasting for a separate Telugu state, leading to Andhra State in 1953.","అమరజీవి; తెలుగు రాష్ట్రం కోసం నిరాహార దీక్షలో ప్రాణాలు అర్పించారు; దాని ఫలితంగా 1953లో ఆంధ్ర రాష్ట్రం ఏర్పడింది."],
+ ["Neelam Sanjiva Reddy","నీలం సంజీవరెడ్డి","1913–1996","First Chief Minister of Andhra Pradesh (1956) and later the sixth President of India.","ఆంధ్రప్రదేశ్ తొలి ముఖ్యమంత్రి (1956); తర్వాత భారత ఆరవ రాష్ట్రపతి."],
+ ["N. T. Rama Rao","నందమూరి తారక రామారావు","1923–1996","Film legend who founded the Telugu Desam Party in 1982 and became Chief Minister.","1982లో తెలుగుదేశం పార్టీని స్థాపించి ముఖ్యమంత్రి అయిన సినీ దిగ్గజం."]
+];
+// district: [name en (matches DISTRICTS), HQ en, HQ te, [name story en, te], [speciality en, te], [contribution en, te]]
+const DIST_INFO={
+ "Alluri Sitharama Raju":["Paderu","పాడేరు",["Named after Alluri Sitarama Raju, the hero of the Rampa rebellion.","రంప పోరాట వీరుడు అల్లూరి సీతారామరాజు పేరు పెట్టారు."],["Araku Valley, Borra Caves, tribal culture and hill coffee.","అరకు లోయ, బొర్రా గుహలు, గిరిజన సంస్కృతి, కొండ కాఫీ."],["Araku coffee grown by tribal farmers and eco-tourism.","గిరిజన రైతులు పండించే అరకు కాఫీ, పర్యావరణ పర్యాటకం."]],
+ "Anakapalli":["Anakapalli","అనకాపల్లి",["Named after its headquarters town, a historic trading centre.","చారిత్రక వ్యాపార కేంద్రమైన జిల్లా కేంద్రం పేరు."],["One of India's biggest jaggery (bellam) markets; Bojjannakonda Buddhist caves.","దేశంలోని అతిపెద్ద బెల్లం మార్కెట్లలో ఒకటి; బొజ్జన్నకొండ బౌద్ధ గుహలు."],["Pharma and industrial hubs near Parawada and Atchutapuram.","పరవాడ, అచ్యుతాపురం వద్ద ఫార్మా, పారిశ్రామిక కేంద్రాలు."]],
+ "Ananthapuramu":["Anantapuram","అనంతపురం",["Traditionally linked to the Anantasagaram tank of the Vijayanagara era.","విజయనగర కాలం నాటి అనంతసాగరం చెరువుతో ఈ పేరు ముడిపడి ఉందని చెబుతారు."],["Gooty fort; groundnut country and one of the driest districts in India.","గుత్తి కోట; వేరుశనగ సాగు ప్రాంతం, దేశంలోని అత్యంత పొడి జిల్లాల్లో ఒకటి."],["Groundnut, fruit orchards and large solar power parks.","వేరుశనగ, పండ్ల తోటలు, భారీ సౌర విద్యుత్ పార్కులు."]],
+ "Annamayya":["Madanapalle","మదనపల్లె",["Named after the saint-composer Annamacharya, born at Tallapaka in this district.","ఈ జిల్లాలోని తాళ్లపాకలో జన్మించిన వాగ్గేయకారుడు అన్నమాచార్యుల పేరు పెట్టారు."],["Horsley Hills; Madanapalle, where Rabindranath Tagore translated Jana Gana Mana into English in 1919.","హార్సిలీ హిల్స్; 1919లో రవీంద్రనాథ్ ఠాగూర్ జనగణమనను ఇంగ్లీషులోకి అనువదించిన మదనపల్లె."],["Major tomato market at Madanapalle, mangoes and silk.","మదనపల్లె టమాటా మార్కెట్, మామిడి, పట్టు."]],
+ "Bapatla":["Bapatla","బాపట్ల",["Named after its headquarters town, home of the ancient Bhavanarayana Swamy temple.","పురాతన భావనారాయణ స్వామి ఆలయం ఉన్న జిల్లా కేంద్రం పేరు."],["Suryalanka beach; Chirala handlooms and the Chirala–Perala movement.","సూర్యలంక బీచ్; చీరాల చేనేత, చీరాల–పేరాల ఉద్యమం."],["Paddy, aquaculture, handloom weaving and agricultural education.","వరి, ఆక్వాకల్చర్, చేనేత, వ్యవసాయ విద్య."]],
+ "Chittoor":["Chittoor","చిత్తూరు",["Named after its headquarters town.","జిల్లా కేంద్రం పేరు."],["Kanipakam Vinayaka temple; famous Totapuri mangoes.","కాణిపాకం వినాయక ఆలయం; ప్రసిద్ధ తోతాపురి మామిడి."],["Mango pulp exports, dairy and granite.","మామిడి గుజ్జు ఎగుమతులు, పాడి పరిశ్రమ, గ్రానైట్."]],
+ "Dr. B. R. Ambedkar Konaseema":["Amalapuram","అమలాపురం",["Named after Dr. B. R. Ambedkar; Konaseema means the land between the branches of the Godavari.","డా. బి.ఆర్. అంబేద్కర్ పేరు; కోనసీమ అంటే గోదావరి పాయల మధ్య భూమి."],["Coconut groves, backwaters and the Godavari delta landscape.","కొబ్బరి తోటలు, కాలువలు, గోదావరి డెల్టా అందాలు."],["Coconut, paddy and onshore natural gas.","కొబ్బరి, వరి, సహజ వాయువు."]],
+ "East Godavari":["Rajamahendravaram","రాజమహేంద్రవరం",["Named after the Godavari river; Rajamahendravaram recalls the Eastern Chalukya king Rajaraja Narendra.","గోదావరి నది పేరు; రాజమహేంద్రవరం తూర్పు చాళుక్య రాజు రాజరాజ నరేంద్రుని గుర్తు చేస్తుంది."],["Cultural capital of Andhra; Nannaya, Kandukuri Veeresalingam and the Godavari Pushkaralu.","ఆంధ్ర సాంస్కృతిక రాజధాని; నన్నయ, కందుకూరి వీరేశలింగం, గోదావరి పుష్కరాలు."],["Paper industry, agriculture and trade on the Godavari.","కాగితం పరిశ్రమ, వ్యవసాయం, గోదావరి తీర వ్యాపారం."]],
+ "Eluru":["Eluru","ఏలూరు",["Named after its headquarters town, close to ancient Vengi of the Eastern Chalukyas.","తూర్పు చాళుక్యుల పురాతన వేంగి సమీపంలోని జిల్లా కేంద్రం పేరు."],["Kolleru lake bird sanctuary, Dwaraka Tirumala temple and Eluru carpets.","కొల్లేరు సరస్సు పక్షుల అభయారణ్యం, ద్వారకా తిరుమల ఆలయం, ఏలూరు తివాచీలు."],["Fish and prawn farming, oil palm and paddy.","చేపలు, రొయ్యల సాగు, ఆయిల్ పామ్, వరి."]],
+ "Guntur":["Guntur","గుంటూరు",["Named after its headquarters city.","జిల్లా కేంద్ర నగరం పేరు."],["Guntur chillies and one of Asia's largest chilli markets; part of the Amaravati capital region.","గుంటూరు మిర్చి, ఆసియాలోని అతిపెద్ద మిర్చి యార్డుల్లో ఒకటి; అమరావతి రాజధాని ప్రాంతంలో భాగం."],["Chilli, cotton and tobacco trade; education and health hub.","మిర్చి, పత్తి, పొగాకు వ్యాపారం; విద్య, వైద్య కేంద్రం."]],
+ "Kakinada":["Kakinada","కాకినాడ",["Named after its port city.","ఓడరేవు నగరం పేరు."],["Deep-water port, Kakinada kaja sweet and the Pithapuram temple.","లోతైన ఓడరేవు, కాకినాడ కాజా, పిఠాపురం ఆలయం."],["Port trade, fertiliser plants and Krishna–Godavari basin natural gas.","ఓడరేవు వ్యాపారం, ఎరువుల కర్మాగారాలు, కృష్ణా–గోదావరి బేసిన్ సహజ వాయువు."]],
+ "Krishna":["Machilipatnam","మచిలీపట్నం",["Named after the Krishna river.","కృష్ణా నది పేరు."],["Machilipatnam, an ancient port; Kalamkari art of Pedana; Bandar laddu.","పురాతన ఓడరేవు మచిలీపట్నం; పెడన కలంకారీ కళ; బందరు లడ్డు."],["Paddy, aquaculture and Kalamkari exports.","వరి, ఆక్వాకల్చర్, కలంకారీ ఎగుమతులు."]],
+ "Kurnool":["Kurnool","కర్నూలు",["Named after its headquarters city, the first capital of Andhra State (1953–56).","ఆంధ్ర రాష్ట్ర తొలి రాజధాని (1953–56) అయిన జిల్లా కేంద్రం పేరు."],["Konda Reddy fort and the Mantralayam Raghavendra Swamy temple on the Tungabhadra.","కొండారెడ్డి బురుజు, తుంగభద్ర తీరాన మంత్రాలయం రాఘవేంద్ర స్వామి మఠం."],["Cotton (Adoni market), groundnut and industrial growth near Orvakal.","పత్తి (ఆదోని మార్కెట్), వేరుశనగ, ఓర్వకల్ వద్ద పారిశ్రామిక అభివృద్ధి."]],
+ "Markapuram":["Markapuram","మార్కాపురం",["Named after its headquarters town; formed from Prakasam district on 31 December 2025.","జిల్లా కేంద్రం పేరు; 2025 డిసెంబర్ 31న ప్రకాశం జిల్లా నుండి ఏర్పడింది."],["Sri Chennakesava Swamy temple; known for its slate stone.","శ్రీ చెన్నకేశవ స్వామి ఆలయం; పలక రాయికి ప్రసిద్ధి."],["Slate industry and dryland farming.","పలక రాయి పరిశ్రమ, మెట్ట వ్యవసాయం."]],
+ "Nandyal":["Nandyal","నంద్యాల",["Linked with the nine Nandi temples (Nava Nandulu) around the town.","పట్టణం చుట్టూ ఉన్న నవ నందులతో ఈ పేరు ముడిపడి ఉంది."],["Srisailam Mallikarjuna Jyotirlinga, Ahobilam, Mahanandi and Belum Caves.","శ్రీశైలం మల్లికార్జున జ్యోతిర్లింగం, అహోబిలం, మహానంది, బెలుం గుహలు."],["Hydropower from Srisailam, rice and pilgrimage tourism.","శ్రీశైలం జలవిద్యుత్, వరి, పుణ్యక్షేత్ర పర్యాటకం."]],
+ "NTR":["Vijayawada","విజయవాడ",["Named after N. T. Rama Rao, film legend and former Chief Minister.","సినీ దిగ్గజం, మాజీ ముఖ్యమంత్రి ఎన్.టి. రామారావు పేరు పెట్టారు."],["Kanaka Durga temple on Indrakeeladri, Prakasam Barrage and Kondapalli toys.","ఇంద్రకీలాద్రిపై కనకదుర్గ ఆలయం, ప్రకాశం బ్యారేజీ, కొండపల్లి బొమ్మలు."],["Trade and transport hub of the state, with one of India's busiest railway junctions.","రాష్ట్ర వ్యాపార, రవాణా కేంద్రం; దేశంలోని రద్దీగా ఉండే రైల్వే జంక్షన్లలో ఒకటి."]],
+ "Palnadu":["Narasaraopeta","నరసరావుపేట",["Named after the historic Palnadu region, scene of the 12th-century Palnati Yuddham.","12వ శతాబ్దపు పల్నాటి యుద్ధం జరిగిన చారిత్రక పల్నాడు ప్రాంతం పేరు."],["Kotappakonda temple and the right bank of Nagarjuna Sagar.","కోటప్పకొండ ఆలయం, నాగార్జున సాగర్ కుడి కాలువ ప్రాంతం."],["Irrigated cotton and chillies, and cement industry.","సాగునీటితో పత్తి, మిర్చి; సిమెంట్ పరిశ్రమ."]],
+ "Parvathipuram Manyam":["Parvathipuram","పార్వతీపురం",["Manyam means the forested hill country of the Eastern Ghats.","మన్యం అంటే తూర్పు కనుమల అటవీ కొండ ప్రాంతం."],["Tribal communities such as the Savaras, hills and forests.","సవర వంటి గిరిజన తెగలు, కొండలు, అడవులు."],["Forest produce, tribal crafts and agriculture.","అటవీ ఉత్పత్తులు, గిరిజన హస్తకళలు, వ్యవసాయం."]],
+ "Polavaram":["Rampachodavaram","రంపచోడవరం",["Named after the Polavaram irrigation project on the Godavari; formed on 31 December 2025.","గోదావరిపై పోలవరం సాగునీటి ప్రాజెక్టు పేరు; 2025 డిసెంబర్ 31న ఏర్పడింది."],["Tribal agency area of the Rampa rebellion led by Alluri Sitarama Raju; Papikondalu hills.","అల్లూరి సీతారామరాజు నడిపిన రంప పోరాట గిరిజన ప్రాంతం; పాపికొండలు."],["Polavaram project for irrigation, drinking water and power.","సాగు, తాగునీరు, విద్యుత్ కోసం పోలవరం ప్రాజెక్టు."]],
+ "Prakasam":["Ongole","ఒంగోలు",["Named after Andhra Kesari Tanguturi Prakasam, first Chief Minister of Andhra State.","ఆంధ్ర రాష్ట్ర తొలి ముఖ్యమంత్రి ఆంధ్రకేసరి టంగుటూరి ప్రకాశం పేరు పెట్టారు."],["The world-famous Ongole breed of cattle and Chimakurthi galaxy granite.","ప్రపంచ ప్రసిద్ధ ఒంగోలు జాతి పశువులు, చీమకుర్తి గెలాక్సీ గ్రానైట్."],["Granite exports, tobacco and livestock.","గ్రానైట్ ఎగుమతులు, పొగాకు, పశు సంపద."]],
+ "Sri Potti Sriramulu Nellore":["Nellore","నెల్లూరు",["Named after Amarajeevi Potti Sriramulu (renamed in 2008).","అమరజీవి పొట్టి శ్రీరాములు పేరు (2008లో పేరు మార్చారు)."],["Fine Nellore rice and the Ranganathaswamy temple.","నాణ్యమైన నెల్లూరు బియ్యం, రంగనాథస్వామి ఆలయం."],["Rice, prawn farming and Krishnapatnam port.","వరి, రొయ్యల సాగు, కృష్ణపట్నం ఓడరేవు."]],
+ "Sri Sathya Sai":["Puttaparthi","పుట్టపర్తి",["Named after Sri Sathya Sai Baba of Puttaparthi.","పుట్టపర్తి శ్రీ సత్యసాయి బాబా పేరు పెట్టారు."],["Lepakshi temple with Vijayanagara art, and Penukonda fort.","విజయనగర కళతో లేపాక్షి ఆలయం, పెనుకొండ కోట."],["Car manufacturing near Penukonda, horticulture and pilgrim tourism.","పెనుకొండ వద్ద కార్ల తయారీ, ఉద్యాన పంటలు, పుణ్యక్షేత్ర పర్యాటకం."]],
+ "Srikakulam":["Srikakulam","శ్రీకాకుళం",["Named after its headquarters town on the Nagavali river.","నాగావళి తీరాన ఉన్న జిల్లా కేంద్రం పేరు."],["Arasavalli Sun temple, Srikurmam and Mukhalingam of the Eastern Gangas.","అరసవల్లి సూర్య దేవాలయం, శ్రీకూర్మం, తూర్పు గంగుల ముఖలింగం."],["Cashew and coconut (Uddanam), and fisheries along a long coastline.","జీడిపప్పు, కొబ్బరి (ఉద్దానం), పొడవైన తీరంలో మత్స్య సంపద."]],
+ "Tirupati":["Tirupati","తిరుపతి",["Tiru means sacred and pati means lord: the town of the sacred lord.","తిరు అంటే పవిత్రం, పతి అంటే స్వామి: పవిత్ర స్వామి నగరం."],["Tirumala Venkateswara temple, the Sriharikota space centre and Pulicat lake.","తిరుమల శ్రీ వేంకటేశ్వర ఆలయం, శ్రీహరికోట అంతరిక్ష కేంద్రం, పులికాట్ సరస్సు."],["Pilgrimage economy, space launches and electronics manufacturing at Sri City.","పుణ్యక్షేత్ర ఆర్థిక వ్యవస్థ, అంతరిక్ష ప్రయోగాలు, శ్రీసిటీలో ఎలక్ట్రానిక్స్ తయారీ."]],
+ "Visakhapatnam":["Visakhapatnam","విశాఖపట్నం",["Traditionally said to be named after Visakha, the god of valour.","శౌర్య దేవుడు విశాఖుని పేరుతో వచ్చిందని చెబుతారు."],["Major port, Eastern Naval Command, RK Beach, Kailasagiri and Simhachalam temple.","ప్రధాన ఓడరేవు, తూర్పు నౌకాదళ కమాండ్, ఆర్కే బీచ్, కైలాసగిరి, సింహాచలం ఆలయం."],["The state's largest city: steel plant, port, shipbuilding and IT.","రాష్ట్రంలో అతిపెద్ద నగరం: ఉక్కు కర్మాగారం, ఓడరేవు, నౌకా నిర్మాణం, ఐటీ."]],
+ "Vizianagaram":["Vizianagaram","విజయనగరం",["Vijaya-nagaram, the city of victory.","విజయనగరం అంటే విజయ నగరం."],["Vizianagaram fort, the music college, Gurajada Apparao, the Bobbili veena and the Battle of Bobbili (1757).","విజయనగరం కోట, సంగీత కళాశాల, గురజాడ అప్పారావు, బొబ్బిలి వీణ, బొబ్బిలి యుద్ధం (1757)."],["Arts and culture, education and agriculture.","కళలు, సంస్కృతి, విద్య, వ్యవసాయం."]],
+ "West Godavari":["Bhimavaram","భీమవరం",["Named after the Godavari river.","గోదావరి నది పేరు."],["Aquaculture capital, the Pancharama temple at Bhimavaram and Narsapuram lace.","ఆక్వా రాజధాని, భీమవరం పంచారామ క్షేత్రం, నరసాపురం లేసు అల్లికలు."],["Prawn and fish exports and rice: part of the rice bowl of Andhra.","రొయ్యలు, చేపల ఎగుమతులు, వరి: ఆంధ్ర అన్నపూర్ణలో భాగం."]],
+ "YSR Kadapa":["Kadapa","కడప",["Named after former Chief Minister Y. S. Rajasekhara Reddy; Kadapa is often said to come from gadapa, the threshold to Tirumala.","మాజీ ముఖ్యమంత్రి వై.ఎస్. రాజశేఖరరెడ్డి పేరు; తిరుమలకు గడప కాబట్టి కడప అనే పేరు వచ్చిందని చెబుతారు."],["Gandikota fort and gorge on the Penna river, and Kadapa stone.","పెన్నా నదిపై గండికోట కోట, లోయ; కడప రాయి."],["Cement, barytes mining and Kadapa slabs.","సిమెంట్, బెరైటీస్ గనులు, కడప బండలు."]]
+};
+
+// ---------- Constitution amendments (all 106 enacted as of 2026), in plain words ----------
+// [number, year, key (1 = important for everyone, 2 = about Andhra Pradesh), english, telugu]
+const AMEND=[
+[1,1951,1,"Allowed special help for socially backward classes, let the State put reasonable limits on free speech, and created the Ninth Schedule to protect land reform laws from court challenges.","సామాజికంగా వెనుకబడిన వర్గాలకు ప్రత్యేక సహాయానికి అనుమతి; వాక్ స్వాతంత్ర్యంపై సహేతుక పరిమితులు; భూ సంస్కరణ చట్టాలను కోర్టు సవాళ్ల నుండి కాపాడేందుకు తొమ్మిదో షెడ్యూల్ ఏర్పాటు."],
+[2,1952,0,"Changed how many people one Lok Sabha member can represent.","ఒక లోక్‌సభ సభ్యుడు ఎంతమంది ప్రజలకు ప్రాతినిధ్యం వహించవచ్చో మార్చారు."],
+[3,1954,0,"Gave Parliament more power to control the production, supply and trade of essential goods such as food.","ఆహారం వంటి నిత్యావసర వస్తువుల ఉత్పత్తి, సరఫరా, వ్యాపారంపై పార్లమెంటుకు ఎక్కువ అధికారం ఇచ్చారు."],
+[4,1955,0,"Said courts cannot question the amount of compensation when the State takes private property, and allowed the State to run trade itself.","ప్రభుత్వం ప్రైవేట్ ఆస్తి తీసుకున్నప్పుడు నష్టపరిహారం మొత్తాన్ని కోర్టులు ప్రశ్నించలేవు; ప్రభుత్వమే వ్యాపారం నడపవచ్చు."],
+[5,1955,0,"Let the President fix a time limit for states to give their views when Parliament changes their boundaries.","రాష్ట్ర సరిహద్దులు మార్చే బిల్లులపై రాష్ట్రాలు అభిప్రాయం చెప్పేందుకు రాష్ట్రపతి గడువు విధించవచ్చు."],
+[6,1956,0,"Gave Parliament the power to tax goods sold from one state to another.","ఒక రాష్ట్రం నుండి మరో రాష్ట్రానికి అమ్మే వస్తువులపై పన్ను విధించే అధికారం పార్లమెంటుకు ఇచ్చారు."],
+[7,1956,1,"Reorganised the states on the basis of language into 14 states and 6 Union Territories, from 1 November 1956, the day Andhra Pradesh was formed.","భాషా ప్రాతిపదికన రాష్ట్రాలను 14 రాష్ట్రాలు, 6 కేంద్ర పాలిత ప్రాంతాలుగా పునర్వ్యవస్థీకరించారు; ఆంధ్రప్రదేశ్ ఏర్పడిన 1956 నవంబర్ 1 నుండి అమలు."],
+[8,1960,0,"Extended reserved seats for SCs, STs and Anglo-Indians in Parliament and the assemblies by 10 years, to 1970.","పార్లమెంటు, శాసనసభల్లో SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (1970 వరకు) పొడిగించారు."],
+[9,1960,0,"Allowed India to hand over the Berubari area to Pakistan (today's Bangladesh) under an agreement.","ఒప్పందం ప్రకారం బెరుబారి ప్రాంతాన్ని పాకిస్తాన్‌కు (నేటి బంగ్లాదేశ్) అప్పగించేందుకు అనుమతి."],
+[10,1961,0,"Made Dadra and Nagar Haveli, freed from Portuguese rule, part of India as a Union Territory.","పోర్చుగీస్ పాలన నుండి విముక్తి పొందిన దాద్రా, నగర్ హవేలీని కేంద్ర పాలిత ప్రాంతంగా భారతదేశంలో చేర్చారు."],
+[11,1961,0,"Changed the Vice-President's election to a vote by members of both Houses of Parliament.","ఉపరాష్ట్రపతిని పార్లమెంటు ఉభయ సభల సభ్యులు ఎన్నుకునేలా మార్చారు."],
+[12,1962,0,"Made Goa, Daman and Diu part of India as a Union Territory.","గోవా, డామన్, డయ్యూను కేంద్ర పాలిత ప్రాంతంగా భారతదేశంలో చేర్చారు."],
+[13,1962,0,"Created Nagaland as a state, with special protection for Naga customs and land (Article 371A).","నాగా ఆచారాలు, భూములకు ప్రత్యేక రక్షణతో నాగాలాండ్ రాష్ట్రాన్ని ఏర్పాటు చేశారు (ఆర్టికల్ 371A)."],
+[14,1962,0,"Made Puducherry part of India and allowed some Union Territories to have their own assemblies.","పుదుచ్చేరిని భారతదేశంలో చేర్చారు; కొన్ని కేంద్ర పాలిత ప్రాంతాలకు శాసనసభలకు అనుమతి."],
+[15,1963,0,"Raised the retirement age of High Court judges from 60 to 62, and let High Courts issue orders beyond their own state.","హైకోర్టు న్యాయమూర్తుల పదవీ విరమణ వయస్సును 60 నుండి 62కు పెంచారు; హైకోర్టులు తమ రాష్ట్రం బయట కూడా ఆదేశాలు ఇవ్వవచ్చు."],
+[16,1963,0,"Allowed limits on freedoms to protect India's sovereignty and integrity, and added this to oaths of office.","భారత సార్వభౌమత్వం, సమగ్రత రక్షణకు స్వేచ్ఛలపై పరిమితులకు అనుమతి; పదవీ ప్రమాణాల్లో దీన్ని చేర్చారు."],
+[17,1964,0,"Protected land that farmers cultivate themselves from being taken without market-value compensation, and added more land laws to the Ninth Schedule.","రైతులు స్వయంగా సాగుచేసే భూమిని మార్కెట్ విలువ చెల్లించకుండా తీసుకోకుండా రక్షణ; మరిన్ని భూ చట్టాలు తొమ్మిదో షెడ్యూల్‌లో."],
+[18,1966,0,"Made clear that Parliament can create new states and Union Territories and change their boundaries.","కొత్త రాష్ట్రాలు, కేంద్ర పాలిత ప్రాంతాలను ఏర్పాటు చేసి, సరిహద్దులు మార్చే అధికారం పార్లమెంటుకు ఉందని స్పష్టం చేశారు."],
+[19,1966,0,"Abolished Election Tribunals; election disputes now go to the High Courts.","ఎన్నికల ట్రిబ్యునళ్లను రద్దు చేశారు; ఎన్నికల వివాదాలు ఇప్పుడు హైకోర్టులకు వెళ్తాయి."],
+[20,1966,0,"Made valid some district judge appointments that the Supreme Court had cancelled.","సుప్రీంకోర్టు రద్దు చేసిన కొన్ని జిల్లా న్యాయమూర్తుల నియామకాలను చెల్లుబాటు చేశారు."],
+[21,1967,0,"Added Sindhi to the Eighth Schedule of languages.","సింధీ భాషను ఎనిమిదో షెడ్యూల్‌లో చేర్చారు."],
+[22,1969,0,"Allowed Meghalaya to be formed as an autonomous state within Assam.","అస్సాంలో స్వయంప్రతిపత్తి రాష్ట్రంగా మేఘాలయ ఏర్పాటుకు అనుమతి."],
+[23,1969,0,"Extended reserved seats for SCs, STs and Anglo-Indians by another 10 years, to 1980.","SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను మరో 10 ఏళ్లు (1980 వరకు) పొడిగించారు."],
+[24,1971,1,"Confirmed that Parliament can amend any part of the Constitution, including Fundamental Rights, and that the President must sign such amendments.","ప్రాథమిక హక్కులతో సహా రాజ్యాంగంలోని ఏ భాగాన్నైనా సవరించే అధికారం పార్లమెంటుకు ఉందని, అలాంటి సవరణలపై రాష్ట్రపతి తప్పనిసరిగా సంతకం చేయాలని ధృవీకరించారు."],
+[25,1971,0,"Reduced the right to property and protected laws made to carry out certain Directive Principles from court challenge (Article 31C).","ఆస్తి హక్కును తగ్గించారు; కొన్ని ఆదేశిక సూత్రాల అమలుకు చేసిన చట్టాలను కోర్టు సవాళ్ల నుండి కాపాడారు (ఆర్టికల్ 31C)."],
+[26,1971,0,"Ended the privy purses and special privileges of the former kings of princely states.","పూర్వపు సంస్థానాధీశుల రాజభరణాలు, ప్రత్యేక హక్కులను రద్దు చేశారు."],
+[27,1971,0,"Made special arrangements for North-Eastern Union Territories and let their administrators issue ordinances.","ఈశాన్య కేంద్ర పాలిత ప్రాంతాలకు ప్రత్యేక ఏర్పాట్లు; వాటి పరిపాలకులు ఆర్డినెన్సులు జారీ చేయవచ్చు."],
+[28,1972,0,"Ended the special privileges of former Indian Civil Service officers.","పూర్వపు ఇండియన్ సివిల్ సర్వీస్ అధికారుల ప్రత్యేక హక్కులను రద్దు చేశారు."],
+[29,1972,0,"Added two Kerala land reform laws to the Ninth Schedule.","కేరళ రెండు భూ సంస్కరణ చట్టాలను తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[30,1972,0,"Allowed civil appeals to the Supreme Court only on important questions of law, not on the money value of the case.","సివిల్ కేసుల్లో విలువ ఆధారంగా కాకుండా ముఖ్యమైన న్యాయ ప్రశ్నలపై మాత్రమే సుప్రీంకోర్టుకు అప్పీలు."],
+[31,1973,0,"Increased the maximum size of the Lok Sabha from 525 to 545 seats.","లోక్‌సభ గరిష్ఠ స్థానాలను 525 నుండి 545కు పెంచారు."],
+[32,1973,2,"Added Articles 371D and 371E for Andhra Pradesh: local reservation by region in education and state jobs (the Six-Point Formula), a state administrative tribunal, and a central university in the state.","ఆంధ్రప్రదేశ్ కోసం ఆర్టికల్ 371D, 371E: ప్రాంతాల వారీగా విద్య, రాష్ట్ర ఉద్యోగాల్లో స్థానిక రిజర్వేషన్ (ఆరు సూత్రాల పథకం), రాష్ట్ర పరిపాలనా ట్రిబ్యునల్, రాష్ట్రంలో కేంద్ర విశ్వవిద్యాలయం."],
+[33,1974,0,"Said an MP's or MLA's resignation is accepted only if it is voluntary and genuine.","స్వచ్ఛందంగా, నిజంగా ఇచ్చినప్పుడే ఎంపీ లేదా ఎమ్మెల్యే రాజీనామాను ఆమోదిస్తారు."],
+[34,1974,0,"Added 20 more state land reform laws to the Ninth Schedule.","మరో 20 రాష్ట్ర భూ సంస్కరణ చట్టాలను తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[35,1974,0,"Made Sikkim an associate state of India.","సిక్కింను భారతదేశ అనుబంధ రాష్ట్రంగా చేశారు."],
+[36,1975,0,"Made Sikkim a full state of India.","సిక్కింను పూర్తి భారతీయ రాష్ట్రంగా చేశారు."],
+[37,1975,0,"Gave Arunachal Pradesh, then a Union Territory, its own assembly and council of ministers.","అప్పటి కేంద్ర పాలిత ప్రాంతం అరుణాచల్ ప్రదేశ్‌కు శాసనసభ, మంత్రిమండలి ఇచ్చారు."],
+[38,1975,0,"During the Emergency, made the President's emergency declarations and ordinances immune from court review.","ఎమర్జెన్సీ కాలంలో రాష్ట్రపతి ఎమర్జెన్సీ ప్రకటనలు, ఆర్డినెన్సులను కోర్టులు సమీక్షించలేకుండా చేశారు."],
+[39,1975,0,"During the Emergency, placed election disputes of the Prime Minister and the Speaker beyond the courts.","ఎమర్జెన్సీ కాలంలో ప్రధానమంత్రి, స్పీకర్ ఎన్నికల వివాదాలను కోర్టుల పరిధి నుండి తప్పించారు."],
+[40,1976,0,"Gave Parliament power over India's territorial waters, continental shelf and exclusive economic zone in the sea.","భారత ప్రాదేశిక జలాలు, ఖండాంతర అంచు, సముద్ర ప్రత్యేక ఆర్థిక మండలంపై పార్లమెంటుకు అధికారం."],
+[41,1976,0,"Raised the retirement age of State Public Service Commission members from 60 to 62.","రాష్ట్ర పబ్లిక్ సర్వీస్ కమిషన్ సభ్యుల పదవీ విరమణ వయస్సును 60 నుండి 62కు పెంచారు."],
+[42,1976,1,"Called the mini-Constitution: added 'socialist', 'secular' and 'integrity' to the Preamble, added Fundamental Duties and new Directive Principles such as free legal aid and protecting the environment, and cut back the courts' powers during the Emergency.","‘చిన్న రాజ్యాంగం’ అంటారు: ప్రవేశికలో ‘సామ్యవాద’, ‘లౌకిక’, ‘సమగ్రత’ పదాలు చేర్చారు; ప్రాథమిక విధులు, ఉచిత న్యాయ సహాయం, పర్యావరణ రక్షణ వంటి కొత్త ఆదేశిక సూత్రాలు జోడించారు; ఎమర్జెన్సీలో కోర్టుల అధికారాలను తగ్గించారు."],
+[43,1977,0,"After the Emergency, restored the powers of the Supreme Court and High Courts that the 42nd Amendment had cut.","ఎమర్జెన్సీ తర్వాత, 42వ సవరణ తగ్గించిన సుప్రీంకోర్టు, హైకోర్టుల అధికారాలను పునరుద్ధరించారు."],
+[44,1978,1,"Removed the right to property from Fundamental Rights (it became a legal right under Article 300A), allowed an Emergency only for armed rebellion, and said Articles 20 and 21 (life and liberty) can never be suspended.","ఆస్తి హక్కును ప్రాథమిక హక్కుల నుండి తొలగించి ఆర్టికల్ 300A కింద చట్టపరమైన హక్కుగా మార్చారు; సాయుధ తిరుగుబాటుకు మాత్రమే ఎమర్జెన్సీ; ఆర్టికల్ 20, 21 (ప్రాణం, స్వేచ్ఛ) ఎప్పుడూ రద్దు కావు."],
+[45,1980,0,"Extended reserved seats for SCs, STs and Anglo-Indians by 10 years, to 1990.","SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (1990 వరకు) పొడిగించారు."],
+[46,1982,0,"Helped states collect sales tax more effectively.","రాష్ట్రాలు అమ్మకపు పన్నును మరింత సమర్థంగా వసూలు చేసేందుకు సహాయపడింది."],
+[47,1984,0,"Added 14 more land reform laws to the Ninth Schedule.","మరో 14 భూ సంస్కరణ చట్టాలను తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[48,1984,0,"Allowed President's Rule in Punjab to continue beyond one year.","పంజాబ్‌లో రాష్ట్రపతి పాలనను ఏడాదికి మించి కొనసాగించేందుకు అనుమతి."],
+[49,1984,0,"Gave constitutional protection to the tribal autonomous district council of Tripura.","త్రిపుర గిరిజన స్వయంప్రతిపత్తి జిల్లా మండలికి రాజ్యాంగ రక్షణ ఇచ్చారు."],
+[50,1984,0,"Allowed Parliament to limit some rights of the armed forces, intelligence and related staff for discipline and security.","క్రమశిక్షణ, భద్రత కోసం సాయుధ దళాలు, నిఘా సిబ్బంది కొన్ని హక్కులను పరిమితం చేసే అధికారం పార్లమెంటుకు."],
+[51,1984,0,"Reserved seats for Scheduled Tribes in the Lok Sabha and assemblies of some North-Eastern states.","కొన్ని ఈశాన్య రాష్ట్రాల్లో లోక్‌సభ, శాసనసభల్లో షెడ్యూల్డ్ తెగలకు రిజర్వ్డ్ స్థానాలు."],
+[52,1985,1,"Added the anti-defection law (Tenth Schedule): an MP or MLA who switches party can lose their seat.","పార్టీ ఫిరాయింపుల నిరోధక చట్టం (పదో షెడ్యూల్): పార్టీ మారే ఎంపీ లేదా ఎమ్మెల్యే పదవి కోల్పోవచ్చు."],
+[53,1986,0,"Special provisions for Mizoram (Article 371G) to protect Mizo customs and land.","మిజో ఆచారాలు, భూముల రక్షణకు మిజోరాంకు ప్రత్యేక నిబంధనలు (ఆర్టికల్ 371G)."],
+[54,1986,0,"Increased the salaries of Supreme Court and High Court judges and let Parliament revise them by law.","సుప్రీంకోర్టు, హైకోర్టు న్యాయమూర్తుల జీతాలు పెంచారు; చట్టం ద్వారా మార్చే అధికారం పార్లమెంటుకు."],
+[55,1986,0,"Special provisions for Arunachal Pradesh (Article 371H) as it became a state.","రాష్ట్రంగా మారుతున్న అరుణాచల్ ప్రదేశ్‌కు ప్రత్యేక నిబంధనలు (ఆర్టికల్ 371H)."],
+[56,1987,0,"Made Goa a state with an assembly of at least 30 members.","కనీసం 30 మంది సభ్యుల శాసనసభతో గోవాను రాష్ట్రంగా చేశారు."],
+[57,1987,0,"Reserved assembly seats for Scheduled Tribes in Arunachal Pradesh, Meghalaya, Mizoram and Nagaland.","అరుణాచల్ ప్రదేశ్, మేఘాలయ, మిజోరాం, నాగాలాండ్ శాసనసభల్లో షెడ్యూల్డ్ తెగలకు రిజర్వ్డ్ స్థానాలు."],
+[58,1987,0,"Gave legal authority to the Hindi text of the Constitution.","రాజ్యాంగ హిందీ పాఠానికి చట్టబద్ధత ఇచ్చారు."],
+[59,1988,0,"Allowed longer President's Rule in Punjab and an emergency there because of internal disturbance.","పంజాబ్‌లో రాష్ట్రపతి పాలన పొడిగింపు, అంతర్గత అలజడి కారణంగా అక్కడ ఎమర్జెన్సీకి అనుమతి."],
+[60,1988,0,"Raised the maximum profession tax a state can charge from ₹250 to ₹2,500 a year.","రాష్ట్రాలు వసూలు చేసే వృత్తి పన్ను గరిష్ఠ పరిమితిని ఏడాదికి ₹250 నుండి ₹2,500కు పెంచారు."],
+[61,1989,1,"Lowered the voting age from 21 to 18.","ఓటు వేసే వయస్సును 21 నుండి 18 ఏళ్లకు తగ్గించారు."],
+[62,1989,0,"Extended reserved seats for SCs, STs and Anglo-Indians by 10 years, to 2000.","SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (2000 వరకు) పొడిగించారు."],
+[63,1989,0,"Withdrew the special emergency provisions for Punjab added by the 59th Amendment.","59వ సవరణ ద్వారా పంజాబ్‌కు చేర్చిన ప్రత్యేక ఎమర్జెన్సీ నిబంధనలను ఉపసంహరించారు."],
+[64,1990,0,"Extended President's Rule in Punjab up to three and a half years.","పంజాబ్‌లో రాష్ట్రపతి పాలనను మూడున్నర ఏళ్ల వరకు పొడిగించారు."],
+[65,1990,0,"Created a National Commission for Scheduled Castes and Scheduled Tribes with constitutional status.","రాజ్యాంగ హోదాతో షెడ్యూల్డ్ కులాలు, తెగల జాతీయ కమిషన్ ఏర్పాటు."],
+[66,1990,0,"Added 55 more land reform laws to the Ninth Schedule.","మరో 55 భూ సంస్కరణ చట్టాలను తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[67,1990,0,"Extended President's Rule in Punjab up to four years.","పంజాబ్‌లో రాష్ట్రపతి పాలనను నాలుగేళ్ల వరకు పొడిగించారు."],
+[68,1991,0,"Extended President's Rule in Punjab up to five years.","పంజాబ్‌లో రాష్ట్రపతి పాలనను ఐదేళ్ల వరకు పొడిగించారు."],
+[69,1991,0,"Gave Delhi special status as the National Capital Territory, with its own assembly.","శాసనసభతో ఢిల్లీకి జాతీయ రాజధాని ప్రాంతంగా ప్రత్యేక హోదా ఇచ్చారు."],
+[70,1992,0,"Let elected members of the Delhi and Puducherry assemblies vote in the President's election.","ఢిల్లీ, పుదుచ్చేరి శాసనసభ సభ్యులు రాష్ట్రపతి ఎన్నికలో ఓటు వేయవచ్చు."],
+[71,1992,0,"Added Konkani, Manipuri and Nepali to the Eighth Schedule of languages.","కొంకణి, మణిపురి, నేపాలీ భాషలను ఎనిమిదో షెడ్యూల్‌లో చేర్చారు."],
+[72,1992,0,"Reserved seats for Scheduled Tribes in the Tripura assembly.","త్రిపుర శాసనసభలో షెడ్యూల్డ్ తెగలకు రిజర్వ్డ్ స్థానాలు."],
+[73,1992,1,"Gave constitutional status to Panchayats at village, mandal and district level: elections every 5 years, Gram Sabhas, and reserved seats for SCs, STs and women (at least one-third for women).","గ్రామ, మండల, జిల్లా స్థాయి పంచాయతీలకు రాజ్యాంగ హోదా: ప్రతి 5 ఏళ్లకు ఎన్నికలు, గ్రామసభలు; SC, ST, మహిళలకు రిజర్వేషన్ (మహిళలకు కనీసం మూడో వంతు)."],
+[74,1992,1,"Gave the same constitutional status to municipalities in towns and cities, with regular elections and reserved seats.","పట్టణాలు, నగరాల మున్సిపాలిటీలకు అదే రాజ్యాంగ హోదా; క్రమం తప్పని ఎన్నికలు, రిజర్వేషన్లు."],
+[75,1994,0,"Allowed rent tribunals to settle disputes between landlords and tenants.","ఇంటి యజమానులు, అద్దెదారుల వివాదాల పరిష్కారానికి అద్దె ట్రిబ్యునళ్లకు అనుమతి."],
+[76,1994,0,"Placed Tamil Nadu's 69% reservation law in the Ninth Schedule.","తమిళనాడు 69% రిజర్వేషన్ చట్టాన్ని తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[77,1995,0,"Allowed reservation in promotions for SCs and STs in government jobs.","ప్రభుత్వ ఉద్యోగాల్లో SC, STలకు పదోన్నతుల్లో రిజర్వేషన్‌కు అనుమతి."],
+[78,1995,0,"Added 27 more land reform laws to the Ninth Schedule.","మరో 27 భూ సంస్కరణ చట్టాలను తొమ్మిదో షెడ్యూల్‌లో చేర్చారు."],
+[79,1999,0,"Extended reserved seats for SCs, STs and Anglo-Indians by 10 years, to 2010.","SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (2010 వరకు) పొడిగించారు."],
+[80,2000,0,"Changed how tax money is shared between the Centre and the states.","కేంద్రం, రాష్ట్రాల మధ్య పన్ను ఆదాయ పంపిణీ విధానాన్ని మార్చారు."],
+[81,2000,0,"Allowed unfilled reserved SC/ST posts to be carried forward and filled separately.","భర్తీ కాని SC/ST రిజర్వ్డ్ పోస్టులను ముందుకు తీసుకెళ్లి విడిగా భర్తీ చేయవచ్చు."],
+[82,2000,0,"Allowed relaxed qualifying marks for SCs and STs in promotions.","పదోన్నతుల్లో SC, STలకు అర్హత మార్కుల సడలింపుకు అనుమతి."],
+[83,2000,0,"Removed SC reservation in Arunachal Pradesh panchayats, since there are no SCs there.","అరుణాచల్ ప్రదేశ్‌లో SCలు లేనందున అక్కడి పంచాయతీల్లో SC రిజర్వేషన్ తొలగించారు."],
+[84,2001,0,"Froze the number of Lok Sabha and assembly seats for each state until after 2026.","ప్రతి రాష్ట్రానికి లోక్‌సభ, శాసనసభ స్థానాల సంఖ్యను 2026 తర్వాత వరకు స్తంభింపజేశారు."],
+[85,2001,0,"Gave SC/ST employees promoted through reservation the seniority that comes with the promotion.","రిజర్వేషన్ ద్వారా పదోన్నతి పొందిన SC/ST ఉద్యోగులకు దానితో వచ్చే సీనియారిటీ ఇచ్చారు."],
+[86,2002,1,"Made free and compulsory education for children aged 6 to 14 a Fundamental Right (Article 21A), and a duty of parents.","6 నుండి 14 ఏళ్ల పిల్లలకు ఉచిత, నిర్బంధ విద్యను ప్రాథమిక హక్కుగా (ఆర్టికల్ 21A), తల్లిదండ్రుల విధిగా చేశారు."],
+[87,2003,0,"Allowed constituency boundaries to be redrawn using the 2001 Census, without changing the number of seats.","స్థానాల సంఖ్య మార్చకుండా 2001 జనాభా లెక్కల ఆధారంగా నియోజకవర్గాల సరిహద్దులు మార్చేందుకు అనుమతి."],
+[88,2003,0,"Gave the Centre the power to levy service tax.","సేవా పన్ను విధించే అధికారం కేంద్రానికి ఇచ్చారు."],
+[89,2003,0,"Split the commission in two: one National Commission for Scheduled Castes and one for Scheduled Tribes.","కమిషన్‌ను రెండుగా విభజించారు: షెడ్యూల్డ్ కులాలకు ఒక జాతీయ కమిషన్, షెడ్యూల్డ్ తెగలకు మరొకటి."],
+[90,2003,0,"Protected the representation of STs and others from the Bodoland areas in the Assam assembly.","అస్సాం శాసనసభలో బోడోలాండ్ ప్రాంతాల STలు, ఇతరుల ప్రాతినిధ్యాన్ని కాపాడారు."],
+[91,2003,1,"Limited the number of ministers to 15% of the House and made the anti-defection law stricter.","మంత్రుల సంఖ్యను సభలో 15%కి పరిమితం చేశారు; ఫిరాయింపుల నిరోధక చట్టాన్ని కఠినతరం చేశారు."],
+[92,2003,0,"Added Bodo, Dogri, Maithili and Santhali to the Eighth Schedule, making 22 languages.","బోడో, డోగ్రీ, మైథిలీ, సంతాలీ భాషలను ఎనిమిదో షెడ్యూల్‌లో చేర్చడంతో మొత్తం 22 భాషలయ్యాయి."],
+[93,2005,0,"Allowed reservation for backward classes, SCs and STs in educational institutions, including private ones but not minority institutions.","ప్రైవేట్ సంస్థలతో సహా విద్యా సంస్థల్లో (మైనారిటీ సంస్థలు మినహా) వెనుకబడిన వర్గాలు, SC, STలకు రిజర్వేషన్‌కు అనుమతి."],
+[94,2006,0,"Required tribal welfare ministers in Chhattisgarh and Jharkhand; Bihar no longer needed one.","ఛత్తీస్‌గఢ్, జార్ఖండ్‌లో గిరిజన సంక్షేమ మంత్రి తప్పనిసరి; బీహార్‌కు ఆ అవసరం తొలగించారు."],
+[95,2009,0,"Extended reserved seats for SCs, STs and Anglo-Indians by 10 years, to 2020.","SC, ST, ఆంగ్లో-ఇండియన్ల రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (2020 వరకు) పొడిగించారు."],
+[96,2011,0,"Changed the language name 'Oriya' to 'Odia'.","భాష పేరును ‘ఒరియా’ నుండి ‘ఒడియా’గా మార్చారు."],
+[97,2011,0,"Gave constitutional status and protection to co-operative societies.","సహకార సంఘాలకు రాజ్యాంగ హోదా, రక్షణ ఇచ్చారు."],
+[98,2012,0,"Special provisions for the Hyderabad–Karnataka region (Article 371J).","హైదరాబాద్–కర్ణాటక ప్రాంతానికి ప్రత్యేక నిబంధనలు (ఆర్టికల్ 371J)."],
+[99,2014,0,"Created a National Judicial Appointments Commission to appoint judges; the Supreme Court struck it down in 2015.","న్యాయమూర్తుల నియామకానికి జాతీయ న్యాయ నియామకాల కమిషన్ ఏర్పాటు; 2015లో సుప్రీంకోర్టు దాన్ని కొట్టివేసింది."],
+[100,2015,0,"Gave effect to the India–Bangladesh land boundary agreement, exchanging enclaves.","భారత–బంగ్లాదేశ్ భూ సరిహద్దు ఒప్పందాన్ని అమలు చేసి, ఎన్‌క్లేవ్‌లను మార్పిడి చేశారు."],
+[101,2016,1,"Introduced the Goods and Services Tax (GST), one tax across India, and created the GST Council of the Centre and the states.","దేశమంతటా ఒకే పన్నుగా వస్తు సేవల పన్ను (GST) తెచ్చారు; కేంద్రం, రాష్ట్రాలతో GST కౌన్సిల్ ఏర్పాటు."],
+[102,2018,0,"Gave constitutional status to the National Commission for Backward Classes.","జాతీయ వెనుకబడిన తరగతుల కమిషన్‌కు రాజ్యాంగ హోదా ఇచ్చారు."],
+[103,2019,1,"Allowed up to 10% reservation in education and government jobs for economically weaker sections not covered by other reservations.","ఇతర రిజర్వేషన్లు లేని ఆర్థికంగా బలహీన వర్గాలకు విద్య, ప్రభుత్వ ఉద్యోగాల్లో 10% వరకు రిజర్వేషన్‌కు అనుమతి."],
+[104,2019,0,"Extended SC/ST reserved seats in Parliament and the assemblies by 10 years, to 2030, and ended nominated Anglo-Indian seats.","పార్లమెంటు, శాసనసభల్లో SC/ST రిజర్వ్డ్ స్థానాలను 10 ఏళ్లు (2030 వరకు) పొడిగించారు; ఆంగ్లో-ఇండియన్ నామినేటెడ్ స్థానాలను రద్దు చేశారు."],
+[105,2021,0,"Restored the power of states to make their own list of backward classes.","వెనుకబడిన తరగతుల జాబితాను సొంతంగా తయారు చేసుకునే అధికారాన్ని రాష్ట్రాలకు పునరుద్ధరించారు."],
+[106,2023,1,"Nari Shakti Vandan Adhiniyam: reserves one-third of seats in the Lok Sabha, the state assemblies and the Delhi assembly for women, for 15 years, starting after the next census and delimitation.","నారీ శక్తి వందన్ అధినియం: లోక్‌సభ, రాష్ట్ర శాసనసభలు, ఢిల్లీ శాసనసభలో మూడో వంతు స్థానాలు మహిళలకు 15 ఏళ్ల పాటు రిజర్వ్; తదుపరి జనాభా లెక్కలు, నియోజకవర్గాల పునర్విభజన తర్వాత అమలు."]
+];
+
+
+// ---------- Right knowledge & History screens ----------
+const KS={};   // speech text for each small listen button, rebuilt on render
+const miniSpeak=id=>TTS?`<button class="mini" type="button" data-ks="${id}" aria-label="${esc(t("listen"))}">${SPK_ICON}</button>`:"";
+document.addEventListener("click",e=>{const b=e.target.closest("[data-ks]");if(b&&KS[b.dataset.ks])speak(KS[b.dataset.ks](),b)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-jump]");if(!b)return;const el=$(b.dataset.jump);if(el)el.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+const ord=n=>{const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])};
+const amendName=n=>LANG==="te"?`${n}వ సవరణ`:`${ord(n)} Amendment`;
+const hit=(q,...parts)=>!q||parts.join(" ").toLowerCase().includes(q);
+const artLbl=a=>`${t("artWord")} ${a}`;
+const artSay=a=>`${t("artWord")} ${a}`;
+function rightRow([a,ti,m,u]){return `<div class="rrow"><span class="badge">${esc(artLbl(a))}</span><div class="rtx"><b>${esc(L(ti))}</b><p>${esc(L(m))}</p>${u?`<p class="note">${esc(t("udhrL"))} ${esc(u)}</p>`:""}</div></div>`}
+const rowText=r=>[r[0],r[1][0],r[1][1],r[2][0],r[2][1]];
+let rkQuery="";
+function amendRow(a){const [n,y,k,en,te]=a;return `<li class="arow${k?" key":""}"><span class="anum">${n}</span><div class="rtx"><p class="ah"><b>${esc(amendName(n))}</b> · ${y}${k===1?` <span class="chip ind">${esc(t("keyAmend"))}</span>`:k===2?` <span class="chip warn">${esc(t("apAmend"))}</span>`:""}</p><p>${esc(LANG==="te"?te:en)}</p></div></li>`}
+const amendSay=list=>list.map(a=>`${amendName(a[0])}, ${a[1]}. ${LANG==="te"?a[4]:a[3]}`).join(" ");
+function renderRights(){
+ const q=rkQuery.trim().toLowerCase();let shown=0;
+ // Fundamental rights
+ const groups=RIGHT_GROUPS.map((g,gi)=>{const rows=g.rights.filter(r=>hit(q,...rowText(r),g.t[0],g.t[1]));if(!rows.length)return "";shown+=rows.length;
+  KS["rg"+gi]=()=>`${L(g.t)}. `+rows.map(r=>`${artSay(r[0])}, ${L(r[1])}. ${L(r[2])}`).join(" ");
+  return `<div class="card rgroup"><div class="q"><span class="qi gnum">${gi+1}</span><div class="qt"><h3>${esc(L(g.t))}</h3><p class="note">${esc(t("artsWord"))} ${esc(g.arts)}</p></div>${miniSpeak("rg"+gi)}</div><div class="rlist">${rows.map(rightRow).join("")}</div></div>`}).join("");
+ $("rk-fund-body").innerHTML=groups;$("rk-fund").hidden=!groups;
+ // Other rights
+ const oth=OTHER_RIGHTS.filter(r=>hit(q,...rowText(r)));shown+=oth.length;
+ KS.oth=()=>oth.map(r=>`${artSay(r[0])}, ${L(r[1])}. ${L(r[2])}`).join(" ");
+ $("rk-other-body").innerHTML=oth.length?`<div class="q"><div class="qt"></div>${miniSpeak("oth")}</div><div class="rlist">${oth.map(rightRow).join("")}</div>`:"";$("rk-other").hidden=!oth.length;
+ // Amendments
+ const am=AMEND.filter(a=>hit(q,"#"+a[0],String(a[0]),String(a[1]),a[3],a[4],amendName(a[0])));shown+=am.length;
+ let ah="";
+ if(q){if(am.length){KS.amq=()=>amendSay(am);ah=`<div class="card"><div class="q"><div class="qt"><p class="note">${esc(t("amendMatches").replace("{n}",am.length))}</p></div>${miniSpeak("amq")}</div><ol class="alist">${am.map(amendRow).join("")}</ol></div>`}}
+ else{
+  const key=AMEND.filter(a=>a[2]);KS.amk=()=>amendSay(key);
+  ah+=`<div class="card keyam"><div class="q"><span class="qi">${svg(ICONS.star)}</span><div class="qt"><h3>${esc(t("keyAmend"))}</h3><p class="note">${esc(t("amendCount").replace("{n}",key.length))}</p></div>${miniSpeak("amk")}</div><ol class="alist">${key.map(amendRow).join("")}</ol></div>`;
+  const dec={};AMEND.forEach(a=>{const d=Math.floor(a[1]/10)*10;(dec[d]=dec[d]||[]).push(a)});
+  ah+=Object.keys(dec).sort().map(d=>{const list=dec[d];KS["amd"+d]=()=>amendSay(list);
+   return `<details class="decade"><summary><b>${LANG==="te"?d+"లు":d+"s"}</b> <span class="note">${esc(t("amendCount").replace("{n}",list.length))} · ${list[0][0]}–${list[list.length-1][0]}</span></summary><div class="dbody"><div class="q"><div class="qt"></div>${miniSpeak("amd"+d)}</div><ol class="alist">${list.map(amendRow).join("")}</ol></div></details>`}).join("");
+ }
+ $("rk-amend-body").innerHTML=ah;$("rk-amend").hidden=!ah;
+ // Laws
+ const laws=RIGHTS_LAWS.filter(l=>hit(q,l[0][0],l[0][1],l[1][0],l[1][1]));shown+=laws.length;
+ KS.laws=()=>laws.map(l=>`${L(l[0])}. ${L(l[1])}`).join(" ");
+ $("rk-laws-body").innerHTML=laws.length?`<div class="q"><div class="qt"></div>${miniSpeak("laws")}</div><div class="rlist">${laws.map(l=>`<div class="rrow law1"><span class="badge law">§</span><div class="rtx"><b>${esc(L(l[0]))}</b><p>${esc(L(l[1]))}</p></div></div>`).join("")}</div>`:"";$("rk-laws").hidden=!laws.length;
+ // Duties
+ const du=DUTIES.filter(d=>hit(q,d[0],d[1],"51A","duty","విధి"));shown+=du.length;
+ KS.duties=()=>`${t("dutiesNote")} `+du.map(d=>L(d)).join(" ");
+ $("rk-duties-body").innerHTML=du.length?`<div class="q"><div class="qt"><p class="note">${esc(t("dutiesNote"))}</p></div>${miniSpeak("duties")}</div><ol class="duties">${du.map(d=>`<li>${esc(L(d))}</li>`).join("")}</ol>`:"";$("rk-duties").hidden=!du.length;
+ // Preamble (always both languages)
+ const showPre=hit(q,PREAMBLE_EN,PREAMBLE_TE,"preamble","ప్రవేశిక");if(showPre)shown++;
+ KS.pre=()=>LANG==="te"?PREAMBLE_TE:PREAMBLE_EN;
+ $("rk-pre-body").innerHTML=`<div class="q"><div class="qt"></div>${miniSpeak("pre")}</div><div class="pre"><blockquote lang="te">${esc(PREAMBLE_TE)}</blockquote><blockquote lang="en">${esc(PREAMBLE_EN)}</blockquote></div>`;$("rk-pre").hidden=!showPre;
+ // Full Constitution
+ const showCoi=!q||hit(q,"constitution","రాజ్యాంగం","pdf","download");
+ $("rk-coi-body").innerHTML=`<p>${esc(t("coiNote"))}</p><div class="coi">${COI_LINKS.map(([u,lbl])=>`<a class="btn${u.includes("telugu")?"":" ghost"}" href="${u}" target="_blank" rel="noopener">${esc(L(lbl))}</a>`).join("")}</div><p class="note">legislative.gov.in · Legislative Department, Ministry of Law and Justice</p>`;$("rk-coi").hidden=!showCoi;
+ $("rk-empty").hidden=!(q&&!shown&&!showCoi);
+}
+let rkTimer=0;$("rk-search").addEventListener("input",e=>{clearTimeout(rkTimer);rkTimer=setTimeout(()=>{rkQuery=e.target.value;renderRights()},150)});
+
+let hiQuery="";
+function renderHistory(){
+ KS.tl=()=>TIMELINE.map(([p,e,x])=>`${p}. ${L(e)}. ${L(x)}`).join(" ");
+ $("hi-tl-body").innerHTML=TIMELINE.map(([p,e,x],i)=>`<li><span class="when">${esc(p)}</span><b class="era">${esc(L(e))}</b><p>${esc(L(x))}</p></li>`).join("");
+ const tlCard=$("hi-tl-body").parentElement;if(!tlCard.querySelector("[data-ks]"))tlCard.insertAdjacentHTML("afterbegin",`<div class="q"><div class="qt"></div>${miniSpeak("tl")}</div>`);
+ $("hi-people-body").innerHTML=PEOPLE.map((p,i)=>{KS["pp"+i]=()=>`${LANG==="te"?p[1]:p[0]}, ${p[2]}. ${LANG==="te"?p[4]:p[3]}`;
+  return `<div class="person"><div class="ptop"><span class="pav">${esc((LANG==="te"?p[1]:p[0]).slice(0,1))}</span><div class="qt"><b>${esc(LANG==="te"?p[1]:p[0])}</b><span class="note">${esc(LANG==="te"?p[0]:p[1])} · ${esc(p[2])}</span></div>${miniSpeak("pp"+i)}</div><p>${esc(LANG==="te"?p[4]:p[3])}</p></div>`}).join("");
+ renderDistricts();
+}
+function renderDistricts(){
+ const q=hiQuery.trim().toLowerCase();
+ const list=DISTRICTS.filter(([en,te])=>{const d=DIST_INFO[en];return hit(q,en,te,d?d[0]:"",d?d[1]:"")});
+ $("hi-dist-body").innerHTML=list.length?list.map(([en,te])=>{const d=DIST_INFO[en];if(!d)return "";const id="ds"+DNAMES.indexOf(en);
+  KS[id]=()=>`${dName(en)}. ${t("hqL")}: ${LANG==="te"?d[1]:d[0]}. ${t("nameL")}: ${L(d[2])} ${t("specL")}: ${L(d[3])} ${t("contribL")}: ${L(d[4])}`;
+  return `<details class="dist"><summary><span class="dn"><b>${esc(LANG==="te"?te:en)}</b><span class="note">${esc(LANG==="te"?en:te)} · ${esc(t("hqL"))}: ${esc(LANG==="te"?d[1]:d[0])}</span></span></summary><div class="dbody"><div class="q"><div class="qt"></div>${miniSpeak(id)}</div><dl class="dfacts"><dt>${esc(t("nameL"))}</dt><dd>${esc(L(d[2]))}</dd><dt>${esc(t("specL"))}</dt><dd>${esc(L(d[3]))}</dd><dt>${esc(t("contribL"))}</dt><dd>${esc(L(d[4]))}</dd></dl></div></details>`}).join(""):`<p class="note">${esc(t("noResults"))}</p>`;
+}
+let hiTimer=0;$("hi-search").addEventListener("input",e=>{clearTimeout(hiTimer);hiTimer=setTimeout(()=>{hiQuery=e.target.value;renderDistricts()},150)});
+
 // ---------- Intro listen buttons ----------
 document.querySelectorAll("[data-speak]").forEach(b=>{
  const v=b.dataset.speak;
  bindListen(b,()=>{if(v==="report")return `${t("repH")} ${t("repLede")} ${t("descHint")}`;
   if(v==="dash")return `${t("dashH")}. ${t("dashLede")} ${INDIC.map(i=>L(i.l)+": "+i.v.replace("%",LANG==="te"?" శాతం":" percent")).join(". ")}. ${dashSpeech}`;
+  if(v==="rights")return `${t("rkH")}. ${t("rkLede")} ${t("amendLede")}`;
+  if(v==="history")return `${t("hiH")}. ${t("hiLede")} `+TIMELINE.map(([p,e])=>`${p}: ${L(e)}`).join(". ");
   return `${t("newsH")}. ${t("newsLede")} ${t("corrNote")}`});
 });
 
@@ -1202,6 +1603,7 @@ window.mhVoiceError=code=>{if(micTarget)setMic(micTarget,false);micTarget=null;i
 
 // ---------- Init ----------
 applyStatic();fillSelects();renderIndic();
+renderRights();renderHistory();
 if(!sampleFn)$("n-assess").hidden=true;
 if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;loadShared();
  $("sg-send").onclick=async()=>{const tx=$("sg-text").value.trim();if(!tx)return;if(piiFound(tx).length){$("sg-note").textContent=t("piiBlocked");return}
@@ -1209,7 +1611,7 @@ if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").h
 
 $("n-text").value=NEWS_EX[LANG];$("n-district").value="Alluri Sitharama Raju";$("n-query").value=autoQuery();
 renderSources();renderVerdict();
-const hashMap={report:"report",dashboard:"dash",news:"news"};
+const hashMap={report:"report",dashboard:"dash",news:"news",rights:"rights",history:"history"};
 let startView=hashMap[location.hash.slice(1)];
 if(!startView){try{startView=localStorage.getItem("mh-tab")}catch(e){}}
 show(startView&&$("v-"+startView)?startView:"report");
