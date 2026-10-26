@@ -24,6 +24,7 @@ jobs:
           mkdir -p site
           cp app/src/main/assets/index.html site/index.html
           cp -r web/. site/
+          node tools/export_keywords.js site/data/keywords.json
           cp -r app/src/main/assets/pdfjs site/pdfjs
           cp -r app/src/main/assets/docs site/docs
           touch site/.nojekyll

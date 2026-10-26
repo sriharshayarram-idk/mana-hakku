@@ -13,6 +13,10 @@
  * Google News (Bing News if Google gives nothing) and marks trusted outlets. The first deploy
  * after adding this asks you to allow "Connect to an external service" — allow it.
  *
+ * Category auto-correction: reports are checked against the app's own keyword lists (published at
+ * KEYWORDS_URL). A report whose words clearly belong to another area is moved there; the original area is
+ * kept in "sector_was". Type no in the "auto_fix" column of a row to stop it from ever being changed.
+ *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
  *
  * Personal details (phone, Aadhaar / long ID numbers, email, PAN, name phrases) are
@@ -22,7 +26,7 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix'];
 const SUGGESTION_COLS = ['created', 'text', 'lang', 'state'];
 
 const DISTRICTS = {
@@ -157,6 +161,41 @@ function newsSearch_(p) {
   return out;
 }
 
+// ---------- category auto-correction (same rule and keywords as the app) ----------
+const KEYWORDS_URL = 'https://sriharshayarram-idk.github.io/mana-hakku/data/keywords.json';
+function keywords_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('kw1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+  try {
+    const r = UrlFetchApp.fetch(KEYWORDS_URL, { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) {
+      const j = JSON.parse(r.getContentText());
+      if (j && j.sectors) { try { cache.put('kw1', JSON.stringify(j), 21600); } catch (e) {} return j; }
+    }
+  } catch (e) {}
+  return null;
+}
+function kwScore_(s0, list) { let s = 0; (list || []).forEach(w => { if (s0.indexOf(String(w).toLowerCase()) >= 0) s += w.length > 4 ? 2 : 1; }); return s; }
+// Returns {sector, sub, changed}. Moves a report only when its words clearly belong to another area
+// and say nothing about the chosen one.
+function autoFix_(kw, text, sector) {
+  if (!kw || !kw.sectors) return { sector: sector, sub: '', changed: false };
+  const s0 = ' ' + String(text || '').toLowerCase().replace(/\s+/g, ' ') + ' ';
+  const rank = Object.keys(kw.sectors).map(k => [k, kwScore_(s0, kw.sectors[k].kw)]).sort((a, b) => b[1] - a[1]);
+  const k1 = rank[0][0], s1 = rank[0][1], s2 = rank.length > 1 ? rank[1][1] : 0;
+  const cur = kw.sectors[sector] ? kwScore_(s0, kw.sectors[sector].kw) : 0;
+  const out = (k1 !== sector && s1 > s2 && ((cur === 0 && s1 >= 2) || (s1 >= 3 && s1 >= cur * 2 + 2))) ? k1 : sector;
+  return { sector: out, sub: subOf_(kw, out, s0), changed: out !== sector };
+}
+function subOf_(kw, sector, s0) {
+  const subs = kw.sectors[sector] && kw.sectors[sector].subs;
+  if (!subs) return '';
+  let best = '', sc = 0, tie = false;
+  Object.keys(subs).forEach(k => { const v = kwScore_(s0, subs[k]); if (v > sc) { sc = v; best = k; tie = false; } else if (v > 0 && v === sc) tie = true; });
+  return tie ? '' : best;
+}
+
 // ---------- read: everyone's reports ----------
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'news') return json_(newsSearch_(e.parameter));
@@ -165,6 +204,22 @@ function doGet(e) {
   const idx = ensureColumns_(sh, REPORT_COLS);
   const values = sh.getDataRange().getValues();
   values.shift();
+  // Re-check categories and correct wrongly filed reports in the sheet (original area kept in sector_was).
+  const kw = keywords_();
+  if (kw) {
+    let writes = 0;
+    values.forEach((r, i) => {
+      if (writes >= 200 || !r[idx.id] || String(r[idx.auto_fix]).toLowerCase() === 'no' || r[idx.sector_was]) return;
+      const f = autoFix_(kw, [r[idx.title], r[idx.desc], r[idx.place]].join(' '), String(r[idx.sector] || ''));
+      if (!f.changed) return;
+      const row = i + 2;
+      sh.getRange(row, idx.sector_was + 1).setValue(r[idx.sector]);
+      sh.getRange(row, idx.sector + 1).setValue(f.sector);
+      sh.getRange(row, idx.sub + 1).setValue(f.sub);
+      r[idx.sector_was] = r[idx.sector]; r[idx.sector] = f.sector; r[idx.sub] = f.sub;
+      writes++;
+    });
+  }
   const rows = values.filter(r => r[idx.id] && String(r[idx.state] || 'ap') === state).slice(-MAX_ROWS_RETURNED).reverse().map(r => ({
     id: String(r[idx.id]),
     state: state,
@@ -178,7 +233,10 @@ function doGet(e) {
     urgency: String(r[idx.urgency] || 'medium'),
     status: STATUSES.indexOf(String(r[idx.status])) >= 0 ? String(r[idx.status]) : 'reported',
     verify: { level: Math.min(2, Number(r[idx.verify_level]) || 0) },
-    lang: String(r[idx.lang] || '')
+    lang: String(r[idx.lang] || ''),
+    sub: String(r[idx.sub] || ''),
+    sector_was: String(r[idx.sector_was] || ''),
+    locked: String(r[idx.auto_fix] || '').toLowerCase() === 'no'
   }));
   return json_({ ok: true, state: state, reports: rows });
 }
@@ -213,13 +271,20 @@ function doPost(e) {
     const id = 'r' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
     const outlets = Array.isArray(r.verify && r.verify.outlets) ? r.verify.outlets.join(', ') : '';
     const sh = sheet_(REPORTS, REPORT_COLS);
-    ensureColumns_(sh, REPORT_COLS);
-    sh.appendRow([
-      id, new Date().toISOString(), r.district, clip_(r.place, 80), r.sector, clip_(r.title, 90), desc,
-      Math.min(10000000, Math.max(1, parseInt(r.affected, 10) || 1)), r.urgency, 'reported',
-      Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0)), clip_(outlets, 200), r.lang === 'te' ? 'te' : 'en', state
-    ]);
-    return json_({ ok: true, id: id });
+    const idx = ensureColumns_(sh, REPORT_COLS);
+    // Correct a clearly wrong area before saving (the app does the same; this also covers older app versions).
+    const f = autoFix_(keywords_(), [r.title, desc, r.place].join(' '), r.sector);
+    const sub = /^[a-z]{3,20}$/.test(String(r.sub || '')) && !f.changed ? String(r.sub) : f.sub;
+    const row = [];
+    const put = (k, v) => { row[idx[k]] = v; };
+    put('id', id); put('created', new Date().toISOString()); put('district', r.district); put('place', clip_(r.place, 80));
+    put('sector', f.sector); put('title', clip_(r.title, 90)); put('desc', desc);
+    put('affected', Math.min(10000000, Math.max(1, parseInt(r.affected, 10) || 1))); put('urgency', r.urgency); put('status', 'reported');
+    put('verify_level', Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0))); put('outlets', clip_(outlets, 200));
+    put('lang', r.lang === 'te' ? 'te' : 'en'); put('state', state); put('sub', sub || ''); put('sector_was', f.changed ? r.sector : ''); put('auto_fix', '');
+    for (let i = 0; i < row.length; i++) if (row[i] === undefined) row[i] = '';
+    sh.appendRow(row);
+    return json_({ ok: true, id: id, sector: f.sector, corrected: f.changed });
   } finally {
     lock.releaseLock();
   }

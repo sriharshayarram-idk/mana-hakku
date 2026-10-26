@@ -1,0 +1,18 @@
+[
+ ["Garbage not collected for 2 weeks, dump near the bus stand","water","sanitation"],
+ ["Drainage overflowing in our street, mosquitoes everywhere","water","sanitation"],
+ ["చెత్త కుప్పలు పేరుకుపోయాయి, ఎవరూ తీయడం లేదు","water","sanitation"],
+ ["మా వీధిలో మురుగు కాలువ పొంగిపొర్లుతోంది, దోమలు ఎక్కువయ్యాయి","livelihood","sanitation"],
+ ["Pension not received for 3 months","health","elderly"],
+ ["The road to our village is full of potholes and buses dont come","water","roads"],
+ ["Our ration card was cancelled","education","nutrition"],
+ ["కరెంటు రోజుకు 6 గంటలు పోతోంది, ట్రాన్స్‌ఫార్మర్ పాడైంది","roads","power"],
+ ["Single teacher for 5 classes in our primary school","livelihood","education"],
+ ["Child marriage happening next week in our village","women","child"],
+ ["No toilets in the school, girls stop coming","education","education"],
+ ["Tap water is muddy and children got diarrhoea","health","health"],
+ ["Community toilet is locked and has no water","water","water"],
+ ["Crop loss due to floods, no insurance claim paid","calamity_not_a_sector","agri"],
+ ["Dalit families not allowed into the temple","social","social"],
+ ["Woman facing domestic violence and dowry harassment","women","women"]
+]

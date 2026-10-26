@@ -422,6 +422,9 @@ dialog.pop[open]{display:flex;flex-direction:column}
 .subbtn{font:inherit;font-weight:600;font-size:.92rem;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px}
 .subbtn[aria-pressed="true"]{background:var(--indigo);border-color:var(--indigo);color:#fff}
 @media (max-width:420px){.choose{grid-template-columns:1fr}}
+.fixnote{background:var(--ochre-soft);border:2px solid var(--ochre);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.fixnote p{margin:0;font-weight:600}
+.chip.fixed{background:var(--ochre-soft);color:var(--ochre)}
 </style>
 </head>
 <body>
@@ -654,7 +657,7 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{chooseH:"Is this about…?",chooseAllS:"Tap the area that matches your problem.",chooseS:"We could not tell clearly from your words. Tap the area that matches your problem.",seeAll:"See all areas",changeArea:"Change area",subPick:"Which problem exactly?",tabMoney:"Public money",mnyH:"Praja Dhanam: your state's money, made simple",mnyLede:"Where the state's money comes from, where it goes, how much it borrows and what life costs for a family. Pick a year.",mnyPickYear:"Choose a year",
+en:{fixedNote:"We moved this to {a}: your words are about that, not {b}.",keepChoice:"Keep {b}",autoFixed:"Corrected automatically (was {b})",chooseH:"Is this about…?",chooseAllS:"Tap the area that matches your problem.",chooseS:"We could not tell clearly from your words. Tap the area that matches your problem.",seeAll:"See all areas",changeArea:"Change area",subPick:"Which problem exactly?",tabMoney:"Public money",mnyH:"Praja Dhanam: your state's money, made simple",mnyLede:"Where the state's money comes from, where it goes, how much it borrows and what life costs for a family. Pick a year.",mnyPickYear:"Choose a year",
 mnyYrActual:"{y}: real spending is known. Plan = the budget made at the start of the year. Spent = what was really spent.",mnyYrPlan:"{y}: the year is not finished in the records yet, so only the plan (budget) is shown.",
 kEco:"Size of the state's economy",kEcoS:"Everything made and every service given in the state in this year (GSDP).",kInc:"Average income per person",kIncS:"About {m} a month for each person.",
 kSpent:"The state spent",kSpentS:"Plan was {p}. It used {u} of the plan.",kPlan:"The state plans to spend",kPlanS:"This is the plan. Real spending is known after the year ends.",
@@ -703,7 +706,7 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{chooseH:"ఇది దేని గురించి?",chooseAllS:"మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",chooseS:"మీ మాటల నుండి స్పష్టంగా గుర్తించలేకపోయాం. మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",seeAll:"అన్ని రంగాలు చూడండి",changeArea:"రంగం మార్చండి",subPick:"సరిగ్గా ఏ సమస్య?",tabMoney:"ప్రజా ధనం",mnyH:"ప్రజా ధనం: మీ రాష్ట్ర డబ్బు, సులభంగా",mnyLede:"రాష్ట్రానికి డబ్బు ఎక్కడి నుండి వస్తుంది, ఎక్కడికి వెళ్తుంది, ఎంత అప్పు చేస్తుంది, ఒక కుటుంబానికి జీవితం ఎంత ఖర్చవుతుంది. ఒక సంవత్సరం ఎంచుకోండి.",mnyPickYear:"సంవత్సరం ఎంచుకోండి",
+te:{fixedNote:"దీన్ని {a}కి మార్చాం: మీ మాటలు {b} గురించి కాదు, దాని గురించే.",keepChoice:"{b}నే ఉంచండి",autoFixed:"స్వయంగా సరిచేశాం ({b} నుండి)",chooseH:"ఇది దేని గురించి?",chooseAllS:"మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",chooseS:"మీ మాటల నుండి స్పష్టంగా గుర్తించలేకపోయాం. మీ సమస్యకు సరిపోయే రంగాన్ని తాకండి.",seeAll:"అన్ని రంగాలు చూడండి",changeArea:"రంగం మార్చండి",subPick:"సరిగ్గా ఏ సమస్య?",tabMoney:"ప్రజా ధనం",mnyH:"ప్రజా ధనం: మీ రాష్ట్ర డబ్బు, సులభంగా",mnyLede:"రాష్ట్రానికి డబ్బు ఎక్కడి నుండి వస్తుంది, ఎక్కడికి వెళ్తుంది, ఎంత అప్పు చేస్తుంది, ఒక కుటుంబానికి జీవితం ఎంత ఖర్చవుతుంది. ఒక సంవత్సరం ఎంచుకోండి.",mnyPickYear:"సంవత్సరం ఎంచుకోండి",
 mnyYrActual:"{y}: అసలు ఖర్చు తెలిసింది. ప్రణాళిక = సంవత్సరం మొదట్లో వేసిన బడ్జెట్. ఖర్చు = నిజంగా ఖర్చు చేసింది.",mnyYrPlan:"{y}: ఈ సంవత్సరం లెక్కలు ఇంకా పూర్తి కాలేదు, కాబట్టి ప్రణాళిక (బడ్జెట్) మాత్రమే చూపిస్తున్నాం.",
 kEco:"రాష్ట్ర ఆర్థిక వ్యవస్థ పరిమాణం",kEcoS:"ఈ సంవత్సరం రాష్ట్రంలో తయారైన ప్రతి వస్తువు, అందించిన ప్రతి సేవ విలువ (GSDP).",kInc:"ఒక్కొక్కరి సగటు ఆదాయం",kIncS:"ఒక్కొక్కరికి నెలకు సుమారు {m}.",
 kSpent:"రాష్ట్రం ఖర్చు చేసింది",kSpentS:"ప్రణాళిక {p}. ప్రణాళికలో {u} వాడింది.",kPlan:"రాష్ట్రం ఖర్చు చేయాలనుకుంటోంది",kPlanS:"ఇది ప్రణాళిక. అసలు ఖర్చు సంవత్సరం ముగిశాక తెలుస్తుంది.",
@@ -926,7 +929,7 @@ const S={
 };
 // Telugu, Tenglish and extra English words so complaints in any of them are recognised
 const KW_ADD={
- health:["hospital","aspatri","doctor ledu","mandulu","jwaram","fever","ambulance","108","pregnan","delivery","snake bite","ఆసుపత్రి","హాస్పిటల్","డాక్టర్","వైద్య","నర్సు","మందు","జ్వర","డెంగ్యూ","మలేరియా","అంబులెన్స్","చికిత్స","ప్రసవ","గర్భిణ","పాము కాటు","పీహెచ్‌సీ","ఆరోగ్య కేంద్ర"],
+ health:["diarrh","vomit","cholera","typhoid","jaundice","sick","విరేచన","వాంతు","కామెర్లు","అస్వస్థ","hospital","aspatri","doctor ledu","mandulu","jwaram","fever","ambulance","108","pregnan","delivery","snake bite","ఆసుపత్రి","హాస్పిటల్","డాక్టర్","వైద్య","నర్సు","మందు","జ్వర","డెంగ్యూ","మలేరియా","అంబులెన్స్","చికిత్స","ప్రసవ","గర్భిణ","పాము కాటు","పీహెచ్‌సీ","ఆరోగ్య కేంద్ర"],
  nutrition:["ration card","ration shop","biyyam","రేషన్","బియ్యం","అంగన్‌వాడీ","అంగన్వాడీ","పోషణ","పౌష్టికాహార","ఆకలి","చౌక ధరల","సరుకులు"],
  education:["badi","teacher ledu","mid-day meal","midday meal","scholarship","బడి","పాఠశాల","స్కూల్","ఉపాధ్యాయ","టీచర్","విద్యార్థ","చదువు","తరగతి","కళాశాల","కాలేజీ","హాస్టల్","పుస్తక","యూనిఫాం","మధ్యాహ్న భోజన","స్కాలర్‌షిప్"],
  child:["బాల కార్మిక","బాల్య వివాహ","అక్రమ రవాణా","అనాథ","తప్పిపోయిన","పిల్లలపై","బాలికపై","బాలుడిపై"],
@@ -1110,10 +1113,14 @@ function detect(text){const s0=" "+text.toLowerCase().replace(/\s+/g," ")+" ";co
  const [k1,s1]=rank[0],s2=rank[1][1];return {key:s1>0?k1:null,confident:s1>=2&&s1>s2,rank:rank.filter(x=>x[1]>0)}}
 function detectSub(k,text){const s=S[k];if(!s||!s.subs)return null;const s0=" "+text.toLowerCase()+" ";let best=null,sc=0,tie=false;for(const [sk,sv] of Object.entries(s.subs)){const v=kwScore(s0,sv.kw);if(v>sc){sc=v;best=sk;tie=false}else if(v>0&&v===sc)tie=true}return tie?null:best}
 let subPick=null;   // sub-problem chosen by the person on the result screen
+// Auto-correction: move a complaint to another area only when its words clearly belong there and say nothing about the chosen area.
+function autoFix(text,sector){const s0=" "+String(text||"").toLowerCase().replace(/\s+/g," ")+" ";const rank=SKEYS.map(k=>[k,kwScore(s0,S[k].kw)]).sort((a,b)=>b[1]-a[1]);const [k1,s1]=rank[0],s2=rank[1][1];const cur=S[sector]?kwScore(s0,S[sector].kw):0;
+ return k1!==sector&&s1>s2&&((cur===0&&s1>=2)||(s1>=3&&s1>=cur*2+2))?{sector:k1,changed:true}:{sector,changed:false}}
+let keepChoice=null; // area the person insisted on after an automatic correction
 
 // ---------- Report ----------
-function readForm(){const urg=document.querySelector('input[name="urg"]:checked');const desc=$("r-desc").value.trim();const sel=$("r-sector").value;const dd=sel==="auto"?detect(desc):{key:sel,confident:true,rank:[]};const d={...dd,key:dd.key||"livelihood"};const picked=subPick&&subPick[0]===d.key;const dsub=picked?subPick[1]:detectSub(d.key,desc);const subSure=!!dsub;const sub=dsub||(S[d.key]&&S[d.key].subs&&S[d.key].subs.supply?"supply":null);
- return {district:$("r-district").value,place:$("r-place").value.trim(),desc,sector:d.key,sub,subSure,confident:d.confident,unknown:sel==="auto"&&!dd.key,rank:d.rank||[],auto:sel==="auto",affected:Math.max(1,parseInt($("r-affected").value,10)||1),urgency:urg?urg.value:"medium"}}
+function readForm(){const urg=document.querySelector('input[name="urg"]:checked');const desc=$("r-desc").value.trim();const sel=$("r-sector").value;const fx=sel!=="auto"&&keepChoice!==sel?autoFix(desc,sel):{sector:sel,changed:false};const dd=sel==="auto"?detect(desc):{key:fx.sector,confident:true,rank:[]};const d={...dd,key:dd.key||"livelihood"};const picked=subPick&&subPick[0]===d.key;const dsub=picked?subPick[1]:detectSub(d.key,desc);const subSure=!!dsub;const sub=dsub||(S[d.key]&&S[d.key].subs&&S[d.key].subs.supply?"supply":null);
+ return {district:$("r-district").value,place:$("r-place").value.trim(),desc,sector:d.key,sub,subSure,fixedFrom:fx.changed?sel:null,confident:d.confident,unknown:sel==="auto"&&!dd.key,rank:d.rank||[],auto:sel==="auto",affected:Math.max(1,parseInt($("r-affected").value,10)||1),urgency:urg?urg.value:"medium"}}
 function setForm(x){$("r-district").value=x.district;const loc=x[LANG]||x;$("r-place").value=loc.place||"";$("r-desc").value=loc.desc||"";$("r-affected").value=x.affected||"";const u=$("u-"+(x.urg||"medium"));if(u)u.checked=true;$("r-sector").value="auto"}
 const URG={high:["crit","uHigh"],medium:["warn","uMed"],low:["ok","uLow"]};
 
@@ -1257,6 +1264,7 @@ function renderResult(r){
    <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}<button type="button" class="chip chgbtn" id="r-change">${esc(t("changeArea"))}</button></div>
    ${TTS?`<button class="listen big" type="button" id="r-listen"></button>`:""}
   </section>
+  ${r.fixedFrom?`<div class="fixnote" role="status"><p>${esc(t("fixedNote").replace("{a}",L(S[r.sector].name)).replace("{b}",L(S[r.fixedFrom].name)))}</p><button type="button" class="btn quiet" id="r-keep">${esc(t("keepChoice").replace("{b}",L(S[r.fixedFrom].name)))}</button></div>`:""}
   ${subPickHTML(r)}
   ${r.urgency==="high"?`<section class="urgent" role="alert"><div class="q"><span class="qi">${svg(ICONS.alert)}</span><div class="qt"><h3>${esc(R("urgentMsg"))}</h3></div></div><div class="calls">${urgentNums.map(callLink).join("")}</div></section>`:""}
   <section class="first"><div class="q"><span class="qi">${svg(ICONS.star)}</span><div class="qt"><p class="eyebrow">${esc(R("first"))}</p><p class="firsttext">${esc(s.plan.now[0])}</p></div>${miniListen("first")}</div></section>
@@ -1278,6 +1286,7 @@ function renderResult(r){
   <section class="card actions">${footerHTML()}</section>
  </article>`;
  $("r-result").querySelectorAll(".subbtn").forEach(b=>b.onclick=()=>{subPick=[r.sector,b.dataset.sub];const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)});
+ const kb=$("r-keep");if(kb)kb.onclick=()=>{keepChoice=r.fixedFrom;subPick=null;const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)};
  const cb=$("r-change");if(cb)cb.onclick=()=>renderChooser(r,true);
  const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
  $("r-result").querySelectorAll("[data-sec]").forEach(b=>{const id=b.dataset.sec;if(!id){b.remove();return}b.onclick=()=>speak(sp[id]||"",b)});
@@ -1322,7 +1331,7 @@ function piiCheckForm(){
 $("pii-fix").onclick=()=>{["r-desc","r-place"].forEach(id=>{$(id).value=piiStrip($(id).value)});if(!piiCheckForm())toast(t("piiNameLeft"));$("r-desc").focus()};
 ["r-desc","r-place"].forEach(id=>$(id).addEventListener("input",piiCheckForm));
 
-$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();subPick=null;const r0=readForm();if(r0.auto&&!r0.confident){renderChooser(r0);return}if(S[r0.sector].subs&&!r0.subSure){renderSubChooser(r0);return}renderResult(r0);if(SHARED)runAutoSources(r0);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+$("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();subPick=null;keepChoice=null;const r0=readForm();if(r0.auto&&!r0.confident){renderChooser(r0);return}if(S[r0.sector].subs&&!r0.subSure){renderSubChooser(r0);return}renderResult(r0);if(SHARED)runAutoSources(r0);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
 ["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
 
@@ -1346,7 +1355,7 @@ let sharedLoaded=false,sharedError=false,sharedReports=[];
 async function loadShared(){
  if(!SHARED)return;const want=ST;sharedError=false;renderDash();
  try{const res=await fetch(REGISTER_URL+"?state="+ST+"&t="+Date.now(),{method:"GET"});const j=await res.json();if(!j.ok)throw 0;
-  if(want!==ST)return;sharedReports=(j.reports||[]).filter(r=>r&&r.id&&(r.state||"ap")===ST&&DNAMES.includes(r.district)&&r.sector in S);sharedLoaded=true}
+  if(want!==ST)return;sharedReports=(j.reports||[]).filter(r=>r&&r.id&&(r.state||"ap")===ST&&DNAMES.includes(r.district)&&r.sector in S).map(r=>{if(r.locked||r.sector_was)return r;const f=autoFix([r.title,r.desc,r.place].join(" "),r.sector);return f.changed?{...r,sector_was:r.sector,sector:f.sector,sub:""}:r}).map(r=>({...r,sub:r.sub&&S[r.sector].subs&&S[r.sector].subs[r.sub]?r.sub:detectSub(r.sector,[r.title,r.desc].join(" "))||""}));sharedLoaded=true}
  catch(e){sharedError=true}
  renderDash();
 }
@@ -1360,7 +1369,7 @@ async function save(){
  if(!piiCheckForm()||piiFound(current.desc+" "+current.place).length){toast(t("piiBlocked"));return}
  const btn=$("r-save");btn.disabled=true;
  const r=current;const title=r.desc.split(/[.!?।]/)[0].slice(0,90);
- const rec={id:"r"+Date.now().toString(36),state:ST,district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:Math.max(newsLevel(),autoLevel()[0]),outlets:[...new Set([...newsOutlets(),...autoLevel()[1]])]},created:new Date().toISOString()};
+ const rec={id:"r"+Date.now().toString(36),state:ST,sub:r.sub||"",district:r.district,place:r.place.slice(0,80),sector:r.sector,title,desc:r.desc.slice(0,1500),affected:r.affected,urgency:r.urgency,status:"reported",lang:LANG,verify:{level:Math.max(newsLevel(),autoLevel()[0]),outlets:[...new Set([...newsOutlets(),...autoLevel()[1]])]},created:new Date().toISOString()};
  reports.unshift(rec);
  if(!persist()){reports.shift();btn.disabled=false;$("r-save-note").textContent=t("saveFail");return}
  if(!SHARED){btn.textContent=t("saved");$("r-save-note").textContent=t("savedNote");toast(t("saved"));renderDash();return}
@@ -1442,7 +1451,7 @@ function renderAll(){
  $("a-list").innerHTML=shown.length?shown.map(r=>{const s=sec(r.sector);const [vc,vk]=verLabel(r.verify&&r.verify.level||0);const st=STATUSES.includes(r.status)?r.status:"reported";
   return `<article class="rep u-${esc(r.urgency)}"><div class="meta"><b>${esc(t("issueNo"))} #${r.no}</b><span>· ${esc(dName(r.district))}</span>${r.place?`<span>· ${esc(r.place)}</span>`:""}<span>· ${num(r.affected)} ${esc(t("people"))}</span>${r.created?`<span>· ${esc(new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"))}</span>`:""}</div>
   <h3>${esc(r.title||s.name)}</h3><p class="desc">${esc(r.desc)}</p>
-  <div class="foot"><span class="chip ind">${esc(s.name)}</span><span class="chip ${esc(URG[r.urgency]?URG[r.urgency][0]:"")}">${esc(t(URG[r.urgency]?URG[r.urgency][1]:"uMed"))}</span><span class="chip">${esc(t(st))}</span><span class="chip ${vc}">${esc(t(vk))}</span><span class="note">→ ${esc(s.ap[0])}</span></div></article>`}).join("")
+  <div class="foot"><span class="chip ind">${esc(sec(r.sector,r.sub).name)}</span>${r.sector_was&&S[r.sector_was]?`<span class="chip fixed">${esc(t("autoFixed").replace("{b}",L(S[r.sector_was].name)))}</span>`:""}<span class="chip ${esc(URG[r.urgency]?URG[r.urgency][0]:"")}">${esc(t(URG[r.urgency]?URG[r.urgency][1]:"uMed"))}</span><span class="chip">${esc(t(st))}</span><span class="chip ${vc}">${esc(t(vk))}</span><span class="note">→ ${esc(s.ap[0])}</span></div></article>`}).join("")
   :(loading?"":`<div class="empty"><b>${esc(t(all.length?"noMatch":"emptyB"))}</b></div>`);
  $("a-more").hidden=list.length<=allLimit;
  allSpeech=$("a-count").textContent+". "+shown.slice(0,5).map(r=>`${t("issueNo")} ${r.no}, ${dName(r.district)}: ${r.title||sec(r.sector).name}`).join(". ");

@@ -49,6 +49,8 @@ Reports can be stored in a Google Sheet so that everyone using the app or websit
 
 Reports land in the **Reports** tab and suggestions in **Suggestions**; the `state` column is `ap` or `ts`, and each report is public as soon as it is saved.
 
+Wrongly filed reports are corrected automatically using the app's own keyword lists (published as `data/keywords.json` on the website). The original area is kept in `sector_was`. Type `no` in a row's `auto_fix` column to stop that row from ever being changed.
+
 To update the script later: paste the new `backend/Code.gs` → Save → **Deploy → Manage deployments →** edit → Version **New version** → **Deploy**. The URL stays the same. Change a report's progress by editing its `status` cell to `reported`, `acknowledged`, `progress` or `resolved`; the app shows it to everyone. Delete a row to remove a report.
 
 ## Personal details are blocked
