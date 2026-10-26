@@ -49,8 +49,8 @@ header.top .wrap{padding-block:16px 10px;display:flex;flex-direction:column;gap:
 .langs button{font:inherit;font-weight:600;font-size:.9rem;border:0;background:transparent;color:var(--muted);padding:5px 14px;border-radius:999px;cursor:pointer}
 .langs button[aria-pressed="true"]{background:var(--indigo);color:var(--surface)}
 nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
-nav.tabs .wrap{display:flex;gap:4px;padding-block:6px;overflow-x:auto}
-.tab{flex:1 0 auto;min-width:0;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:9px 12px;border-radius:8px;cursor:pointer}
+nav.tabs .wrap{display:flex;flex-wrap:wrap;gap:4px;padding-block:6px}
+.tab{flex:1 1 auto;min-width:0;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;padding:9px 12px;border-radius:8px;cursor:pointer}
 .tab[aria-selected="true"]{background:var(--indigo-soft);color:var(--indigo)}
 .tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
 main .wrap{padding-block:20px 48px;display:flex;flex-direction:column;gap:20px}
