@@ -1,0 +1,39 @@
+app/src/main/assets/docs/constitution-en.pdf <- https://www.legislative.gov.in/static/uploads/2025/07/c9fe9c9b6840524844316f74bb1c556c.pdf : HTTP 200, 2684622 bytes, PDF document, version 1.7, 20 page(s)
+app/src/main/assets/docs/constitution-te.pdf <- https://cdnbbsr.s3waas.gov.in/s380537a945c7aaa788ccfcdf1b99b5d8f/uploads/2023/05/2023051268.pdf : HTTP 200, 2734789 bytes, PDF document, version 1.5, 423 page(s)
+== app/src/main/assets/docs/constitution-en.pdf
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdfinfo: command not found
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdffonts: command not found
+-- text p1-4:
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdftotext: command not found
+== app/src/main/assets/docs/constitution-te.pdf
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdfinfo: command not found
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdffonts: command not found
+-- text p1-4:
+/home/runner/work/_temp/d6215c1a-cf55-44b1-883b-e00469aecccf.sh: line 12: pdftotext: command not found
+pdf.js v6.4.299
+23M	app/src/main/assets/pdfjs
+app/src/main/assets/pdfjs:
+LICENSE
+build
+web
+
+app/src/main/assets/pdfjs/web:
+cmaps
+compressed.tracemonkey-pldi-09.pdf
+debugger.css
+debugger.mjs
+iccs
+images
+locale
+standard_fonts
+viewer.css
+viewer.html
+viewer.mjs
+viewer.mjs.map
+wasm
+total 5308
+drwxr-xr-x 2 runner runner    4096 Oct 26 08:25 .
+drwxr-xr-x 4 runner runner    4096 Oct 26 08:25 ..
+-rw-r--r-- 1 runner runner 2684622 Oct 26 08:25 constitution-en.pdf
+-rw-r--r-- 1 runner runner 2734789 Oct 26 08:25 constitution-te.pdf
+-rw-r--r-- 1 runner runner    1428 Oct 26 08:25 fetch-report.txt
