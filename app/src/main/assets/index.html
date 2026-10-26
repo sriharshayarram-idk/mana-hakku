@@ -252,6 +252,21 @@ body{margin:0;-webkit-text-size-adjust:100%}
 #n-verdict{cursor:pointer}
 .manual{background:var(--ochre-soft);border-left:4px solid var(--ochre);border-radius:8px;padding:10px 12px;font-size:.92rem;color:var(--ink)}
 .src label{max-width:52%;text-align:right;line-height:1.3;justify-content:flex-end}
+.ind{font:inherit;text-align:left;cursor:pointer;color:var(--ink);position:relative}
+.ind .chev{position:absolute;top:10px;right:10px;font-size:.7rem;color:var(--muted)}
+.ind.open{border:2px solid var(--indigo);background:var(--indigo-soft)}
+#indic-detail{background:var(--surface);border:2px solid var(--indigo);border-radius:12px;padding:16px}
+.idet{display:flex;flex-direction:column;gap:12px}
+.idet .glbl{margin-bottom:2px}
+.cbar{display:grid;grid-template-columns:minmax(0,110px) 1fr 56px;gap:10px;align-items:center;font-size:.9rem}
+.ct{position:relative;height:14px;background:var(--sunk);border-radius:7px}
+.cf{position:absolute;left:0;top:0;bottom:0;border-radius:7px}
+.cf.ap{background:var(--indigo)}.cf.in{background:var(--muted)}
+.cw{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--crit)}
+.cwkey{display:inline-block;width:2px;height:12px;background:var(--crit);vertical-align:middle}
+.cv{font-family:var(--f-mono);font-size:.85rem;text-align:right;font-variant-numeric:tabular-nums}
+.good{color:var(--ok)}.bad{color:var(--crit)}
+.export{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
@@ -317,7 +332,8 @@ body{margin:0;-webkit-text-size-adjust:100%}
   <div class="stack">
     <p class="eyebrow" data-t="indicEb"></p>
     <div class="indic" id="indic"></div>
-    <p class="note" data-t="indicNote"></p>
+    <div id="indic-detail" hidden></div>
+    <p class="note"><span data-t="tapIndic"></span> <span data-t="indicNote"></span></p>
   </div>
   <div class="card">
     <div class="btns" style="justify-content:space-between">
@@ -326,6 +342,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
     </div>
     <p class="note" id="d-src"></p>
     <div id="d-summary"></div>
+    <div class="export"><p class="glbl" data-t="exportH"></p><div class="btns"><button class="btn" type="button" id="x-pdf"></button><button class="btn ghost" type="button" id="x-csv"></button></div><p class="note" data-t="exportNote"></p></div>
   </div>
   <div class="stack">
     <div class="filters">
@@ -384,7 +401,7 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
+en:{tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
 repH:"What is missing in your area?",repLede:"Describe one problem in plain words. You will see which department is responsible, which rights and laws apply, and what should happen step by step.",
 exFlag:"Example filled in · replace with your own",district:"District",place:"Mandal / village / ward",placePh:"e.g. Hukumpeta mandal, K. Kothuru village",desc:"Describe the need",descHint:"Do not enter names, phone numbers or Aadhaar of any person.",
 sector:"Sector",auto:"Detect from description",affected:"People affected (approx.)",urgency:"Urgency",uHigh:"Risk to life or health now",uMed:"Hardship for weeks",uLow:"Long-term gap",analyse:"Analyse need",clear:"Clear form",
@@ -407,7 +424,7 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
+te:{tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
 repH:"మీ ప్రాంతంలో ఏమి లోపించింది?",repLede:"ఒక సమస్యను సరళమైన మాటల్లో వివరించండి. దానికి బాధ్యత వహించే శాఖ, వర్తించే హక్కులు, చట్టాలు, దశలవారీగా ఏమి జరగాలో మీకు కనిపిస్తుంది.",
 exFlag:"ఉదాహరణ నింపబడింది · మీ వివరాలతో మార్చండి",district:"జిల్లా",place:"మండలం / గ్రామం / వార్డు",placePh:"ఉదా: హుకుంపేట మండలం, కె. కొత్తూరు గ్రామం",desc:"అవసరాన్ని వివరించండి",descHint:"ఎవరి పేర్లు, ఫోన్ నంబర్లు లేదా ఆధార్ నమోదు చేయవద్దు.",
 sector:"రంగం",auto:"వివరణ నుండి గుర్తించు",affected:"ప్రభావితులైన వారు (సుమారు)",urgency:"అత్యవసరత",uHigh:"ప్రాణానికి లేదా ఆరోగ్యానికి ఇప్పుడే ప్రమాదం",uMed:"వారాలుగా ఇబ్బంది",uLow:"దీర్ఘకాలిక లోటు",analyse:"విశ్లేషించండి",clear:"ఫారం ఖాళీ చేయండి",
@@ -578,6 +595,26 @@ const LADDER=[
  [["High Court · Art 226","హైకోర్టు · ఆర్టికల్ 226"],["Writ petition or PIL when rights remain denied","హక్కులు నిరాకరిస్తూనే ఉంటే రిట్ పిటిషన్ లేదా ప్రజాహిత వ్యాజ్యం"],""]
 ];
 
+const INDIC_MORE=[
+ {ap:31.2,india:35.5,low:true,who:20,sector:"nutrition",
+  m:["Children under 5 who are too short for their age. It shows long-term undernutrition.","వయసుకు తగిన ఎత్తు లేని 5 ఏళ్లలోపు పిల్లలు. దీర్ఘకాలంగా సరైన పోషణ అందడం లేదని ఇది చూపిస్తుంది."],
+  w:["Stunted children learn less in school and earn less as adults. Most of the damage happens in the first two years of life and is hard to reverse.","ఎదుగుదల లోపం ఉన్న పిల్లలు బడిలో తక్కువ నేర్చుకుంటారు, పెద్దయ్యాక తక్కువ సంపాదిస్తారు. ఈ నష్టం ఎక్కువగా జీవితంలో మొదటి రెండేళ్లలో జరుగుతుంది, తర్వాత సరిచేయడం కష్టం."]},
+ {ap:16.1,india:19.3,low:true,who:10,sector:"nutrition",
+  m:["Children under 5 who are too thin for their height, a sign of recent hunger or illness.","ఎత్తుకు తగిన బరువు లేని 5 ఏళ్లలోపు పిల్లలు. ఇటీవలి ఆకలి లేదా అనారోగ్యానికి ఇది సంకేతం."],
+  w:["Wasted children are at much higher risk of dying from common illnesses like diarrhoea and pneumonia.","ఇలాంటి పిల్లలు విరేచనాలు, న్యుమోనియా వంటి సాధారణ వ్యాధులతో మరణించే ప్రమాదం చాలా ఎక్కువ."]},
+ {ap:63.2,india:67.1,low:true,who:40,sector:"health",
+  m:["Children aged 6–59 months with too little haemoglobin in their blood.","రక్తంలో హిమోగ్లోబిన్ తక్కువగా ఉన్న 6–59 నెలల పిల్లలు."],
+  w:["Anaemia causes tiredness, slows growth and learning, and weakens the body against infections.","రక్తహీనత వల్ల అలసట, ఎదుగుదల, నేర్చుకోవడం మందగించడం, ఇన్ఫెక్షన్లను తట్టుకునే శక్తి తగ్గడం జరుగుతాయి."]},
+ {ap:29.6,india:32.1,low:true,who:null,sector:"nutrition",
+  m:["Children under 5 who weigh too little for their age.","వయసుకు తగిన బరువు లేని 5 ఏళ్లలోపు పిల్లలు."],
+  w:["It combines short height and thinness, so it tracks overall child nutrition.","ఇది ఎత్తు లోపం, సన్నదనం రెండింటినీ కలిపి చూపిస్తుంది, కాబట్టి పిల్లల మొత్తం పోషణను సూచిస్తుంది."]},
+ {ap:6.06,india:14.96,low:true,who:null,sector:"livelihood",
+  m:["People who lack several basics at the same time, such as nutrition, schooling, cooking fuel, sanitation, drinking water, housing, electricity and a bank account.","పోషణ, చదువు, వంట ఇంధనం, పారిశుధ్యం, తాగునీరు, ఇల్లు, విద్యుత్, బ్యాంకు ఖాతా వంటి ఎన్నో ప్రాథమిక అవసరాలు ఒకేసారి లేనివారు."],
+  w:["It finds households left behind on many fronts at once, not just on income.","ఆదాయం మాత్రమే కాకుండా, అనేక విధాలుగా వెనుకబడిన కుటుంబాలను ఇది గుర్తిస్తుంది."]},
+ {ap:74,india:71,low:false,who:null,sector:null,max:100,
+  m:["NITI Aayog's score of progress on the UN Sustainable Development Goals, from 0 to 100.","ఐరాస సుస్థిర అభివృద్ధి లక్ష్యాలపై పురోగతికి నీతి ఆయోగ్ ఇచ్చే స్కోరు, 0 నుండి 100 వరకు."],
+  w:["A score of 65–99 makes a state a Front Runner. A high total can still hide individual goals that lag behind.","65–99 స్కోరు ఉన్న రాష్ట్రాన్ని ఫ్రంట్ రన్నర్ అంటారు. మొత్తం స్కోరు ఎక్కువైనా కొన్ని లక్ష్యాల్లో వెనుకబడి ఉండవచ్చు."]}
+];
 const INDIC=[
  {v:"31.2%",l:["Children under 5 stunted","వయసుకు తగిన ఎత్తు లేని 5 ఏళ్లలోపు పిల్లలు"],s:["NFHS-5, 2019–21","NFHS-5, 2019–21"],flag:true},
  {v:"16.1%",l:["Children under 5 wasted","ఎత్తుకు తగిన బరువు లేని 5 ఏళ్లలోపు పిల్లలు"],s:["NFHS-5, 2019–21","NFHS-5, 2019–21"],flag:true},
@@ -663,6 +700,7 @@ function applyStatic(){
  if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
  document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
  document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
+ const xp=$("x-pdf"),xc=$("x-csv");if(xp){xp.textContent=t("exportPdf");xc.textContent=t("exportCsv")}
 }
 function fillSelect(el,opts,keepVal){const v=keepVal?el.value:null;el.innerHTML="";opts.forEach(([val,txt])=>{const o=document.createElement("option");o.value=val;o.textContent=txt;el.appendChild(o)});if(v!==null&&[...el.options].some(o=>o.value===v))el.value=v}
 function fillSelects(){
@@ -887,16 +925,48 @@ Reply with only JSON: {"summary":"one sentence","root_causes":["..."],"actions":
 }
 
 // ---------- Dashboard ----------
-function renderIndic(){$("indic").innerHTML=INDIC.map(i=>`<div class="ind${i.flag?" flag":""}"><span class="v">${i.v}</span><span class="l">${esc(L(i.l))}</span><span class="s">${esc(L(i.s))}</span></div>`).join("")}
+let openIndic=-1;
+function renderIndic(){
+ $("indic").innerHTML=INDIC.map((i,n)=>`<button type="button" class="ind${i.flag?" flag":""}${n===openIndic?" open":""}" data-i="${n}" aria-expanded="${n===openIndic}" aria-controls="indic-detail"><span class="v">${i.v}</span><span class="l">${esc(L(i.l))}</span><span class="s">${esc(L(i.s))}</span><span class="chev" aria-hidden="true">${n===openIndic?"▲":"▼"}</span></button>`).join("");
+ $("indic").querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>{const n=+b.dataset.i;openIndic=openIndic===n?-1:n;stopSpeak();renderIndic();if(openIndic>=0)$("indic-detail").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"nearest"})});
+ renderIndicDetail();
+}
+function indicFacts(n){
+ const i=INDIC[n],x=INDIC_MORE[n],max=x.max||Math.max(x.ap,x.india,x.who||0)*1.15;
+ const better=x.low?x.ap<x.india:x.ap>x.india;
+ const unit=x.max?"":"%";
+ return {i,x,max,better,unit};
+}
+function indicSpeech(n){const {i,x,better,unit}=indicFacts(n);const sc=x.sector?sec(x.sector):null;
+ return `${L(i.l)}: ${i.v}. ${t("meansL")}: ${L(x.m)} ${t("compareL")}: ${t("apL")} ${x.ap}${unit}, ${t("indiaL")} ${x.india}${unit}. ${t(better?"betterL":"worseL")}. ${x.who&&x.ap>=x.who?t("aboveConcern").replace("{x}",x.who+"%"):""} ${t("whyL")}: ${L(x.w)} ${sc?t("respL")+": "+sc.ap.join(", ")+".":""}`.replace(/%/g,LANG==="te"?" శాతం":" percent")}
+function renderIndicDetail(){
+ const box=$("indic-detail");
+ if(openIndic<0){box.hidden=true;box.innerHTML="";return}
+ const n=openIndic,{i,x,max,better,unit}=indicFacts(n);const sc=x.sector?sec(x.sector):null;
+ const bar=(lbl,v,cls)=>`<div class="cbar"><span class="cl">${esc(lbl)}</span><span class="ct"><span class="cf ${cls}" style="width:${Math.min(100,v/max*100)}%"></span>${x.who?`<span class="cw" style="left:${Math.min(100,x.who/max*100)}%"></span>`:""}</span><span class="cv">${v}${unit}</span></div>`;
+ box.hidden=false;
+ box.innerHTML=`<div class="idet">
+  <div class="q"><div class="qt"><p class="eyebrow">${esc(i.v)}</p><h3>${esc(L(i.l))}</h3></div>${TTS?`<button class="mini" type="button" id="indic-listen" aria-label="${esc(t("listen"))}">${SPK_ICON}</button>`:""}</div>
+  <div class="block"><p class="glbl">${esc(t("meansL"))}</p><p>${esc(L(x.m))}</p></div>
+  <div class="block"><p class="glbl">${esc(t("compareL"))}</p>${bar(t("apL"),x.ap,"ap")}${bar(t("indiaL"),x.india,"in")}
+   <p class="note">${x.who?`<span class="cwkey"></span> ${esc(t("whoL"))}: ${x.who}% · `:""}${esc(t(x.low?"lowBetter":"highBetter"))} <b class="${better?"good":"bad"}">${esc(t(better?"betterL":"worseL"))}.</b> ${x.who&&x.ap>=x.who?esc(t("aboveConcern").replace("{x}",x.who+"%")):""}</p></div>
+  <div class="block"><p class="glbl">${esc(t("whyL"))}</p><p>${esc(L(x.w))}</p></div>
+  ${sc?`<div class="grid2"><div class="block"><p class="glbl">${esc(t("respL"))}</p><ul>${sc.ap.map(a=>`<li>${esc(a)}</li>`).join("")}${sc.un.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div><div class="block"><p class="glbl">${esc(t("helpL"))}</p><div class="chips">${sc.sch.map(c=>`<span class="chip scheme">${esc(c)}</span>`).join("")}</div></div></div>`:`<div class="block"><p class="glbl">${esc(t("respL"))}</p><p>${esc(t("allDepts"))}</p></div>`}
+  <p class="note">${esc(t("srcL"))}: ${esc(L(i.s))}</p>
+  ${sc?`<div class="btns"><button class="btn ghost" type="button" id="indic-report">${esc(t("reportThis"))}</button></div>`:""}
+ </div>`;
+ const lb=$("indic-listen");if(lb)lb.onclick=()=>speak(indicSpeech(n),lb);
+ const rb=$("indic-report");if(rb)rb.onclick=()=>{$("r-sector").value=x.sector;$("ex-flag").hidden=true;$("r-desc").value="";$("r-place").value="";$("r-result").innerHTML="";current=null;show("report");$("r-desc").focus()};
+}
 ["d-demo","d-f-district","d-f-sector","d-f-status"].forEach(id=>$(id).addEventListener("change",renderDash));
 const UW={high:3,medium:2,low:1};
 const verLabel=l=>l>=2?["ok","corroborated"]:l===1?["warn","single"]:["","unverified"];
-let dashSpeech="";
+let dashSpeech="";let dashState={list:[],demo:false,fd:"",fs:"",ft:""};
 function renderDash(){
  const demo=$("d-demo").checked;
  const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):reports;
  $("d-src").textContent=demo?t("demoNote"):t("countLocal").replace("{n}",reports.length);
- if(!data.length){$("d-summary").innerHTML=`<div class="empty"><b>${esc(t("emptyB"))}</b><span>${esc(t("emptyS"))}</span></div>`;$("d-list").innerHTML="";dashSpeech=t("emptyB")+" "+t("emptyS");return}
+ if(!data.length){$("d-summary").innerHTML=`<div class="empty"><b>${esc(t("emptyB"))}</b><span>${esc(t("emptyS"))}</span></div>`;$("d-list").innerHTML="";dashSpeech=t("emptyB")+" "+t("emptyS");dashState={list:[],demo,fd:"",fs:"",ft:""};return}
  const by={};data.forEach(r=>{const k=r.sector in S?r.sector:"livelihood";by[k]=by[k]||{n:0,p:0};by[k].n++;by[k].p+=UW[r.urgency]||1});
  const rows=Object.entries(by).sort((a,b)=>b[1].p-a[1].p);const max=Math.max(...rows.map(r=>r[1].p));
  const bars=rows.map(([k,v])=>`<div class="bar"><span class="nm" title="${esc(L(S[k].name))}">${esc(L(S[k].name))}</span><span class="track"><span class="fill${v.p/max>.66?" hi":""}" style="width:${Math.max(6,v.p/max*100)}%"></span></span><span class="num">${v.n}</span></div>`).join("");
@@ -910,6 +980,7 @@ function renderDash(){
  dashSpeech=`${data.length} ${t("needsN")}, ${high} ${t("urgentN")}, ${res} ${t("resolvedN")}. ${t("priorityEb")}: ${rows.slice(0,3).map(([k,v])=>L(S[k].name)+" "+v.n).join(", ")}. ${t("distEb")}: ${dsorted.slice(0,3).map(([d,v])=>dName(d)+" "+v.high).join(", ")}.`;
  const fd=$("d-f-district").value,fs=$("d-f-sector").value,ft=$("d-f-status").value;
  const list=data.filter(r=>(!fd||r.district===fd)&&(!fs||r.sector===fs)&&(!ft||(r.status||"reported")===ft)).sort((a,b)=>(UW[b.urgency]||0)-(UW[a.urgency]||0));
+ dashState={list,demo,fd,fs,ft};
  const canEdit=!!db&&!demo;
  $("d-list").innerHTML=list.length?list.map(r=>{const s=sec(r.sector);const [vc,vk]=verLabel(r.verify&&r.verify.level||0);const st=STATUSES.includes(r.status)?r.status:"reported";
   return `<article class="rep u-${esc(r.urgency)}"><div class="meta"><span>${esc(dName(r.district))}</span>${r.place?`<span>· ${esc(r.place)}</span>`:""}<span>· ${num(r.affected)} ${esc(t("people"))}</span>${r.created?`<span>· ${esc(new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"))}</span>`:""}</div>
@@ -985,6 +1056,51 @@ $("n-verdict").setAttribute("role","button");$("n-verdict").tabIndex=0;
 const openVerHelp=()=>{const d=$("ver-help");d.open=true;d.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"nearest"})};
 $("n-verdict").addEventListener("click",openVerHelp);
 $("n-verdict").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openVerHelp()}});
+
+
+// ---------- Export ----------
+function verText(r){const l=r.verify&&r.verify.level||0;return t(verLabel(l)[1])}
+function exportRows(){return dashState.list.map(r=>{const s=sec(r.sector);return {date:r.created?new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"):"",district:dName(r.district),place:r.place||"",sector:s.name,need:r.desc||r.title||"",people:+r.affected||0,urgency:t(URG[r.urgency]?URG[r.urgency][1]:"uMed"),status:t(STATUSES.includes(r.status)?r.status:"reported"),verify:verText(r),dept:s.ap.join("; ")}})}
+function filterText(){const f=[];if(dashState.fd)f.push(dName(dashState.fd));if(dashState.fs)f.push(L(S[dashState.fs].name));if(dashState.ft)f.push(t(dashState.ft));return f.length?f.join(", "):t("noneL")}
+function stamp(){const d=new Date();return d.toISOString().slice(0,10)}
+function buildCSV(){
+ const head=[t("thDate"),t("thDistrict"),t("thPlace"),t("thSector"),t("thNeed"),t("thPeople"),t("thUrgency"),t("thStatus"),t("thVerify"),t("thDept")];
+ const q=v=>{const x=String(v??"");return /[",\n]/.test(x)?`"${x.replace(/"/g,'""')}"`:x};
+ const rows=exportRows().map(r=>[r.date,r.district,r.place,r.sector,r.need,r.people,r.urgency,r.status,r.verify,r.dept]);
+ return "﻿"+[head,...rows].map(r=>r.map(q).join(",")).join("\r\n");
+}
+function buildReportHTML(){
+ const rows=exportRows(),e=esc;
+ const total=rows.length,urgent=dashState.list.filter(r=>r.urgency==="high").length,people=dashState.list.reduce((a,r)=>a+(+r.affected||0),0);
+ const ind=INDIC.map((i,n)=>{const x=INDIC_MORE[n];return `<tr><td>${e(L(i.l))}</td><td class="n"><b>${e(i.v)}</b></td><td class="n">${x.india}${x.max?"":"%"}</td><td>${e(L(i.s))}</td></tr>`}).join("");
+ const list=rows.map((r,k)=>`<tr><td class="n">${k+1}</td><td>${e(r.district)}${r.place?"<br><small>"+e(r.place)+"</small>":""}</td><td>${e(r.sector)}</td><td>${e(r.need)}</td><td class="n">${num(r.people)}</td><td>${e(r.urgency)}</td><td>${e(r.status)}</td><td>${e(r.verify)}</td><td><small>${e(r.dept)}</small></td></tr>`).join("");
+ return `<!doctype html><html lang="${LANG}"><head><meta charset="utf-8"><title>Mana Hakku · ${e(t("reportTitle"))} · ${stamp()}</title>
+<style>@page{size:A4;margin:14mm}body{font-family:"Noto Sans Telugu","Hind Guntur","Nirmala UI",system-ui,sans-serif;color:#1B2233;font-size:11pt;line-height:1.45;margin:0}
+h1{font-size:20pt;margin:0;color:#26337F}h2{font-size:13pt;margin:18px 0 6px;color:#26337F;border-bottom:2px solid #E3A93A;padding-bottom:3px}
+.meta{color:#596173;font-size:9.5pt;margin:4px 0 12px}.kpis{display:flex;gap:10px;margin:8px 0}.kpi{border:1px solid #D6D9D2;border-radius:6px;padding:6px 12px}.kpi b{display:block;font-size:15pt;color:#26337F}
+table{border-collapse:collapse;width:100%;font-size:9.5pt}th,td{border:1px solid #D6D9D2;padding:5px 6px;text-align:left;vertical-align:top}th{background:#E4E7F6}td.n{text-align:right;white-space:nowrap}tr{page-break-inside:avoid}small{color:#596173}
+.foot{margin-top:16px;font-size:8.5pt;color:#596173}</style></head><body>
+<h1>మన హక్కు · Mana Hakku</h1><div><b>${e(t("reportTitle"))}</b> · Andhra Pradesh</div>
+<div class="meta">${e(t("generated"))}: ${new Date().toLocaleString(LANG==="te"?"te-IN":"en-IN")} · ${e(t("filtersL"))}: ${e(filterText())}${dashState.demo?" · "+e(t("exampleNote")):""}</div>
+<div class="kpis"><div class="kpi"><b>${total}</b>${e(t("needsN"))}</div><div class="kpi"><b>${urgent}</b>${e(t("urgentN"))}</div><div class="kpi"><b>${num(people)}</b>${e(t("thPeople"))}</div></div>
+<h2>${e(t("indicEb"))}</h2><table><thead><tr><th></th><th class="n">${e(t("apL"))}</th><th class="n">${e(t("indiaL"))}</th><th>${e(t("srcL"))}</th></tr></thead><tbody>${ind}</tbody></table>
+<h2>${e(t("reportedH"))}</h2>${total?`<table><thead><tr><th>#</th><th>${e(t("thDistrict"))}</th><th>${e(t("thSector"))}</th><th>${e(t("thNeed"))}</th><th class="n">${e(t("thPeople"))}</th><th>${e(t("thUrgency"))}</th><th>${e(t("thStatus"))}</th><th>${e(t("thVerify"))}</th><th>${e(t("thDept"))}</th></tr></thead><tbody>${list}</tbody></table>`:`<p>${e(t("emptyB"))}</p>`}
+<p class="foot">${e(t("foot1"))}<br>${e(t("foot2"))}</p></body></html>`;
+}
+function downloadBlob(name,mime,content){const blob=new Blob([content],{type:mime});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+function exportCSV(){
+ const name=`ManaHakku-needs-${stamp()}.csv`,csv=buildCSV();
+ if(typeof window.AndroidFile!=="undefined"){try{const r=AndroidFile.save(name,"text/csv",csv);if(r==="saved"){toast(t("fileSaved").replace("{f}",name));return}}catch(e){}shareReport(csv);return}
+ downloadBlob(name,"text/csv;charset=utf-8",csv);
+}
+function exportPDF(){
+ const html=buildReportHTML(),title=`ManaHakku-report-${stamp()}`;
+ if(typeof window.AndroidPrint!=="undefined"){try{AndroidPrint.print(html,title);return}catch(e){}}
+ const w=window.open("","_blank");
+ if(w){w.document.open();w.document.write(html);w.document.close();w.focus();setTimeout(()=>{try{w.print()}catch(e){}},500);return}
+ downloadBlob(title+".html","text/html;charset=utf-8",html);
+}
+$("x-pdf").onclick=exportPDF;$("x-csv").onclick=exportCSV;
 
 // ---------- Intro listen buttons ----------
 document.querySelectorAll("[data-speak]").forEach(b=>{

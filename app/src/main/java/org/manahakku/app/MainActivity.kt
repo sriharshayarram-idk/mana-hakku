@@ -3,9 +3,16 @@ package org.manahakku.app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.print.PrintAttributes
+import android.print.PrintManager
+import android.provider.MediaStore
+import android.widget.Toast
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -22,11 +29,14 @@ import java.util.Locale
  *  - AndroidTTS   : read text aloud with the phone's Telugu or English voice
  *  - AndroidVoice : speak a complaint in Telugu or English (Google speech dialog)
  *  - AndroidShare : send a report to WhatsApp, SMS or email through the share sheet
+ *  - AndroidPrint : print or "Save as PDF" a generated report
+ *  - AndroidFile  : save an exported file (CSV) to the Downloads folder
  */
 class MainActivity : Activity(), TextToSpeech.OnInitListener {
 
     private lateinit var web: WebView
     private var tts: TextToSpeech? = null
+    private var printView: WebView? = null
     @Volatile private var ttsReady = false
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -54,6 +64,8 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
         web.addJavascriptInterface(TtsBridge(), "AndroidTTS")
         web.addJavascriptInterface(VoiceBridge(), "AndroidVoice")
         web.addJavascriptInterface(ShareBridge(), "AndroidShare")
+        web.addJavascriptInterface(PrintBridge(), "AndroidPrint")
+        web.addJavascriptInterface(FileBridge(), "AndroidFile")
 
         tts = TextToSpeech(this, this)
 
@@ -185,6 +197,51 @@ class MainActivity : Activity(), TextToSpeech.OnInitListener {
                     putExtra(Intent.EXTRA_TEXT, text)
                 }
                 startActivity(Intent.createChooser(send, getString(R.string.app_name)))
+            }
+        }
+    }
+
+    // ---------- Print / Save as PDF ----------
+    inner class PrintBridge {
+        @JavascriptInterface
+        fun print(html: String, title: String) {
+            runOnUiThread {
+                val view = WebView(this@MainActivity)
+                view.settings.javaScriptEnabled = false
+                view.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(v: WebView, url: String?) {
+                        val manager = getSystemService(PRINT_SERVICE) as PrintManager
+                        val attrs = PrintAttributes.Builder()
+                            .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                            .build()
+                        manager.print(title, v.createPrintDocumentAdapter(title), attrs)
+                    }
+                }
+                view.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+                printView = view
+            }
+        }
+    }
+
+    // ---------- Save file to Downloads ----------
+    inner class FileBridge {
+        @JavascriptInterface
+        fun save(name: String, mime: String, content: String): String {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return "unsupported"
+            return try {
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                    put(MediaStore.MediaColumns.MIME_TYPE, mime)
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+                val uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                    ?: return "failed"
+                contentResolver.openOutputStream(uri)?.use { it.write(content.toByteArray(Charsets.UTF_8)) }
+                    ?: return "failed"
+                runOnUiThread { Toast.makeText(this@MainActivity, "Downloads/$name", Toast.LENGTH_LONG).show() }
+                "saved"
+            } catch (_: Exception) {
+                "failed"
             }
         }
     }
