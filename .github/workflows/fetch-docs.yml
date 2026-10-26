@@ -31,12 +31,17 @@ jobs:
           TAG=$(gh api repos/mozilla/pdf.js/releases/latest --jq .tag_name); V=${TAG#v}
           echo "pdf.js $TAG" >> $R
           curl -sSL -o /tmp/pdfjs.zip "https://github.com/mozilla/pdf.js/releases/download/$TAG/pdfjs-$V-legacy-dist.zip" && rm -rf app/src/main/assets/pdfjs && mkdir -p app/src/main/assets/pdfjs && unzip -q /tmp/pdfjs.zip -d app/src/main/assets/pdfjs && du -sh app/src/main/assets/pdfjs >> $R && ls app/src/main/assets/pdfjs app/src/main/assets/pdfjs/web | head -30 >> $R
+          # keep the reader small: no source maps, demo file, debugger, or locales other than English and Telugu
+          P=app/src/main/assets/pdfjs
+          find $P -name "*.map" -delete; rm -f $P/web/compressed.tracemonkey-pldi-09.pdf $P/web/debugger.*
+          find $P/web/locale -mindepth 1 -maxdepth 1 -type d ! -name en-US ! -name te -exec rm -rf {} +
+          du -sh $P $P/build $P/web >> $R; ls $P/build >> $R
           ls -la $D >> $R
       - name: Commit
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/assets/docs app/src/main/assets/pdfjs
+          git add -A app/src/main/assets/docs app/src/main/assets/pdfjs
           git commit -m "Add official Constitution PDFs and the PDF.js reader" || echo "nothing to commit"
           git push
