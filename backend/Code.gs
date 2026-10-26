@@ -93,15 +93,16 @@ function json_(obj) {
 }
 
 // ---------- automatic news check ----------
+// Only these publishers are trusted. Matching is on the publisher's web address, never on the name a site gives itself.
 const TRUSTED = [
-  ['The Hindu', /thehindu\.com|^the hindu/i], ['The New Indian Express', /newindianexpress\.com|new indian express/i],
-  ['Deccan Chronicle', /deccanchronicle\.com|deccan chronicle/i], ['The Hans India', /thehansindia\.com|hans india/i],
-  ['Times of India', /timesofindia|times of india/i], ['Eenadu', /eenadu|ఈనాడు/i], ['Sakshi', /sakshi|సాక్షి/i],
-  ['PIB', /pib\.gov\.in|press information bureau|^pib/i], ['Telangana Today', /telanganatoday|telangana today/i],
-  ['Andhra Jyothy', /andhrajyothy|ఆంధ్రజ్యోతి|andhra jyothy/i], ['The News Minute', /thenewsminute|news minute/i],
-  ['The Indian Express', /indianexpress\.com|^the indian express/i], ['NDTV', /ndtv/i], ['ETV Bharat', /etvbharat|etv bharat/i],
-  ['Hindustan Times', /hindustantimes|hindustan times/i], ['Deccan Herald', /deccanherald|deccan herald/i]
+  ['The Hindu', 'thehindu.com'], ['The New Indian Express', 'newindianexpress.com'], ['Deccan Chronicle', 'deccanchronicle.com'],
+  ['The Hans India', 'thehansindia.com'], ['Times of India', 'timesofindia.indiatimes.com'], ['Eenadu', 'eenadu.net'],
+  ['Sakshi', 'sakshi.com'], ['PIB', 'pib.gov.in'], ['Telangana Today', 'telanganatoday.com'], ['Andhra Jyothy', 'andhrajyothy.com'],
+  ['The News Minute', 'thenewsminute.com'], ['The Indian Express', 'indianexpress.com'], ['NDTV', 'ndtv.com'],
+  ['ETV Bharat', 'etvbharat.com'], ['Hindustan Times', 'hindustantimes.com'], ['Deccan Herald', 'deccanherald.com']
 ];
+function host_(u) { const m = String(u || '').match(/^https?:\/\/([^/:?#]+)/i); return m ? m[1].toLowerCase().replace(/^www\./, '') : ''; }
+function trustedFor_(host) { return TRUSTED.find(x => host === x[1] || host.endsWith('.' + x[1])); }
 function decode_(x) {
   return String(x || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, ' ')
     .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
@@ -115,11 +116,15 @@ function parseRss_(xml, engine) {
     const srcUrl = (it.match(/<source[^>]*url="([^"]+)"/i) || [])[1] || '';
     if (engine === 'google' && source && title.endsWith(' - ' + source)) title = title.slice(0, -(source.length + 3));
     if (engine === 'bing') { const u = (link.match(/[?&]url=([^&]+)/) || [])[1]; if (u) { try { link = decodeURIComponent(u); } catch (e) {} } }
-    if (!source) source = (link.match(/^https?:\/\/(?:www\.)?([^/]+)/) || [])[1] || '';
+    // Publisher's address: Google gives it in <source url>, Bing links go straight to the article.
+    const domain = engine === 'google' ? host_(srcUrl) : host_(link);
+    if (!source) source = domain;
     if (!title || !/^https?:\/\//.test(link)) return;
-    const hay = source + ' ' + srcUrl + ' ' + link;
-    const t = TRUSTED.find(x => x[1].test(hay));
-    out.push({ title: title.slice(0, 220), link: link, source: t ? t[0] : source.slice(0, 60), trusted: !!t, date: tag_(it, 'pubDate') });
+    const t = domain ? trustedFor_(domain) : null;
+    // A trusted item may only be opened over https, and only through Google News or the publisher's own site.
+    const lh = host_(link);
+    const safeLink = !!t && /^https:\/\//i.test(link) && (lh === 'news.google.com' || lh === t[1] || lh.endsWith('.' + t[1]));
+    out.push({ title: title.slice(0, 220), link: safeLink ? link : '', source: safeLink ? t[0] : (domain || source).slice(0, 60), domain: domain, trusted: safeLink, date: tag_(it, 'pubDate') });
   });
   return out;
 }
