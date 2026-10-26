@@ -1,0 +1,39 @@
+name: Fetch budget data (RBI State Finances)
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "Extra space-separated URLs to download"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download into the budget-raw branch
+        env:
+          EXTRA: ${{ github.event.inputs.urls }}
+        run: |
+          set +e
+          mkdir raw && cd raw
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
+          B=https://rbidocs.rbi.org.in/rdocs/Publications/DOCs
+          for u in \
+            $B/ESTATES23012026AB138FB463474EBFBCC03A8FC878C45A.XLSX \
+            $B/2APPENDIX23012026_1.XLSX \
+            $B/2APPENDIX23012026_727553561E287487EA994DFDA664702D7.XLSX \
+            $B/4APPENDIX23012026_14B7C303C5B434A9590D6BB9A22B386F2.XLSX \
+            $B/4APPENDIX23012026_132CF0E0C27F7A42A3ADB723288CC4166F.XLSX \
+            "https://rbi.org.in/Scripts/AnnualPublications.aspx?head=State+Finances+%3A+A+Study+of+Budgets" \
+            $EXTRA; do
+            n=$(echo "$u" | sed 's#.*/##; s#[?&=:+%]#_#g' | cut -c1-120)
+            code=$(curl -sSL --retry 2 -m 300 -A "$UA" -o "$n" -w "%{http_code}" "$u")
+            echo "$code $(stat -c%s "$n") $n <- $u" >> report.txt
+          done
+          cat report.txt
+          git init -q -b budget-raw && git add -A && git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -qm "raw budget files" && git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" budget-raw
