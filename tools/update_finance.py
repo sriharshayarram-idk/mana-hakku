@@ -87,9 +87,9 @@ async def download_all(dest):
         sf_title, sf_rows, sf_links = await rows_with_links(SF_PAGE)
         hs_title, hs_rows, hs_links = await rows_with_links(HSIS_PAGE)
 
-        def by_title(rows, pattern, fallback=None, links=()):
+        def by_title(rows, pattern, fallback=None, links=(), exclude=None):
             for r in rows:
-                if re.search(pattern, r["t"], re.I):
+                if re.search(pattern, r["t"], re.I) and not (exclude and re.search(exclude, r["t"], re.I)):
                     return r["x"][0]
             if fallback:
                 for l in links:
@@ -103,6 +103,7 @@ async def download_all(dest):
             "liabpct": by_title(sf_rows, r"Total Outstanding Liabilities of State Governments.*GSDP", r"/20_ST[^/]*\.xlsx$", sf_links),
             "gsdp": by_title(hs_rows, r"Gross State Domestic Product \(Current Prices\)", None),
             "pc": by_title(hs_rows, r"Per Capita Net State Domestic Product \(Current Prices\)", None),
+            "nsdp": by_title(hs_rows, r"Net State Domestic Product \(Current Prices\)", None, exclude=r"Per Capita"),
             "cpi": by_title(hs_rows, r"Average Inflation \(CPI\)\s*[-–]\s*General", None),
         }
         missing = [k for k, v in want.items() if not v]
@@ -249,6 +250,9 @@ def build(dir_, links):
     years = f["years"]
     gsdp = parse_hsis(os.path.join(dir_, "gsdp.xlsx"), years, scale=100, dec=0)   # ₹ lakh -> ₹ crore
     pc = parse_hsis(os.path.join(dir_, "pc.xlsx"), years, 1, 0)
+    nsdp = parse_hsis(os.path.join(dir_, "nsdp.xlsx"), years, scale=100, dec=0)  # ₹ lakh -> ₹ crore
+    # population (lakh) = NSDP / per-capita NSDP
+    pop = {k: [rnd(n * 1e7 / p / 1e5, 1) if n and p else None for n, p in zip(nsdp[k], pc[k])] for k in STATES}
     cpi = parse_hsis(os.path.join(dir_, "cpi.xlsx"), years, 1, 1)
     lyears, liab = parse_liab(os.path.join(dir_, "liab.xlsx"), 0)
     _, liabpct = parse_liab(os.path.join(dir_, "liabpct.xlsx"), 1)
@@ -260,7 +264,7 @@ def build(dir_, links):
                 "sf": {"title": links.get("sf_title", "State Finances: A Study of Budgets"), "page": SF_PAGE,
                        "files": {k: links[k] for k in ("estates", "liab", "liabpct") if k in links}},
                 "hsis": {"title": links.get("hsis_title", "Handbook of Statistics on Indian States"), "page": HSIS_PAGE,
-                         "files": {k: links[k] for k in ("gsdp", "pc", "cpi") if k in links}},
+                         "files": {k: links[k] for k in ("gsdp", "nsdp", "pc", "cpi") if k in links}},
             },
             "cats": [c for c, _ in CATS],
             "yrFields": ["revenue", "interest", "borrowed", "repaid", "deficit", "pensions"],
@@ -268,7 +272,7 @@ def build(dir_, links):
         "years": years, "liabYears": lyears,
     }
     for k in STATES:
-        data[k] = {"gsdp": gsdp[k], "pc": pc[k], "cpi": cpi[k], "liab": liab[k], "liabPct": liabpct[k],
+        data[k] = {"gsdp": gsdp[k], "nsdp": nsdp[k], "pop": pop[k], "pc": pc[k], "cpi": cpi[k], "liab": liab[k], "liabPct": liabpct[k],
                    "yr": f[k]["yr"], "cat": f[k]["cat"]}
     return data
 
@@ -303,10 +307,18 @@ def main():
         old = json.load(open(OUT))
     same = old is not None and {k: v for k, v in old.items() if k != "meta"} == {k: v for k, v in data.items() if k != "meta"}
     if same:
-        print("unchanged", OUT)
-        return
-    json.dump(data, open(OUT, "w"), ensure_ascii=False, separators=(",", ":"))
-    print("UPDATED", OUT)
+        data = old  # keep the original "updated" date
+    txt = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    if not same:
+        open(OUT, "w").write(txt)
+    # keep the copy built into the app page in step (no change if already equal)
+    page = os.path.join(os.path.dirname(__file__), "..", "app", "src", "main", "assets", "index.html")
+    h = open(page, encoding="utf-8").read()
+    a, b = "/*FIN-DATA*/", "/*END-FIN-DATA*/"
+    if a in h and b in h:
+        h = h[:h.index(a) + len(a)] + txt + h[h.index(b):]
+        open(page, "w", encoding="utf-8").write(h)
+    print("unchanged" if same else "UPDATED", OUT)
 
 
 if __name__ == "__main__":
