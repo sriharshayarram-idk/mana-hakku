@@ -9,6 +9,10 @@
  * Update: paste the new file → Save → Deploy → Manage deployments → edit → Version "New version" → Deploy.
  *         The /exec URL stays the same.
  *
+ * Automatic news check: the app asks this script (?action=news&q=...) and the script searches
+ * Google News (Bing News if Google gives nothing) and marks trusted outlets. The first deploy
+ * after adding this asks you to allow "Connect to an external service" — allow it.
+ *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
  *
  * Personal details (phone, Aadhaar / long ID numbers, email, PAN, name phrases) are
@@ -88,8 +92,69 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
+// ---------- automatic news check ----------
+const TRUSTED = [
+  ['The Hindu', /thehindu\.com|^the hindu/i], ['The New Indian Express', /newindianexpress\.com|new indian express/i],
+  ['Deccan Chronicle', /deccanchronicle\.com|deccan chronicle/i], ['The Hans India', /thehansindia\.com|hans india/i],
+  ['Times of India', /timesofindia|times of india/i], ['Eenadu', /eenadu|ఈనాడు/i], ['Sakshi', /sakshi|సాక్షి/i],
+  ['PIB', /pib\.gov\.in|press information bureau|^pib/i], ['Telangana Today', /telanganatoday|telangana today/i],
+  ['Andhra Jyothy', /andhrajyothy|ఆంధ్రజ్యోతి|andhra jyothy/i], ['The News Minute', /thenewsminute|news minute/i],
+  ['The Indian Express', /indianexpress\.com|^the indian express/i], ['NDTV', /ndtv/i], ['ETV Bharat', /etvbharat|etv bharat/i],
+  ['Hindustan Times', /hindustantimes|hindustan times/i], ['Deccan Herald', /deccanherald|deccan herald/i]
+];
+function decode_(x) {
+  return String(x || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+    .replace(/&#(\d+);/g, (m, n) => String.fromCharCode(+n)).replace(/\s+/g, ' ').trim();
+}
+function tag_(item, name) { const m = item.match(new RegExp('<' + name + '[^>]*>([\\s\\S]*?)</' + name + '>', 'i')); return m ? decode_(m[1]) : ''; }
+function parseRss_(xml, engine) {
+  const out = [];
+  (String(xml).match(/<item>[\s\S]*?<\/item>/gi) || []).forEach(it => {
+    let title = tag_(it, 'title'), link = tag_(it, 'link'), source = tag_(it, 'source') || tag_(it, 'News:Source');
+    const srcUrl = (it.match(/<source[^>]*url="([^"]+)"/i) || [])[1] || '';
+    if (engine === 'google' && source && title.endsWith(' - ' + source)) title = title.slice(0, -(source.length + 3));
+    if (engine === 'bing') { const u = (link.match(/[?&]url=([^&]+)/) || [])[1]; if (u) { try { link = decodeURIComponent(u); } catch (e) {} } }
+    if (!source) source = (link.match(/^https?:\/\/(?:www\.)?([^/]+)/) || [])[1] || '';
+    if (!title || !/^https?:\/\//.test(link)) return;
+    const hay = source + ' ' + srcUrl + ' ' + link;
+    const t = TRUSTED.find(x => x[1].test(hay));
+    out.push({ title: title.slice(0, 220), link: link, source: t ? t[0] : source.slice(0, 60), trusted: !!t, date: tag_(it, 'pubDate') });
+  });
+  return out;
+}
+function fetchNews_(q, lang) {
+  const g = 'https://news.google.com/rss/search?q=' + encodeURIComponent(q) +
+    (lang === 'te' ? '&hl=te&gl=IN&ceid=IN:te' : '&hl=en-IN&gl=IN&ceid=IN:en');
+  let items = [], engine = 'google';
+  try { const r = UrlFetchApp.fetch(g, { muteHttpExceptions: true, followRedirects: true }); if (r.getResponseCode() === 200) items = parseRss_(r.getContentText(), 'google'); } catch (e) {}
+  if (!items.length) {
+    engine = 'bing';
+    try {
+      const b = 'https://www.bing.com/news/search?format=rss&mkt=' + (lang === 'te' ? 'te-IN' : 'en-IN') + '&q=' + encodeURIComponent(q);
+      const r = UrlFetchApp.fetch(b, { muteHttpExceptions: true, followRedirects: true });
+      if (r.getResponseCode() === 200) items = parseRss_(r.getContentText(), 'bing');
+    } catch (e) {}
+  }
+  return { items: items.slice(0, 25), engine: engine };
+}
+function newsSearch_(p) {
+  const q = String(p.q || '').replace(/[\u0000-\u001F]/g, ' ').slice(0, 200).trim();
+  const lang = p.lang === 'te' ? 'te' : 'en';
+  if (!q) return { ok: false, error: 'empty' };
+  const cache = CacheService.getScriptCache();
+  const key = 'n' + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, lang + '|' + q, Utilities.Charset.UTF_8));
+  const hit = cache.get(key);
+  if (hit) return JSON.parse(hit);
+  const res = fetchNews_(q, lang);
+  const out = { ok: true, q: q, lang: lang, engine: res.engine, items: res.items };
+  try { cache.put(key, JSON.stringify(out), 1800); } catch (e) {}
+  return out;
+}
+
 // ---------- read: everyone's reports ----------
 function doGet(e) {
+  if (e && e.parameter && e.parameter.action === 'news') return json_(newsSearch_(e.parameter));
   const state = e && e.parameter && e.parameter.state === 'ts' ? 'ts' : 'ap';
   const sh = sheet_(REPORTS, REPORT_COLS);
   const idx = ensureColumns_(sh, REPORT_COLS);

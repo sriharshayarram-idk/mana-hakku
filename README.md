@@ -10,6 +10,7 @@ An Android app and website for Andhra Pradesh and Telangana that turns a public 
 - **Speak a complaint**: a Speak (మాట్లాడండి) button turns spoken Telugu or English into text (uses the phone's Google voice typing).
 - **Share report**: sends a ready-made summary to WhatsApp, SMS or email for an official or NGO.
 - **Gap dashboard**: official indicators for Andhra Pradesh (NFHS-5, NITI Aayog MPI, SDG India Index) and the needs saved on the phone.
+- **Automatic source check**: after Analyse, the app asks the register script, which searches Google News (Bing News as a fallback) and checks earlier Mana Hakku reports. A pop-up shows *possible duplicates* (only reports made in Mana Hakku) separately from *supporting news* (evidence only, never treated as a duplicate). The person confirms whether the news is about their issue.
 - **News check**: searches nine trusted outlets and grades a report as Unverified, Single source or Corroborated.
 
 Reports are saved on the phone in this version. A shared online register (Firebase) is the next step.
