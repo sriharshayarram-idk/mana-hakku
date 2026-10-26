@@ -35,7 +35,7 @@ const DISTRICTS = {
 const SECTORS = ['water', 'health', 'nutrition', 'education', 'child', 'women', 'elderly', 'livelihood', 'housing', 'roads', 'power', 'social', 'agri'];
 const URGENCY = ['high', 'medium', 'low'];
 const STATUSES = ['reported', 'acknowledged', 'progress', 'resolved'];
-const MAX_ROWS_RETURNED = 500;
+const MAX_ROWS_RETURNED = 20000;   // every report from the start
 
 // ---------- personal-details guard (mirrors the app) ----------
 const TE_DIGITS = '౦౧౨౩౪౫౬౭౮౯';

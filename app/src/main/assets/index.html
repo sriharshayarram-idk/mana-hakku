@@ -91,6 +91,7 @@ legend{font-weight:500;font-size:.95rem;padding:0;margin-bottom:5px}
 .chip.warn{background:var(--warn-soft);color:var(--warn)}
 .chip.ok{background:var(--ok-soft);color:var(--ok)}
 .chip.ind{background:var(--indigo-soft);color:var(--indigo)}
+.rep .chip.ind{display:inline;border:0;padding:2px 10px;border-radius:999px;font-size:.82rem;min-width:0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:600px){.grid2{grid-template-columns:1fr}}
 .block{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -343,6 +344,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
 <nav class="tabs" id="tabs" aria-label="Sections"><div class="wrap" role="tablist">
   <button class="tab" role="tab" id="t-report" aria-selected="true" data-view="report" data-t="tabReport">Report a need</button>
   <button class="tab" role="tab" id="t-dash" aria-selected="false" data-view="dash" data-t="tabDash">Gap dashboard</button>
+  <button class="tab" role="tab" id="t-all" aria-selected="false" data-view="all" data-t="tabAll">All issues</button>
   <button class="tab" role="tab" id="t-news" aria-selected="false" data-view="news" data-t="tabNews">News check</button>
   <button class="tab" role="tab" id="t-rights" aria-selected="false" data-view="rights" data-t="tabRights">Right knowledge</button>
   <button class="tab" role="tab" id="t-history" aria-selected="false" data-view="history" data-t="tabHistory">History</button>
@@ -456,6 +458,23 @@ body{margin:0;-webkit-text-size-adjust:100%}
     <p class="note" data-t="corrNote"></p>
   </div>
 </section>
+<section class="wrap" id="v-all" aria-labelledby="t-all" hidden>
+  <div class="intro">
+    <div class="introhead"><h2 data-t="allH"></h2><button class="listen" type="button" data-speak="all"></button></div>
+    <p class="lede" data-t="allLede"></p>
+  </div>
+  <input id="a-search" type="search" autocomplete="off">
+  <div class="filters">
+    <select id="a-f-district" aria-label="District"></select>
+    <select id="a-f-sector" aria-label="Sector"></select>
+    <select id="a-f-status" aria-label="Status"></select>
+    <select id="a-sort" aria-label="Order"></select>
+  </div>
+  <div class="btns" style="justify-content:space-between"><p class="note" id="a-count"></p><button class="btn quiet" type="button" id="a-refresh" hidden></button></div>
+  <div class="reports" id="a-list"></div>
+  <button class="btn ghost" type="button" id="a-more" hidden></button>
+  <p class="note" data-t="viewOnlyNote"></p>
+</section>
 <section class="wrap" id="v-rights" aria-labelledby="t-rights" hidden>
   <div class="intro">
     <div class="introhead"><h2 data-t="rkH"></h2><button class="listen" type="button" data-speak="rights"></button></div>
@@ -502,7 +521,7 @@ let LANG="te";
 try{const s=localStorage.getItem("mh-lang");if(s==="en"||s==="te")LANG=s}catch(e){}
 
 const I18N={
-en:{viewOnlyNote:"Reports are view-only here: they cannot be downloaded, and screenshots are blocked in the Android app.",homeEb:"Andhra Pradesh · Telangana",homeH:"Choose your state",homeLede:"Mana Hakku works for one state at a time. Pick your state to report a need, see the gaps, check news and read its history.",homeNote:"Departments, helplines, indicators, reports, history and districts change with the state. Your rights and the Constitution are the same everywhere.",apCount:"28 districts",tsCount:"33 districts",openState:"Open →",changeState:"Change",apName:"Andhra Pradesh",tsName:"Telangana",tabRights:"Right knowledge",tabHistory:"History",rkH:"Know your rights",rkLede:"Your rights under the Constitution of India, with article numbers, explained in simple words.",rkSearchPh:"Search: education, 21, vote, women…",secFund:"Fundamental Rights",fundNote:"Part III of the Constitution. You can go to court to enforce these rights.",secOther:"Other important rights",otherNote:"Articles 39A, 41 and 47 are Directive Principles: duties of the government that guide laws and schemes. They cannot be enforced directly in court.",secLaws:"Laws that give you rights",secDuties:"Fundamental Duties",dutiesNote:"Article 51A. Rights come with duties; the main ones are:",secPre:"Preamble",preNote:"The opening statement of the Constitution, in both languages. The Telugu text is a careful rendering; the official Telugu edition is linked under Full Constitution.",secAmend:"Constitution amendments",amendLede:"The Constitution has been amended 106 times. The latest is the 106th Amendment (2023), which reserves seats for women. Each amendment is explained below in simple words.",keyAmend:"Important for everyone",apAmend:"About Andhra Pradesh",amendCount:"{n} amendments",amendMatches:"{n} amendments match",secCoi:"Full Constitution of India",coiNote:"Read or download the complete, up-to-date Constitution from the Government of India's Legislative Department.",udhrL:"Human rights (UDHR) Art.",noResults:"Nothing matches your search.",artWord:"Article",artsWord:"Articles",
+en:{tabAll:"All issues",allH:"All issues reported",allLede:"Every issue reported in this state, from the very first one. Anyone can read them. Search or filter to find issues near you.",allSearchPh:"Search: village, water, school…",oldFirst:"From the first report",newFirst:"Newest first",allCount:"{n} issues reported in total",allShown:"Showing {k} of {n}",showMore:"Show more",issueNo:"Issue",viewOnlyNote:"Reports are view-only here: they cannot be downloaded, and screenshots are blocked in the Android app.",homeEb:"Andhra Pradesh · Telangana",homeH:"Choose your state",homeLede:"Mana Hakku works for one state at a time. Pick your state to report a need, see the gaps, check news and read its history.",homeNote:"Departments, helplines, indicators, reports, history and districts change with the state. Your rights and the Constitution are the same everywhere.",apCount:"28 districts",tsCount:"33 districts",openState:"Open →",changeState:"Change",apName:"Andhra Pradesh",tsName:"Telangana",tabRights:"Right knowledge",tabHistory:"History",rkH:"Know your rights",rkLede:"Your rights under the Constitution of India, with article numbers, explained in simple words.",rkSearchPh:"Search: education, 21, vote, women…",secFund:"Fundamental Rights",fundNote:"Part III of the Constitution. You can go to court to enforce these rights.",secOther:"Other important rights",otherNote:"Articles 39A, 41 and 47 are Directive Principles: duties of the government that guide laws and schemes. They cannot be enforced directly in court.",secLaws:"Laws that give you rights",secDuties:"Fundamental Duties",dutiesNote:"Article 51A. Rights come with duties; the main ones are:",secPre:"Preamble",preNote:"The opening statement of the Constitution, in both languages. The Telugu text is a careful rendering; the official Telugu edition is linked under Full Constitution.",secAmend:"Constitution amendments",amendLede:"The Constitution has been amended 106 times. The latest is the 106th Amendment (2023), which reserves seats for women. Each amendment is explained below in simple words.",keyAmend:"Important for everyone",apAmend:"About Andhra Pradesh",amendCount:"{n} amendments",amendMatches:"{n} amendments match",secCoi:"Full Constitution of India",coiNote:"Read or download the complete, up-to-date Constitution from the Government of India's Legislative Department.",udhrL:"Human rights (UDHR) Art.",noResults:"Nothing matches your search.",artWord:"Article",artsWord:"Articles",
 hiH:"History of Andhra Pradesh",hiLede:"From the Satavahanas to today's 28 districts: the dynasties, people and places that shaped the state.",secTimeline:"Timeline",secPeople:"Prominent people",secDist:"Districts",distLede:"Tap a district to see what its name means, what it is known for, and how it contributes to the state.",distSearchPh:"Search a district",nameL:"Name",specL:"Known for",contribL:"Contribution to the state",hqL:"Headquarters",histNote:"Eras before British rule are shown by century; later events have exact dates.",piiTitle:"Remove personal details to continue",piiPhone:"A mobile or phone number",piiLongNum:"An Aadhaar, bank account or other long ID number",piiEmail:"An email address",piiPan:"A PAN card number",piiName:"A person's name (for example “my name is…”, “S/o…”). Describe the problem without naming anyone.",piiFix:"Remove numbers and emails for me",piiBlocked:"This report has personal details. Remove them before analysing or saving.",piiNameLeft:"Numbers removed. Please also remove the person's name.",
 registerNote:"Reports saved here are visible to everyone. Never include names, phone numbers or Aadhaar.",countShared:"{n} needs reported by everyone.",loadingShared:"Loading everyone's reports…",sharedFail:"Couldn't load everyone's reports. Check your internet and refresh.",refresh:"Refresh",sharedSaved:"Shared. Everyone can now see this need.",shareFailNet:"Couldn't share now. It is saved on this phone; try again when online.",serverPii:"The register refused this report because it looks like it has personal details.",
 suggestH:"Give a suggestion",suggestPh:"What should we improve? (no names or phone numbers)",suggestSend:"Send suggestion",suggestThanks:"Thank you. Your suggestion was sent.",suggestFail:"Couldn't send now. Try again when online.",tapIndic:"Tap an indicator for details.",meansL:"What it means",whyL:"Why it matters",compareL:"Andhra Pradesh vs India",apL:"Andhra Pradesh",indiaL:"India",whoL:"WHO concern level",respL:"Who can act",helpL:"Schemes that help",srcL:"Source",reportThis:"Report a need on this",betterL:"Better than the India average",worseL:"Worse than the India average",lowBetter:"Lower is better.",highBetter:"Higher is better.",aboveConcern:"Still above the WHO public health concern level of {x}.",allDepts:"All departments",exportH:"Export report",exportPdf:"Save as PDF",exportCsv:"Download data (Excel)",exportNote:"Exports the needs shown with the current filters, together with the indicators.",fileSaved:"Saved to Downloads: {f}",reportTitle:"Gap report",generated:"Generated",filtersL:"Filters",noneL:"None",thPlace:"Place",thSector:"Sector",thNeed:"Need",thUrgency:"Urgency",thStatus:"Status",thVerify:"News check",thDept:"State department",thDate:"Date",exampleNote:"Example reports, not real cases.",eyebrow:"Andhra Pradesh · 28 districts",tagline:"Every need, the right department, the right law.",tabReport:"Report a need",tabDash:"Gap dashboard",tabNews:"News check",
@@ -528,7 +547,7 @@ foot1:"Prototype · Rights mapping follows the Constitution of India, central Ac
 reported:"Reported",acknowledged:"Acknowledged",progress:"Action under way",resolved:"Resolved",helpline:"helpline",
 speakIn:"Speak",listening:"Listening…",voiceUnavailable:"Voice typing is not available on this phone. Install or update the Google app to speak your complaint.",share:"Share report",
 copied:"Report copied. Paste it into WhatsApp, SMS or email.",voiceDenied:"Allow microphone access for this site to speak your complaint.",getApp:"Get the Android app",saveNoteLocal:"Saved needs stay on this phone and appear on the Gap dashboard. Use Share report to send one to an official or NGO.",countLocal:"{n} needs saved on this phone.",shareHead:"Mana Hakku report",whatNeeded:"Need",peopleAffected:"People affected",urgencyL:"Urgency"},
-te:{viewOnlyNote:"నివేదికలను ఇక్కడ చూడటానికి మాత్రమే: డౌన్‌లోడ్ చేయలేరు, Android యాప్‌లో స్క్రీన్‌షాట్లు నిరోధించబడ్డాయి.",homeEb:"ఆంధ్రప్రదేశ్ · తెలంగాణ",homeH:"మీ రాష్ట్రాన్ని ఎంచుకోండి",homeLede:"మన హక్కు ఒకసారి ఒక రాష్ట్రానికే పనిచేస్తుంది. అవసరం తెలపడానికి, లోటులు చూడటానికి, వార్తలు నిర్ధారించడానికి, చరిత్ర చదవడానికి మీ రాష్ట్రాన్ని ఎంచుకోండి.",homeNote:"శాఖలు, హెల్ప్‌లైన్లు, సూచికలు, నివేదికలు, చరిత్ర, జిల్లాలు రాష్ట్రాన్ని బట్టి మారుతాయి. మీ హక్కులు, రాజ్యాంగం అంతటా ఒకటే.",apCount:"28 జిల్లాలు",tsCount:"33 జిల్లాలు",openState:"తెరవండి →",changeState:"మార్చండి",apName:"ఆంధ్రప్రదేశ్",tsName:"తెలంగాణ",tabRights:"హక్కుల జ్ఞానం",tabHistory:"చరిత్ర",rkH:"మీ హక్కులు తెలుసుకోండి",rkLede:"భారత రాజ్యాంగం మీకు ఇచ్చిన హక్కులు, ఆర్టికల్ నంబర్లతో, సరళమైన మాటల్లో.",rkSearchPh:"వెతకండి: విద్య, 21, ఓటు, మహిళలు…",secFund:"ప్రాథమిక హక్కులు",fundNote:"రాజ్యాంగంలోని భాగం III. ఈ హక్కుల అమలుకు కోర్టును ఆశ్రయించవచ్చు.",secOther:"ఇతర ముఖ్య హక్కులు",otherNote:"ఆర్టికల్ 39A, 41, 47 ఆదేశిక సూత్రాలు: చట్టాలు, పథకాలకు మార్గదర్శనం చేసే ప్రభుత్వ బాధ్యతలు. వీటిని నేరుగా కోర్టు ద్వారా అమలు చేయించలేము.",secLaws:"మీకు హక్కులు ఇచ్చే చట్టాలు",secDuties:"ప్రాథమిక విధులు",dutiesNote:"ఆర్టికల్ 51A. హక్కులతో పాటు విధులూ ఉంటాయి; ముఖ్యమైనవి:",secPre:"ప్రవేశిక",preNote:"రాజ్యాంగ ఆరంభ ప్రకటన, రెండు భాషల్లో. తెలుగు పాఠం జాగ్రత్తగా చేసిన అనువాదం; అధికారిక తెలుగు ప్రతి ‘పూర్తి భారత రాజ్యాంగం’ కింద ఉంది.",secAmend:"రాజ్యాంగ సవరణలు",amendLede:"రాజ్యాంగాన్ని ఇప్పటివరకు 106 సార్లు సవరించారు. తాజాది మహిళలకు స్థానాలు రిజర్వ్ చేసిన 106వ సవరణ (2023). ప్రతి సవరణను కింద సరళమైన మాటల్లో వివరించాం.",keyAmend:"అందరికీ ముఖ్యమైనది",apAmend:"ఆంధ్రప్రదేశ్‌కు సంబంధించినది",amendCount:"{n} సవరణలు",amendMatches:"{n} సవరణలు దొరికాయి",secCoi:"పూర్తి భారత రాజ్యాంగం",coiNote:"భారత ప్రభుత్వ శాసన విభాగం నుండి పూర్తి, తాజా రాజ్యాంగాన్ని చదవండి లేదా డౌన్‌లోడ్ చేసుకోండి.",udhrL:"మానవ హక్కుల ప్రకటన (UDHR) ఆర్టికల్",noResults:"మీ వెతుకులాటకు ఏమీ దొరకలేదు.",artWord:"ఆర్టికల్",artsWord:"ఆర్టికల్స్",
+te:{tabAll:"అన్ని సమస్యలు",allH:"నమోదైన అన్ని సమస్యలు",allLede:"ఈ రాష్ట్రంలో మొదటి నుండి నమోదైన ప్రతి సమస్య. ఎవరైనా చదవవచ్చు. మీ దగ్గరి సమస్యల కోసం వెతకండి లేదా ఎంపికలు వాడండి.",allSearchPh:"వెతకండి: గ్రామం, నీరు, బడి…",oldFirst:"మొదటి నివేదిక నుండి",newFirst:"తాజావి ముందు",allCount:"మొత్తం {n} సమస్యలు నమోదయ్యాయి",allShown:"{n} లో {k} చూపిస్తున్నాం",showMore:"మరిన్ని చూపండి",issueNo:"సమస్య",viewOnlyNote:"నివేదికలను ఇక్కడ చూడటానికి మాత్రమే: డౌన్‌లోడ్ చేయలేరు, Android యాప్‌లో స్క్రీన్‌షాట్లు నిరోధించబడ్డాయి.",homeEb:"ఆంధ్రప్రదేశ్ · తెలంగాణ",homeH:"మీ రాష్ట్రాన్ని ఎంచుకోండి",homeLede:"మన హక్కు ఒకసారి ఒక రాష్ట్రానికే పనిచేస్తుంది. అవసరం తెలపడానికి, లోటులు చూడటానికి, వార్తలు నిర్ధారించడానికి, చరిత్ర చదవడానికి మీ రాష్ట్రాన్ని ఎంచుకోండి.",homeNote:"శాఖలు, హెల్ప్‌లైన్లు, సూచికలు, నివేదికలు, చరిత్ర, జిల్లాలు రాష్ట్రాన్ని బట్టి మారుతాయి. మీ హక్కులు, రాజ్యాంగం అంతటా ఒకటే.",apCount:"28 జిల్లాలు",tsCount:"33 జిల్లాలు",openState:"తెరవండి →",changeState:"మార్చండి",apName:"ఆంధ్రప్రదేశ్",tsName:"తెలంగాణ",tabRights:"హక్కుల జ్ఞానం",tabHistory:"చరిత్ర",rkH:"మీ హక్కులు తెలుసుకోండి",rkLede:"భారత రాజ్యాంగం మీకు ఇచ్చిన హక్కులు, ఆర్టికల్ నంబర్లతో, సరళమైన మాటల్లో.",rkSearchPh:"వెతకండి: విద్య, 21, ఓటు, మహిళలు…",secFund:"ప్రాథమిక హక్కులు",fundNote:"రాజ్యాంగంలోని భాగం III. ఈ హక్కుల అమలుకు కోర్టును ఆశ్రయించవచ్చు.",secOther:"ఇతర ముఖ్య హక్కులు",otherNote:"ఆర్టికల్ 39A, 41, 47 ఆదేశిక సూత్రాలు: చట్టాలు, పథకాలకు మార్గదర్శనం చేసే ప్రభుత్వ బాధ్యతలు. వీటిని నేరుగా కోర్టు ద్వారా అమలు చేయించలేము.",secLaws:"మీకు హక్కులు ఇచ్చే చట్టాలు",secDuties:"ప్రాథమిక విధులు",dutiesNote:"ఆర్టికల్ 51A. హక్కులతో పాటు విధులూ ఉంటాయి; ముఖ్యమైనవి:",secPre:"ప్రవేశిక",preNote:"రాజ్యాంగ ఆరంభ ప్రకటన, రెండు భాషల్లో. తెలుగు పాఠం జాగ్రత్తగా చేసిన అనువాదం; అధికారిక తెలుగు ప్రతి ‘పూర్తి భారత రాజ్యాంగం’ కింద ఉంది.",secAmend:"రాజ్యాంగ సవరణలు",amendLede:"రాజ్యాంగాన్ని ఇప్పటివరకు 106 సార్లు సవరించారు. తాజాది మహిళలకు స్థానాలు రిజర్వ్ చేసిన 106వ సవరణ (2023). ప్రతి సవరణను కింద సరళమైన మాటల్లో వివరించాం.",keyAmend:"అందరికీ ముఖ్యమైనది",apAmend:"ఆంధ్రప్రదేశ్‌కు సంబంధించినది",amendCount:"{n} సవరణలు",amendMatches:"{n} సవరణలు దొరికాయి",secCoi:"పూర్తి భారత రాజ్యాంగం",coiNote:"భారత ప్రభుత్వ శాసన విభాగం నుండి పూర్తి, తాజా రాజ్యాంగాన్ని చదవండి లేదా డౌన్‌లోడ్ చేసుకోండి.",udhrL:"మానవ హక్కుల ప్రకటన (UDHR) ఆర్టికల్",noResults:"మీ వెతుకులాటకు ఏమీ దొరకలేదు.",artWord:"ఆర్టికల్",artsWord:"ఆర్టికల్స్",
 hiH:"ఆంధ్రప్రదేశ్ చరిత్ర",hiLede:"శాతవాహనుల నుండి నేటి 28 జిల్లాల వరకు: రాష్ట్రాన్ని తీర్చిదిద్దిన రాజవంశాలు, వ్యక్తులు, ప్రాంతాలు.",secTimeline:"కాలక్రమం",secPeople:"ప్రముఖులు",secDist:"జిల్లాలు",distLede:"జిల్లా పేరు అర్థం, దాని ప్రత్యేకత, రాష్ట్రాభివృద్ధికి తోడ్పాటు చూడటానికి జిల్లాను తాకండి.",distSearchPh:"జిల్లా వెతకండి",nameL:"పేరు",specL:"ప్రత్యేకత",contribL:"రాష్ట్రానికి తోడ్పాటు",hqL:"జిల్లా కేంద్రం",histNote:"బ్రిటిష్ పాలనకు ముందు కాలాలను శతాబ్దాల వారీగా చూపాం; తర్వాతి ఘటనలకు ఖచ్చితమైన తేదీలు ఇచ్చాం.",piiTitle:"కొనసాగడానికి వ్యక్తిగత వివరాలు తొలగించండి",piiPhone:"మొబైల్ లేదా ఫోన్ నంబర్",piiLongNum:"ఆధార్, బ్యాంకు ఖాతా లేదా ఇతర పొడవైన గుర్తింపు నంబర్",piiEmail:"ఈమెయిల్ చిరునామా",piiPan:"PAN కార్డు నంబర్",piiName:"వ్యక్తి పేరు (ఉదా: “నా పేరు…”, “S/o…”). ఎవరి పేరూ లేకుండా సమస్యను వివరించండి.",piiFix:"నంబర్లు, ఈమెయిల్ తొలగించు",piiBlocked:"ఈ నివేదికలో వ్యక్తిగత వివరాలు ఉన్నాయి. విశ్లేషించే ముందు లేదా భద్రపరిచే ముందు వాటిని తొలగించండి.",piiNameLeft:"నంబర్లు తొలగించాం. వ్యక్తి పేరును కూడా తొలగించండి.",
 registerNote:"ఇక్కడ భద్రపరిచిన నివేదికలు అందరికీ కనిపిస్తాయి. పేర్లు, ఫోన్ నంబర్లు, ఆధార్ ఎప్పుడూ రాయవద్దు.",countShared:"అందరూ నమోదు చేసిన అవసరాలు: {n}.",loadingShared:"అందరి నివేదికలు లోడ్ అవుతున్నాయి…",sharedFail:"అందరి నివేదికలు లోడ్ కాలేదు. ఇంటర్నెట్ చూసి మళ్లీ ప్రయత్నించండి.",refresh:"రిఫ్రెష్",sharedSaved:"పంచుకోబడింది. ఈ అవసరం ఇప్పుడు అందరికీ కనిపిస్తుంది.",shareFailNet:"ఇప్పుడు పంచుకోలేకపోయాం. ఈ ఫోన్‌లో భద్రపరిచాం; ఇంటర్నెట్ వచ్చాక మళ్లీ ప్రయత్నించండి.",serverPii:"వ్యక్తిగత వివరాలు ఉన్నట్లు కనిపించడంతో రిజిస్టర్ ఈ నివేదికను తిరస్కరించింది.",
 suggestH:"సూచన ఇవ్వండి",suggestPh:"మేము ఏమి మెరుగుపరచాలి? (పేర్లు, ఫోన్ నంబర్లు వద్దు)",suggestSend:"సూచన పంపండి",suggestThanks:"ధన్యవాదాలు. మీ సూచన పంపబడింది.",suggestFail:"ఇప్పుడు పంపలేకపోయాం. ఇంటర్నెట్ వచ్చాక ప్రయత్నించండి.",tapIndic:"వివరాల కోసం సూచికను తాకండి.",meansL:"దీని అర్థం",whyL:"ఇది ఎందుకు ముఖ్యం",compareL:"ఆంధ్రప్రదేశ్ vs భారత్",apL:"ఆంధ్రప్రదేశ్",indiaL:"భారత్",whoL:"WHO ఆందోళన స్థాయి",respL:"ఎవరు చర్య తీసుకోవచ్చు",helpL:"సహాయపడే పథకాలు",srcL:"మూలం",reportThis:"దీనిపై అవసరం తెలపండి",betterL:"భారత సగటు కంటే మెరుగు",worseL:"భారత సగటు కంటే అధ్వాన్నం",lowBetter:"తక్కువ ఉంటే మంచిది.",highBetter:"ఎక్కువ ఉంటే మంచిది.",aboveConcern:"అయినా WHO ప్రజారోగ్య ఆందోళన స్థాయి {x} కంటే ఎక్కువే.",allDepts:"అన్ని శాఖలు",exportH:"నివేదిక ఎగుమతి",exportPdf:"PDF గా భద్రపరచండి",exportCsv:"డేటా డౌన్‌లోడ్ (Excel)",exportNote:"ప్రస్తుత ఎంపికలతో కనిపిస్తున్న అవసరాలు, సూచికలతో కలిపి ఎగుమతి అవుతాయి.",fileSaved:"డౌన్‌లోడ్స్‌లో భద్రపరచబడింది: {f}",reportTitle:"లోటుల నివేదిక",generated:"తయారైన తేదీ",filtersL:"ఎంపికలు",noneL:"ఏవీ లేవు",thPlace:"ప్రాంతం",thSector:"రంగం",thNeed:"అవసరం",thUrgency:"అత్యవసరత",thStatus:"స్థితి",thVerify:"వార్త నిర్ధారణ",thDept:"రాష్ట్ర శాఖ",thDate:"తేదీ",exampleNote:"ఉదాహరణ నివేదికలు, నిజమైన కేసులు కావు.",eyebrow:"ఆంధ్రప్రదేశ్ · 28 జిల్లాలు",tagline:"ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం.",tabReport:"అవసరం తెలపండి",tabDash:"లోటుల పట్టిక",tabNews:"వార్త నిర్ధారణ",
@@ -815,7 +834,7 @@ function applyStatic(){
  if(!sampleFn)$("n-note").textContent=t("nNoteNoAI");
  document.querySelectorAll(".listen:not(.mic)").forEach(b=>{if(b!==speakingBtn&&TTS)setListenBtn(b,false)});
  document.querySelectorAll("[data-mic]").forEach(b=>{if(!b.hidden)setMic(b,b===micTarget)});
- $("rk-search").placeholder=t("rkSearchPh");$("hi-search").placeholder=t("distSearchPh");
+ $("rk-search").placeholder=t("rkSearchPh");$("a-search").placeholder=t("allSearchPh");$("a-more").textContent=t("showMore");$("a-refresh").textContent=t("refresh");$("hi-search").placeholder=t("distSearchPh");
  const dr=$("d-refresh");if(dr)dr.textContent=t("refresh");const sgt=$("sg-text");if(sgt)sgt.placeholder=t("suggestPh");if(!$("pii-warn").hidden)piiCheckForm();
  const xp=$("x-pdf"),xc=$("x-csv");if(xp){xp.textContent=t("exportPdf");xc.textContent=t("exportCsv")}
 }
@@ -829,6 +848,10 @@ function fillSelects(){
  fillSelect($("r-sector"),[["auto",t("auto")],...sOpts],true);
  fillSelect($("d-f-sector"),[["",t("allSectors")],...sOpts],true);
  fillSelect($("d-f-status"),[["",t("anyStatus")],...STATUSES.map(s=>[s,t(s)])],true);
+ fillSelect($("a-f-district"),[["",t("allDistricts")],...dOpts],true);
+ fillSelect($("a-f-sector"),[["",t("allSectors")],...sOpts],true);
+ fillSelect($("a-f-status"),[["",t("anyStatus")],...STATUSES.map(s=>[s,t(s)])],true);
+ fillSelect($("a-sort"),[["old",t("oldFirst")],["new",t("newFirst")]],true);
 }
 function setLang(l){
  if(l===LANG)return;stopSpeak();
@@ -845,7 +868,7 @@ $("lang-te").onclick=()=>setLang("te");$("lang-en").onclick=()=>setLang("en");
 
 // ---------- Tabs ----------
 const tabs=[...document.querySelectorAll(".tab")];
-function show(view){stopSpeak();const home=view==="home";try{if(window.AndroidScreen)AndroidScreen.secure(view==="dash")}catch(e){}tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["home","report","dash","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);
+function show(view){stopSpeak();const home=view==="home";try{if(window.AndroidScreen)AndroidScreen.secure(view==="dash"||view==="all")}catch(e){}tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["home","report","dash","all","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);
  $("tabs").hidden=home;$("st-btn").hidden=home;$("home-eb").hidden=!home;if(SHARED)$("suggest").hidden=home;
  if(home){let last="";try{last=localStorage.getItem("mh-state")||""}catch(e){}document.querySelectorAll(".stcard").forEach(c=>c.classList.toggle("last",c.dataset.state===last))}
  else{try{localStorage.setItem("mh-tab",view)}catch(e){}}
@@ -1140,10 +1163,36 @@ function renderIndicDetail(){
  const rb=$("indic-report");if(rb)rb.onclick=()=>{$("r-sector").value=x.sector;$("ex-flag").hidden=true;$("r-desc").value="";$("r-place").value="";$("r-result").innerHTML="";current=null;show("report");$("r-desc").focus()};
 }
 ["d-demo","d-f-district","d-f-sector","d-f-status"].forEach(id=>$(id).addEventListener("change",renderDash));
+// ---------- All issues: the full public register of this state, numbered from the first report ----------
+let allLimit=50,allSpeech="",allTimer=0;
+function allData(){const src=SHARED?sharedReports:reports.filter(r=>(r.state||"ap")===ST);
+ const chrono=[...src].sort((a,b)=>String(a.created||"").localeCompare(String(b.created||"")));
+ return chrono.map((r,i)=>({...r,no:i+1}))}
+function renderAll(){
+ const all=allData();const q=$("a-search").value.trim().toLowerCase();
+ const fd=$("a-f-district").value,fs=$("a-f-sector").value,ft=$("a-f-status").value,newest=$("a-sort").value==="new";
+ let list=all.filter(r=>(!fd||r.district===fd)&&(!fs||r.sector===fs)&&(!ft||(r.status||"reported")===ft)&&
+  (!q||[r.district,dName(r.district),r.place,r.title,r.desc,L(S[r.sector]?S[r.sector].name:""),"#"+r.no].join(" ").toLowerCase().includes(q)));
+ if(newest)list.reverse();
+ const loading=SHARED&&!sharedLoaded&&!sharedError;
+ $("a-count").textContent=sharedError?t("sharedFail"):loading?t("loadingShared"):(t("allCount").replace("{n}",all.length)+(list.length!==all.length||list.length>allLimit?" · "+t("allShown").replace("{k}",Math.min(list.length,allLimit)).replace("{n}",list.length):""));
+ const shown=list.slice(0,allLimit);
+ $("a-list").innerHTML=shown.length?shown.map(r=>{const s=sec(r.sector);const [vc,vk]=verLabel(r.verify&&r.verify.level||0);const st=STATUSES.includes(r.status)?r.status:"reported";
+  return `<article class="rep u-${esc(r.urgency)}"><div class="meta"><b>${esc(t("issueNo"))} #${r.no}</b><span>· ${esc(dName(r.district))}</span>${r.place?`<span>· ${esc(r.place)}</span>`:""}<span>· ${num(r.affected)} ${esc(t("people"))}</span>${r.created?`<span>· ${esc(new Date(r.created).toLocaleDateString(LANG==="te"?"te-IN":"en-IN"))}</span>`:""}</div>
+  <h3>${esc(r.title||s.name)}</h3><p class="desc">${esc(r.desc)}</p>
+  <div class="foot"><span class="chip ind">${esc(s.name)}</span><span class="chip ${esc(URG[r.urgency]?URG[r.urgency][0]:"")}">${esc(t(URG[r.urgency]?URG[r.urgency][1]:"uMed"))}</span><span class="chip">${esc(t(st))}</span><span class="chip ${vc}">${esc(t(vk))}</span><span class="note">→ ${esc(s.ap[0])}</span></div></article>`}).join("")
+  :(loading?"":`<div class="empty"><b>${esc(t(all.length?"noMatch":"emptyB"))}</b></div>`);
+ $("a-more").hidden=list.length<=allLimit;
+ allSpeech=$("a-count").textContent+". "+shown.slice(0,5).map(r=>`${t("issueNo")} ${r.no}, ${dName(r.district)}: ${r.title||sec(r.sector).name}`).join(". ");
+}
+["a-f-district","a-f-sector","a-f-status","a-sort"].forEach(id=>$(id).addEventListener("change",()=>{allLimit=50;renderAll()}));
+$("a-search").addEventListener("input",()=>{clearTimeout(allTimer);allTimer=setTimeout(()=>{allLimit=50;renderAll()},150)});
+$("a-more").onclick=()=>{allLimit+=50;renderAll()};
 const UW={high:3,medium:2,low:1};
 const verLabel=l=>l>=2?["ok","corroborated"]:l===1?["warn","single"]:["","unverified"];
 let dashSpeech="";let dashState={list:[],demo:false,fd:"",fs:"",ft:""};
-function renderDash(){
+function renderDash(){renderDash0();renderAll()}
+function renderDash0(){
  const demo=$("d-demo").checked;
  const data=demo?DEMO.map((d,i)=>({...d,id:"demo"+i,demo:true,place:L(d.place),title:L(d.title),desc:L(d.desc)})):(SHARED?sharedReports:reports.filter(r=>(r.state||"ap")===ST));
  $("d-src").textContent=demo?t("demoNote"):SHARED?(sharedError?t("sharedFail"):!sharedLoaded?t("loadingShared"):t("countShared").replace("{n}",sharedReports.length)):t("countLocal").replace("{n}",reports.length);
@@ -1753,6 +1802,7 @@ document.querySelectorAll("[data-speak]").forEach(b=>{
  const v=b.dataset.speak;
  bindListen(b,()=>{if(v==="home")return `${t("homeH")}. ${t("homeLede")} ${t("apName")}, ${t("apCount")}. ${t("tsName")}, ${t("tsCount")}.`;
   if(v==="report")return `${t("repH")} ${t("repLede")} ${t("descHint")}`;
+  if(v==="all")return `${t("allH")}. ${t("allLede")} ${allSpeech}`;
   if(v==="dash")return `${t("dashH")}. ${t("dashLede")} ${INDIC.map(i=>L(i.l)+": "+i.v.replace("%",LANG==="te"?" శాతం":" percent")).join(". ")}. ${dashSpeech}`;
   if(v==="rights")return `${t("rkH")}. ${t("rkLede")} ${t("amendLede")}`;
   if(v==="history")return `${t("hiH")}. ${t("hiLede")} `+TIMELINE.map(([p,e])=>`${L(p)}: ${L(e)}`).join(". ");
@@ -1789,7 +1839,7 @@ try{const ls=localStorage.getItem("mh-state");if(ls==="ts")ST="ts"}catch(e){}
 applyStateData();applyStatic();fillSelects();renderIndic();
 renderRights();renderHistory();
 if(!sampleFn)$("n-assess").hidden=true;
-if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;
+if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").hidden=false;$("d-refresh").onclick=loadShared;$("a-refresh").hidden=false;$("a-refresh").onclick=loadShared;
  $("sg-send").onclick=async()=>{const tx=$("sg-text").value.trim();if(!tx)return;if(piiFound(tx).length){$("sg-note").textContent=t("piiBlocked");return}
   $("sg-send").disabled=true;try{const j=await postRegister({type:"suggestion",text:tx,lang:LANG,state:ST});if(j&&j.ok){$("sg-text").value="";$("sg-note").textContent=t("suggestThanks")}else $("sg-note").textContent=t(j&&j.error==="pii"?"serverPii":"suggestFail")}catch(e){$("sg-note").textContent=t("suggestFail")}$("sg-send").disabled=false}}
 
@@ -1802,12 +1852,12 @@ function enterState(code,view){
  hiQuery="";$("hi-search").value="";renderHistory();
  queryTouched=false;ticked.clear();$("n-text").value=NEWS_EX[LANG];$("n-ex").hidden=false;$("n-district").value=EXAMPLE.district;$("n-query").value=autoQuery();renderSources();renderVerdict();
  setForm(EXAMPLE);$("ex-flag").hidden=false;$("pii-warn").hidden=true;renderResult(readForm());
- $("d-demo").checked=false;sharedReports=[];sharedLoaded=false;renderDash();if(SHARED)loadShared();
+ $("d-demo").checked=false;$("a-search").value="";allLimit=50;["a-f-district","a-f-sector","a-f-status"].forEach(id=>$(id).value="");$("a-sort").value="old";sharedReports=[];sharedLoaded=false;renderDash();if(SHARED)loadShared();
  show(view&&$("v-"+view)&&view!=="home"?view:"report");
 }
 document.querySelectorAll(".stcard").forEach(c=>c.onclick=()=>{let v=null;try{v=localStorage.getItem("mh-tab")}catch(e){}enterState(c.dataset.state,v)});
 $("st-btn").onclick=()=>show("home");
-const hashMap={report:"report",dashboard:"dash",news:"news",rights:"rights",history:"history"};
+const hashMap={report:"report",dashboard:"dash",all:"all",issues:"all",news:"news",rights:"rights",history:"history"};
 const hp=location.hash.slice(1).split("/");
 const hashState=["ap","ts","telangana","andhra"].includes(hp[0])?(hp[0].startsWith("t")?"ts":"ap"):null;
 const hashView=hashMap[hashState?hp[1]:hp[0]];
