@@ -235,6 +235,21 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .terms dd{margin:0}
 @media (max-width:420px){.terms{grid-template-columns:1fr}.terms dd{margin-bottom:6px}}
 .actions{gap:10px}
+.verhelp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0}
+.verhelp summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:600}
+.verhelp summary::-webkit-details-marker{display:none}
+.verhelp summary::after{content:"+";margin-left:auto;font-size:1.3rem;color:var(--muted)}
+.verhelp[open] summary::after{content:"−"}
+.verhelp summary .qi{width:28px;height:28px;border-radius:50%;font-family:Georgia,serif;font-style:italic;font-weight:700}
+#ver-help-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+.vhow{display:flex;gap:10px;align-items:flex-start}
+.vhow p{flex:1;font-size:.93rem;color:var(--muted)}
+.vrow{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.vrow.cur{border:2px solid var(--indigo);background:var(--indigo-soft)}
+.vrow .vtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vrow .here{font-size:.75rem;font-weight:700;color:var(--indigo)}
+.vrow .vdo{font-size:.9rem;font-weight:600}
+#n-verdict{cursor:pointer}
 </style>
 </head>
 <body>
@@ -346,6 +361,7 @@ body{margin:0;-webkit-text-size-adjust:100%}
       <div class="verdict"><div class="meter" id="n-meter"><i></i><i></i><i></i></div><span class="chip" id="n-verdict"></span></div>
     </div>
     <div class="sources" id="n-sources"></div>
+    <details class="verhelp" id="ver-help"><summary><span class="qi">i</span><span id="ver-help-q">What do these labels mean?</span></summary><div id="ver-help-body"></div></details>
     <p class="note" data-t="corrNote"></p>
   </div>
 </section>
@@ -913,7 +929,7 @@ function renderSources(){const q=encodeURIComponent($("n-query").value.trim()).r
 function newsOutlets(){return [...ticked].map(i=>SOURCES[i][0])}
 function newsLevel(){const n=[...ticked].filter(i=>i!==8).length;return ticked.has(8)||n>=2?2:n===1?1:0}
 function verdictKey(){return ticked.has(8)?["ok","official"]:verLabel(newsLevel())}
-function renderVerdict(){const [c,k]=verdictKey();const v=$("n-verdict");v.className="chip "+c;v.textContent=t(k);[...$("n-meter").children].forEach((m,i)=>m.classList.toggle("on",i<Math.min(3,ticked.size)))}
+function renderVerdict(){if(typeof renderVerHelp==="function"&&$("ver-help-body"))try{renderVerHelp()}catch(e){}const [c,k]=verdictKey();const v=$("n-verdict");v.className="chip "+c;v.textContent=t(k);[...$("n-meter").children].forEach((m,i)=>m.classList.toggle("on",i<Math.min(3,ticked.size)))}
 let lastNewsAI=null;
 function renderNewsAI(j){
  const box=$("n-ai");box.hidden=false;
@@ -942,6 +958,30 @@ $("n-tolog").onclick=()=>{
  const sk=$("n-ai").dataset.sector;if(sk)$("r-sector").value=sk;
  $("ex-flag").hidden=true;show("report");$("r-result").innerHTML="";current=null;$("r-affected").focus();toast(t("moved"));
 };
+
+
+const VH={
+ q:["What do these labels mean?","ఈ గుర్తుల అర్థం ఏమిటి?"],
+ how:["Open each outlet link, read the report, and tick Confirms only if it reports the same facts. The label updates from your ticks.","ప్రతి సంస్థ లింకు తెరిచి వార్త చదవండి; అదే విషయాలు ఉంటేనే “నిర్ధారిస్తుంది” టిక్ చేయండి. మీ టిక్‌ల ఆధారంగా గుర్తు మారుతుంది."],
+ here:["Current label","ప్రస్తుత గుర్తు"],
+ rows:[
+  ["","unverified",["No trusted news outlet has confirmed this yet. It could be a rumour, an old story or a forwarded message.","ఇంకా ఏ విశ్వసనీయ వార్తా సంస్థా దీన్ని నిర్ధారించలేదు. ఇది పుకారు, పాత వార్త లేదా ఫార్వర్డ్ చేసిన సందేశం కావచ్చు."],["Do not act on it yet. Open the outlet links and check.","ఇప్పుడే దీనిపై చర్య తీసుకోవద్దు. లింకులు తెరిచి తనిఖీ చేయండి."]],
+  ["warn","single",["One trusted outlet reports it. A good sign, but one paper can still get details wrong.","ఒక విశ్వసనీయ సంస్థ నివేదించింది. ఇది మంచి సూచన, కానీ ఒక పత్రిక వివరాల్లో పొరపాటు చేయవచ్చు."],["Check one more outlet before acting.","చర్య తీసుకునే ముందు మరో సంస్థలో కూడా తనిఖీ చేయండి."]],
+  ["ok","corroborated",["Two or more independent outlets report the same facts.","రెండు లేదా అంతకంటే ఎక్కువ స్వతంత్ర సంస్థలు ఒకే విషయాలను నివేదించాయి."],["Reasonably safe to treat as true and log as a need.","నిజమని భావించి అవసరంగా నమోదు చేయవచ్చు."]],
+  ["ok","official",["The government has confirmed it, through a PIB release, PIB Fact Check or an official statement.","ప్రభుత్వమే దీన్ని నిర్ధారించింది: PIB ప్రకటన, PIB ఫ్యాక్ట్ చెక్ లేదా అధికారిక ప్రకటన ద్వారా."],["The strongest level. Log it and mention the official source.","ఇది అత్యంత బలమైన స్థాయి. నమోదు చేసి, అధికారిక మూలాన్ని పేర్కొనండి."]]
+ ]};
+function verHelpSpeech(){return `${L(VH.q)} ${L(VH.how)} ${VH.rows.map(([,k,m,d])=>`${t(k)}: ${L(m)} ${L(d)}`).join(" ")}`}
+function renderVerHelp(){
+ const cur=verdictKey()[1];
+ $("ver-help-q").textContent=L(VH.q);
+ $("ver-help-body").innerHTML=`<div class="vhow"><p>${esc(L(VH.how))}</p>${TTS?`<button class="mini" type="button" id="ver-listen" aria-label="${esc(t("listen"))}">${SPK_ICON}</button>`:""}</div>`+
+  VH.rows.map(([c,k,m,d])=>`<div class="vrow${k===cur?" cur":""}"><div class="vtop"><span class="chip ${c}">${esc(t(k))}</span>${k===cur?`<span class="here">← ${esc(L(VH.here))}</span>`:""}</div><p>${esc(L(m))}</p><p class="vdo">${esc(L(d))}</p></div>`).join("");
+ const b=$("ver-listen");if(b)b.onclick=()=>speak(verHelpSpeech(),b);
+}
+$("n-verdict").setAttribute("role","button");$("n-verdict").tabIndex=0;
+const openVerHelp=()=>{const d=$("ver-help");d.open=true;d.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"nearest"})};
+$("n-verdict").addEventListener("click",openVerHelp);
+$("n-verdict").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openVerHelp()}});
 
 // ---------- Intro listen buttons ----------
 document.querySelectorAll("[data-speak]").forEach(b=>{
