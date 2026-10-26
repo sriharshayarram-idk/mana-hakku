@@ -1,0 +1,9 @@
+200 43455 ESTATES23012026AB138FB463474EBFBCC03A8FC878C45A.XLSX <- https://rbidocs.rbi.org.in/rdocs/Publications/DOCs/ESTATES23012026AB138FB463474EBFBCC03A8FC878C45A.XLSX
+200 52043 2APPENDIX23012026_1.XLSX <- https://rbidocs.rbi.org.in/rdocs/Publications/DOCs/2APPENDIX23012026_1.XLSX
+200 39995 2APPENDIX23012026_727553561E287487EA994DFDA664702D7.XLSX <- https://rbidocs.rbi.org.in/rdocs/Publications/DOCs/2APPENDIX23012026_727553561E287487EA994DFDA664702D7.XLSX
+200 46795 4APPENDIX23012026_14B7C303C5B434A9590D6BB9A22B386F2.XLSX <- https://rbidocs.rbi.org.in/rdocs/Publications/DOCs/4APPENDIX23012026_14B7C303C5B434A9590D6BB9A22B386F2.XLSX
+200 45191 4APPENDIX23012026_132CF0E0C27F7A42A3ADB723288CC4166F.XLSX <- https://rbidocs.rbi.org.in/rdocs/Publications/DOCs/4APPENDIX23012026_132CF0E0C27F7A42A3ADB723288CC4166F.XLSX
+200 196092 AnnualPublications.aspx_head_State_Finances__3A_A_Study_of_Budgets <- https://rbi.org.in/Scripts/AnnualPublications.aspx?head=State+Finances+%3A+A+Study+of+Budgets
+200 17016577 comprehensive-modular-survey-education-2025-MoSPI.pdf <- https://educationforallinindia.com/wp-content/uploads/2025/08/comprehensive-modular-survey-education-2025-MoSPI.pdf
+200 8985496 publications_reports1776676412084_2b4f2b5c-2f1c-446b-8fa3-ec8f125b2b66_Final_Report_no_596_Health_(2).pdf <- https://www.mospi.gov.in/uploads/publications_reports/publications_reports1776676412084_2b4f2b5c-2f1c-446b-8fa3-ec8f125b2b66_Final_Report_no_596_Health_(2).pdf
+200 1008769 1776681150721_PRESS_NOTE_HEALTH_REVISED.pdf <- https://www.mospi.gov.in/uploads/release_calendar/1776681150721_PRESS_NOTE_HEALTH_REVISED.pdf
