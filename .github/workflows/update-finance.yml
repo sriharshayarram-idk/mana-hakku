@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: update-finance
@@ -33,9 +34,9 @@ jobs:
             git commit -m "State finances: refresh from RBI ($(date +%Y-%m-%d))"
             git push
             # A push made with the workflow token does not start other workflows, so start them here.
-            curl -s -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+            curl -sf -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${{ github.repository }}/actions/workflows/website.yml/dispatches" -d '{"ref":"main"}'
-            curl -s -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+            curl -sf -X POST -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${{ github.repository }}/actions/workflows/build-apk.yml/dispatches" -d '{"ref":"main"}'
           else
             echo "No change in RBI data."
