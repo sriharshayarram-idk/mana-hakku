@@ -153,6 +153,76 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .mic{border-color:var(--indigo);background:var(--indigo-soft);color:var(--indigo)}
 .mic[aria-busy="true"]{background:var(--indigo);color:var(--surface)}
 @media (prefers-reduced-motion:no-preference){.card,.rep{animation:rise .25s ease-out both}@keyframes rise{from{transform:translateY(4px)}to{transform:none}}}
+/* Report v2: one plain question per section */
+.result{display:flex;flex-direction:column;gap:14px}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hero{background:#26337F;color:#fff;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.hero .eyebrow{color:rgba(255,255,255,.75)}
+.hero h2{color:#fff;font-size:1.5rem}
+.herotop{display:flex;gap:14px;align-items:center}
+.heroicon{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+.heroicon .ico{width:32px;height:32px;stroke-width:1.7}
+.herotext{min-width:0}
+.summary{font-size:1.05rem;line-height:1.5}
+.hero .chip{background:rgba(255,255,255,.16);color:#fff}
+.hero .chip.crit{background:#FFE1E3;color:#9B1C24}
+.hero .chip.warn{background:#FCEBCB;color:#7A4800}
+.hero .chip.ok{background:#D7F0E0;color:#22603D}
+.listen.big{align-self:flex-start;font-size:1rem;padding:10px 18px;background:#fff;color:#26337F;border-color:#fff}
+.listen.big[aria-pressed="true"]{background:#E3A93A;color:#1B2233;border-color:#E3A93A}
+.listen.big svg{width:20px;height:20px}
+.urgent{background:var(--crit-soft);border:2px solid var(--crit);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.urgent h3{color:var(--crit)}
+.urgent .qi{background:var(--crit);color:var(--surface)}
+.urgent .call{border-color:var(--crit)}
+.urgent .call .num{color:var(--crit)}
+.first{background:var(--ochre-soft);border:2px solid var(--ochre);border-radius:14px;padding:14px 16px}
+.first .qi{background:var(--ochre);color:var(--surface)}
+.first .eyebrow{color:var(--ochre);font-weight:600}
+.firsttext{font-size:1.1rem;font-weight:600;line-height:1.45;color:var(--ink)}
+.q{display:flex;align-items:flex-start;gap:12px}
+.qi{width:40px;height:40px;border-radius:12px;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;flex:none}
+.qt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.qt h3{font-size:1.12rem}
+.mini{width:40px;height:40px;border-radius:50%;border:1px solid var(--ochre);background:var(--ochre-soft);color:var(--ochre);display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+.mini svg{width:20px;height:20px;fill:currentColor}
+.mini[aria-pressed="true"]{background:var(--ochre);color:var(--surface)}
+.gov{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:600px){.gov{grid-template-columns:1fr}}
+.g{background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.glbl{font-size:.8rem;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.04em}
+.g ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px}
+.rights{display:flex;flex-direction:column;gap:10px}
+.art{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.badge{font-weight:700;font-size:.8rem;background:var(--indigo);color:var(--surface);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+.hr{font-size:.9rem;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.hr b{color:var(--ink);font-weight:600}
+.tl{list-style:none;margin:0;padding:0}
+.tl>li{position:relative;padding:0 0 18px 32px}
+.tl>li::before{content:"";position:absolute;left:6px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--ochre);box-shadow:0 0 0 4px var(--ochre-soft)}
+.tl>li::after{content:"";position:absolute;left:12px;top:24px;bottom:2px;width:2px;background:var(--line)}
+.tl>li:last-child{padding-bottom:0}
+.tl>li:last-child::after{display:none}
+.tl .when{font-weight:700;color:var(--ochre);display:block;margin-bottom:4px}
+.tl ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.chip.scheme{background:var(--indigo-soft);color:var(--indigo);font-size:.88rem;padding:4px 12px}
+.stairs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.stairs li{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.stairs li:first-child{border-top:0;padding-top:0}
+.stairs .n{width:32px;height:32px;border-radius:50%;background:var(--sunk);font-weight:700;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.stairs li:first-child .n{background:var(--ochre);color:var(--surface)}
+.stairs p{margin:2px 0 0;font-size:.93rem;color:var(--muted)}
+.start{font-size:.75rem;font-weight:700;color:var(--ochre);background:var(--ochre-soft);border-radius:999px;padding:1px 8px;margin-left:8px;white-space:nowrap}
+.tel{color:var(--indigo);font-weight:700;text-decoration:none;font-variant-numeric:tabular-nums}
+.calls{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.call{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--surface);min-width:0}
+.call .num{font-family:var(--f-display);font-weight:700;font-size:1.35rem;color:var(--indigo);font-variant-numeric:tabular-nums;line-height:1.2}
+.call .lbl{font-size:.83rem;color:var(--muted);line-height:1.3}
+.terms{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0;font-size:.93rem}
+.terms dt{font-weight:700;color:var(--indigo);white-space:nowrap}
+.terms dd{margin:0}
+@media (max-width:420px){.terms{grid-template-columns:1fr}.terms dd{margin-bottom:6px}}
+.actions{gap:10px}
 </style>
 </head>
 <body>
@@ -533,7 +603,7 @@ function pickVoice(lang){const p=lang.slice(0,2);return voices.find(v=>v.lang&&v
 const digits=s=>String(s).replace(/\d{3,}/g,m=>m.split("").join(" "));
 function chunks(text){const parts=text.replace(/\s+/g," ").split(/(?<=[.!?।;:])\s+|\n/);const out=[];let cur="";for(const p of parts){if((cur+" "+p).length>220&&cur){out.push(cur);cur=p}else cur=cur?cur+" "+p:p}if(cur)out.push(cur);return out.filter(x=>x.trim())}
 function stopSpeak(){if(!TTS)return;try{if(NATIVE)AndroidTTS.stop();else speechSynthesis.cancel()}catch(e){}if(speakingBtn){setListenBtn(speakingBtn,false)}speakingBtn=null}
-function setListenBtn(b,on){b.setAttribute("aria-pressed",String(on));b.innerHTML=(on?STOP_ICON:SPK_ICON)+`<span>${esc(on?t("stop"):t("listen"))}</span>`}
+function setListenBtn(b,on){b.setAttribute("aria-pressed",String(on));if(b.classList.contains("mini")){b.innerHTML=on?STOP_ICON:SPK_ICON;b.setAttribute("aria-label",on?t("stop"):t("listen"));return}const big=b.classList.contains("big");b.innerHTML=(on?STOP_ICON:SPK_ICON)+`<span>${esc(on?t("stop"):(big?R("listenAll"):t("listen")))}</span>`}
 function speak(text,btn){
  if(!TTS){toast(t("noVoice"));return}
  if(speakingBtn===btn){stopSpeak();return}
@@ -601,41 +671,138 @@ function setForm(x){$("r-district").value=x.district;const loc=x[LANG]||x;$("r-p
 const URG={high:["crit","uHigh"],medium:["warn","uMed"],low:["ok","uLow"]};
 
 let current=null,lastRefine=null;
-function resultSpeech(r){const s=sec(r.sector);const parts=[];
- parts.push(`${t("analysis")}. ${dName(r.district)}${r.place?", "+r.place:""}. ${s.name}. ${t(URG[r.urgency][1])}. ${num(r.affected)} ${t("people")}.`);
- parts.push(`${t("stateDept")}: ${s.ap.join(", ")}.`);parts.push(`${t("union")}: ${s.un.join(", ")}.`);
- parts.push(`${t("legal")}: ${s.law.map(([a,b])=>(LANG==="te"?a.replace(/^Art /,"ఆర్టికల్ "):a.replace(/^Art /,"Article "))+", "+b).join(". ")}.`);
- parts.push(`${t("plan")}. ${t("d7")}: ${s.plan.now.join(". ")}. ${t("d30")}: ${s.plan.d30.join(". ")}. ${t("d90")}: ${s.plan.d90.join(". ")}.`);
- parts.push(`${t("escalate")}. ${LADDER.map(([a,b,tel],i)=>`${i+1}. ${L(a)}. ${L(b)}${tel?". "+t("helpline")+" "+tel:""}`).join(". ")}.`);
- return parts.join("\n")}
-function renderResult(r){
- current=r;const s=sec(r.sector);const [uc,uk]=URG[r.urgency];
- const lawRows=s.law.map(([a,b])=>`<b>${esc(a)}</b><span>${esc(b)}</span>`).join("");
- const phase=(k,items)=>`<div class="phase"><span class="when">${esc(t(k))}</span><ul>${items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`;
- const ladder=LADDER.map(([a,b,tel],i)=>`<li><span class="n">${i+1}</span><span><b>${esc(L(a))}</b> · ${esc(L(b))}${tel?` · ${esc(t("helpline"))} <span class="tel">${tel}</span>`:""}</span></li>`).join("");
- $("r-result").innerHTML=`<article class="card" aria-live="polite">
-  <div class="introhead"><div class="result-head">
-   <p class="eyebrow">${esc(t("analysis"))} · ${esc(dName(r.district))}${r.place?" · "+esc(r.place):""}</p>
-   <h2>${esc(s.name)}</h2>
-   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span><span class="chip">${num(r.affected)} ${esc(t("people"))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}</div>
-  </div><button class="listen" type="button" id="r-listen"></button></div>
-  <div class="grid2">
-   <div class="block"><h3>${esc(t("stateDept"))}</h3><ul>${s.ap.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
-   <div class="block"><h3>${esc(t("union"))}</h3><ul>${s.un.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
-  </div>
-  <div class="block"><h3>${esc(t("legal"))}</h3><div class="law">${lawRows}</div><p class="note">${esc(t("hrStd"))}: ${esc(s.hr)}</p></div>
-  <div class="block"><h3>${esc(t("schemes"))}</h3><div class="chips">${s.sch.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div></div>
-  <div class="block"><h3>${esc(t("plan"))}</h3>${phase("d7",s.plan.now)}${phase("d30",s.plan.d30)}${phase("d90",s.plan.d90)}</div>
-  <div class="block"><h3>${esc(t("escalate"))}</h3><ol class="ladder">${ladder}</ol></div>
-  <div class="ai-box" id="r-ai-box"${sampleFn?"":" hidden"}><div class="btns"><button class="btn ghost" type="button" id="r-refine">${esc(t("refine"))}</button><span class="note">${esc(t("refineNote"))}</span></div><div class="ai-out" id="r-ai"></div></div>
-  <div class="btns"><button class="btn" type="button" id="r-save">${esc(t("save"))}</button>${typeof window.AndroidShare!=="undefined"?`<button class="btn ghost" type="button" id="r-share">${esc(t("share"))}</button>`:""}</div>
-  <p class="note" id="r-save-note">${esc(t("saveNoteLocal"))}</p>
- </article>`;
- $("r-refine").onclick=refine;$("r-save").onclick=save;
- const sh=$("r-share");if(sh)sh.onclick=()=>{try{AndroidShare.share(shareText(current))}catch(e){}};
- bindListen($("r-listen"),()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
- if(lastRefine&&lastRefine.key===refineKey()&&lastRefine.lang===LANG)renderRefine(lastRefine.j);
+const svg=(d,cls)=>`<svg class="${cls||"ico"}" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+const ICONS={
+ water:"M12 3c-3.5 4.5-6 7.8-6 11a6 6 0 0 0 12 0c0-3.2-2.5-6.5-6-11z",
+ health:"M12 20.5s-7-4.3-9.1-8.8A5 5 0 0 1 12 6.2a5 5 0 0 1 9.1 5.5C19 16.2 12 20.5 12 20.5zM9 12h6M12 9v6",
+ nutrition:"M3 11h18a9 9 0 0 1-18 0zM8 7c0-1 1-1.5 1-2.5M12 7c0-1 1-1.5 1-2.5M16 7c0-1 1-1.5 1-2.5",
+ education:"M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5M22 9v6",
+ child:"M12 7a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM7 11h10M12 9v6M9 21l3-6 3 6",
+ women:"M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6zM9 12l2 2 4-4",
+ elderly:"M11 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM9 22l1-7-3-3 2-4h4l1 6M17 10v12",
+ livelihood:"M3 8h18v12H3zM9 8V5h6v3M3 13h18",
+ housing:"M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6",
+ roads:"M8 3L4 21M16 3l4 18M12 5v2M12 11v2M12 17v2",
+ power:"M13 2L4 14h7l-1 8 9-12h-7z",
+ social:"M12 3v18M6 21h12M4 7h16M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z",
+ agri:"M12 21v-9M12 12c0-4 3-7 7-7 0 4-3 7-7 7zM12 15c0-3-2.5-5.5-6-5.5 0 3 2.5 5.5 6 5.5z",
+ who:"M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 11h.01M16 11h.01",
+ todo:"M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2",
+ stairs:"M3 20h5v-5h5v-5h5V5h3",
+ phone:"M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2z",
+ book:"M4 5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2zM4 20V5",
+ gift:"M3 10h18v4H3zM5 14v7h14v-7M12 10v11M12 10S8 5 6 7s2 3 6 3zm0 0s4-5 6-3-2 3-6 3z",
+ alert:"M12 3l10 18H2zM12 10v5M12 18h.01",
+ star:"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"
+};
+const RX={
+ whoQ:["Who is responsible?","ఎవరు బాధ్యులు?"],whoSub:["These offices must act on this problem.","ఈ సమస్యపై చర్య తీసుకోవడం ఈ కార్యాలయాల బాధ్యత."],
+ stateGov:["State government","రాష్ట్ర ప్రభుత్వం"],centralGov:["Central government","కేంద్ర ప్రభుత్వం"],
+ rightQ:["What is your right?","మీ హక్కు ఏమిటి?"],rightSub:["These parts of the Constitution and laws protect you.","రాజ్యాంగంలోని ఈ భాగాలు, చట్టాలు మిమ్మల్ని రక్షిస్తాయి."],
+ humanRights:["Human rights","మానవ హక్కులు"],
+ doQ:["What should happen, and by when?","ఏమి జరగాలి, ఎప్పటిలోగా?"],doSub:["Ask the office to finish each step in time.","ప్రతి దశను గడువులోగా పూర్తి చేయమని కార్యాలయాన్ని అడగండి."],
+ schemeQ:["Government schemes that can help","సహాయపడే ప్రభుత్వ పథకాలు"],schemeSub:["Ask the office whether you are covered by these.","ఈ పథకాలు మీకు వర్తిస్తాయేమో కార్యాలయంలో అడగండి."],
+ escQ:["Not solved? Go one step up","పరిష్కారం కాలేదా? ఒక మెట్టు పైకి వెళ్లండి"],escSub:["Start at step 1. Go to the next step only if nothing happens.","1వ మెట్టుతో మొదలుపెట్టండి. ఏ చర్యా లేకపోతేనే తర్వాతి మెట్టుకు వెళ్లండి."],
+ startHere:["Start here","ఇక్కడ మొదలుపెట్టండి"],
+ helpQ:["Helpline numbers","హెల్ప్‌లైన్ నంబర్లు"],helpSub:["Free to call. Tap a number to call it.","కాల్ ఉచితం. కాల్ చేయడానికి నంబర్‌ను తాకండి."],
+ termsQ:["Words explained","పదాల అర్థం"],
+ yourProblem:["Your problem","మీ సమస్య"],first:["Do this first","ముందుగా ఇది చేయండి"],
+ urgentMsg:["Risk to life. Call for help first, then follow the steps.","ప్రాణాపాయం ఉంది. ముందుగా సహాయం కోసం కాల్ చేయండి, తర్వాత దశలను అనుసరించండి."],
+ listenAll:["Listen to the full report","పూర్తి నివేదిక వినండి"],
+ d7:["This week","ఈ వారంలోనే"],d30:["Within a month","నెల రోజుల్లో"],d90:["Within 3 months","3 నెలల్లో"]
+};
+const R=k=>L(RX[k]);
+const HELP={"112":["Emergency (police, fire)","అత్యవసరం (పోలీసు, అగ్నిమాపక)"],"108":["Ambulance","అంబులెన్స్"],"1098":["Childline","చైల్డ్‌లైన్"],"181":["Women helpline","మహిళా హెల్ప్‌లైన్"],"14567":["Elderline","వయోవృద్ధుల హెల్ప్‌లైన్"],"1912":["Electricity complaints","విద్యుత్ ఫిర్యాదులు"],"18001801551":["Kisan Call Centre","కిసాన్ కాల్ సెంటర్"],"1100":["PGRS complaint","PGRS ఫిర్యాదు"],"15100":["Free legal aid","ఉచిత న్యాయ సహాయం"]};
+const SECTOR_HELP={health:["108"],child:["1098","112"],women:["181","112"],elderly:["14567"],power:["1912"],agri:["18001801551"],social:["112"]};
+const URGENT_HELP={health:"108",child:"1098",women:"181",water:"108",nutrition:"108"};
+const TERMS=[
+ [/\bArt\b|ఆర్టికల్/,"Article","Article: a numbered part of the Constitution of India","ఆర్టికల్: భారత రాజ్యాంగంలోని ఒక సంఖ్య గల భాగం"],
+ [/PGRS/,"PGRS","Public Grievance Redressal System, the AP government's complaint service","ప్రజా ఫిర్యాదుల పరిష్కార వ్యవస్థ, ఆంధ్రప్రదేశ్ ప్రభుత్వ ఫిర్యాదు సేవ"],
+ [/Sachivalayam|సచివాలయ/,"Sachivalayam","Village or ward secretariat, the government office nearest to you","గ్రామ లేదా వార్డు సచివాలయం, మీకు దగ్గరలోని ప్రభుత్వ కార్యాలయం"],
+ [/\bPHC\b/,"PHC","Primary Health Centre, the government clinic for a group of villages","ప్రాథమిక ఆరోగ్య కేంద్రం, కొన్ని గ్రామాలకు ఉండే ప్రభుత్వ వైద్యశాల"],
+ [/\bANM\b/,"ANM","Auxiliary Nurse Midwife, the village health worker","గ్రామ ఆరోగ్య కార్యకర్త (నర్సు)"],
+ [/NALSA/,"NALSA","National Legal Services Authority, gives a free lawyer to people who cannot pay","జాతీయ న్యాయ సేవల అధికార సంస్థ, ఫీజు కట్టలేని వారికి ఉచిత న్యాయవాది"],
+ [/\bPIL\b|ప్రజాహిత వ్యాజ్యం/,"PIL","Public Interest Litigation, a court case filed for the public good","ప్రజాహిత వ్యాజ్యం, ప్రజల మేలు కోసం వేసే కోర్టు కేసు"],
+ [/\bFIR\b/,"FIR","First Information Report, the police complaint that starts a case","ప్రథమ సమాచార నివేదిక, కేసు మొదలుపెట్టే పోలీసు ఫిర్యాదు"],
+ [/\bSHG|స్వయం సహాయక/,"SHG","Self Help Group of women who save and borrow together","కలిసి పొదుపు, రుణం చేసే మహిళా స్వయం సహాయక సంఘం"],
+ [/MGNREG|ఉపాధి హామీ/,"MGNREGS","Rural job guarantee: 100 days of paid work a year on demand","ఉపాధి హామీ: అడిగినప్పుడు ఏడాదికి 100 రోజుల వేతనంతో పని"],
+ [/DISCOM/,"DISCOM","Electricity distribution company that supplies your power","మీకు కరెంటు ఇచ్చే విద్యుత్ పంపిణీ సంస్థ"],
+ [/ITDA/,"ITDA","Integrated Tribal Development Agency, the office for tribal welfare","సమగ్ర గిరిజనాభివృద్ధి సంస్థ, గిరిజన సంక్షేమ కార్యాలయం"],
+ [/UDID/,"UDID","Unique Disability ID card, one card for all disability benefits","దివ్యాంగుల ప్రత్యేక గుర్తింపు కార్డు, అన్ని ప్రయోజనాలకు ఒకే కార్డు"],
+ [/PMAY/,"PMAY","Pradhan Mantri Awas Yojana, the government housing scheme","ప్రధాన మంత్రి ఆవాస్ యోజన, ప్రభుత్వ గృహ పథకం"],
+ [/PMGSY|Gram Sadak/,"PMGSY","Pradhan Mantri Gram Sadak Yojana, the village road scheme","ప్రధాన మంత్రి గ్రామ సడక్ యోజన, గ్రామీణ రోడ్ల పథకం"],
+ [/NFSA/,"NFSA","National Food Security Act, the law behind your ration rights","జాతీయ ఆహార భద్రతా చట్టం, రేషన్ హక్కుకు ఆధారమైన చట్టం"],
+ [/\bRTE\b|విద్యా హక్కు చట్టం/,"RTE","Right to Education Act: free school for every child aged 6 to 14","విద్యా హక్కు చట్టం: 6 నుండి 14 ఏళ్ల ప్రతి బిడ్డకు ఉచిత విద్య"],
+ [/e-KYC/,"e-KYC","Aadhaar-based identity check for ration and pensions","రేషన్, పెన్షన్ల కోసం ఆధార్ ఆధారిత గుర్తింపు తనిఖీ"],
+ [/UDHR/,"UDHR","Universal Declaration of Human Rights, adopted by the United Nations","ఐక్యరాజ్యసమితి ఆమోదించిన సార్వత్రిక మానవ హక్కుల ప్రకటన"],
+ [/ICESCR/,"ICESCR","UN treaty on economic, social and cultural rights, signed by India","భారత్ సంతకం చేసిన ఆర్థిక, సామాజిక, సాంస్కృతిక హక్కుల ఐరాస ఒడంబడిక"],
+ [/\bPoA\b/,"PoA Act","Law that punishes atrocities against SC and ST communities","SC, ST వర్గాలపై అత్యాచారాలను శిక్షించే చట్టం"],
+ [/\bJJ Act|POCSO/,"JJ Act · POCSO","Laws that protect children from neglect and sexual abuse","నిర్లక్ష్యం, లైంగిక వేధింపుల నుండి పిల్లలను రక్షించే చట్టాలు"]
+];
+const artL=a=>LANG==="te"?a.replace(/\bArt /g,"ఆర్టికల్ "):a.replace(/\bArt /g,"Article ");
+const fmtNum=n=>n.length>6?n.replace(/^(\d{4})(\d{3})(\d+)$/,"$1 $2 $3"):n;
+const callLink=n=>`<a class="call" href="tel:${n}"><span class="num">${fmtNum(n)}</span><span class="lbl">${esc(L(HELP[n]))}</span></a>`;
+const miniListen=id=>TTS?`<button class="mini" type="button" data-sec="${id}" aria-label="${esc(t("listen"))}">${SPK_ICON}</button>`:"";
+const qHead=(icon,q,sub,id)=>`<div class="q"><span class="qi">${svg(ICONS[icon])}</span><div class="qt"><h3>${esc(q)}</h3>${sub?`<p class="note">${esc(sub)}</p>`:""}</div>${miniListen(id)}</div>`;
+
+function buildSpeech(r){
+ const s=sec(r.sector);const helps=helpList(r);
+ const summary=summaryLine(r,s);
+ return {
+  head:`${R("yourProblem")}: ${summary} ${t(URG[r.urgency][1])}.`,
+  first:`${R("first")}: ${s.plan.now[0]}`,
+  who:`${R("whoQ")} ${R("stateGov")}: ${s.ap.join(", ")}. ${R("centralGov")}: ${s.un.join(", ")}.`,
+  right:`${R("rightQ")} ${s.law.map(([a,b])=>artL(a)+": "+b).join(". ")}. ${R("humanRights")}: ${s.hr}.`,
+  todo:`${R("doQ")} ${R("d7")}: ${s.plan.now.join(". ")}. ${R("d30")}: ${s.plan.d30.join(". ")}. ${R("d90")}: ${s.plan.d90.join(". ")}.`,
+  schemes:`${R("schemeQ")}: ${s.sch.join(", ")}.`,
+  esc:`${R("escQ")}. ${LADDER.map(([a,b,tel],i)=>`${i+1}. ${L(a)}. ${L(b)}${tel?". "+t("helpline")+" "+tel:""}`).join(". ")}.`,
+  help:`${R("helpQ")}. ${helps.map(n=>L(HELP[n])+", "+n).join(". ")}.`
+ };
 }
+function helpList(r){const k=r.sector;const list=[...(SECTOR_HELP[k]||[])];if(r.urgency==="high"&&!list.includes("112"))list.unshift("112");["1100","15100"].forEach(n=>{if(!list.includes(n))list.push(n)});return list}
+function summaryLine(r,s){const place=r.place?` (${r.place})`:"";return LANG==="te"?`${dName(r.district)}${place}లో ${s.name} సమస్య. ${num(r.affected)} మంది ప్రభావితులు.`:`${s.name} problem in ${dName(r.district)}${place}. ${num(r.affected)} people affected.`}
+function resultSpeech(r){const sp=buildSpeech(r);return [sp.head,sp.first,sp.who,sp.right,sp.todo,sp.esc,sp.help].join("\n")}
+
+function renderResult(r){
+ current=r;const s=sec(r.sector),k=r.sector in S?r.sector:"livelihood";const [uc,uk]=URG[r.urgency];
+ const sp=buildSpeech(r);const helps=helpList(r);
+ const urgentNums=[URGENT_HELP[k]||"112","112"].filter((v,i,a)=>a.indexOf(v)===i);
+ const allText=[s.ap,s.un,s.law.map(x=>x.join(" ")),s.hr,s.sch,s.plan.now,s.plan.d30,s.plan.d90,LADDER.map(x=>L(x[0])+" "+L(x[1]))].flat().join(" ");
+ const terms=TERMS.filter(([re])=>re.test(allText));
+ const phase=(key,items)=>`<li><span class="when">${esc(R(key))}</span><ul>${items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></li>`;
+ $("r-result").innerHTML=`<article class="result" aria-live="polite">
+  <section class="hero">
+   <div class="herotop"><span class="heroicon">${svg(ICONS[k]||ICONS.livelihood)}</span>
+    <div class="herotext"><p class="eyebrow">${esc(R("yourProblem"))}</p><h2>${esc(s.name)}</h2></div></div>
+   <p class="summary">${esc(summaryLine(r,s))}</p>
+   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}</div>
+   ${TTS?`<button class="listen big" type="button" id="r-listen"></button>`:""}
+  </section>
+  ${r.urgency==="high"?`<section class="urgent" role="alert"><div class="q"><span class="qi">${svg(ICONS.alert)}</span><div class="qt"><h3>${esc(R("urgentMsg"))}</h3></div></div><div class="calls">${urgentNums.map(callLink).join("")}</div></section>`:""}
+  <section class="first"><div class="q"><span class="qi">${svg(ICONS.star)}</span><div class="qt"><p class="eyebrow">${esc(R("first"))}</p><p class="firsttext">${esc(s.plan.now[0])}</p></div>${miniListen("first")}</div></section>
+  <section class="card">${qHead("who",R("whoQ"),R("whoSub"),"who")}
+   <div class="gov"><div class="g"><p class="glbl">${esc(R("stateGov"))}</p><ul>${s.ap.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+   <div class="g"><p class="glbl">${esc(R("centralGov"))}</p><ul>${s.un.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div></section>
+  <section class="card">${qHead("social",R("rightQ"),R("rightSub"),"right")}
+   <div class="rights">${s.law.map(([a,b])=>`<div class="art"><span class="badge">${esc(artL(a))}</span><span>${esc(b)}</span></div>`).join("")}</div>
+   <p class="hr"><b>${esc(R("humanRights"))}:</b> ${esc(s.hr)}</p></section>
+  <section class="card">${qHead("todo",R("doQ"),R("doSub"),"todo")}
+   <ol class="tl">${phase("d7",s.plan.now)}${phase("d30",s.plan.d30)}${phase("d90",s.plan.d90)}</ol></section>
+  <section class="card">${qHead("gift",R("schemeQ"),R("schemeSub"),"schemes")}
+   <div class="chips">${s.sch.map(x=>`<span class="chip scheme">${esc(x)}</span>`).join("")}</div></section>
+  <section class="card">${qHead("stairs",R("escQ"),R("escSub"),"esc")}
+   <ol class="stairs">${LADDER.map(([a,b,tel],i)=>`<li><span class="n">${i+1}</span><div><b>${esc(L(a))}</b>${i===0?`<span class="start">${esc(R("startHere"))}</span>`:""}<p>${esc(L(b))}${tel?` · <a class="tel" href="tel:${tel}">${fmtNum(tel)}</a>`:""}</p></div></li>`).join("")}</ol></section>
+  <section class="card">${qHead("phone",R("helpQ"),R("helpSub"),"help")}
+   <div class="calls">${helps.map(callLink).join("")}</div></section>
+  ${terms.length?`<section class="card">${qHead("book",R("termsQ"),"","")}<dl class="terms">${terms.map(([,w,en,te])=>`<dt>${esc(w)}</dt><dd>${esc(LANG==="te"?te:en)}</dd>`).join("")}</dl></section>`:""}
+  <section class="card actions">${footerHTML()}</section>
+ </article>`;
+ const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
+ $("r-result").querySelectorAll("[data-sec]").forEach(b=>{const id=b.dataset.sec;if(!id){b.remove();return}b.onclick=()=>speak(sp[id]||"",b)});
+ bindFooter();
+}
+function footerHTML(){return `<div class="btns"><button class="btn" type="button" id="r-save">${esc(t("save"))}</button>${typeof window.AndroidShare!=="undefined"?`<button class="btn ghost" type="button" id="r-share">${esc(t("share"))}</button>`:""}</div><p class="note" id="r-save-note">${esc(t("saveNoteLocal"))}</p>`}
+function bindFooter(){$("r-save").onclick=save;const sh=$("r-share");if(sh)sh.onclick=()=>{try{AndroidShare.share(shareText(current))}catch(e){}}}
 $("f-report").addEventListener("submit",e=>{e.preventDefault();const r=readForm();if(!r.desc){toast(t("describeFirst"));return}$("ex-flag").hidden=true;stopSpeak();renderResult(r);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;$("r-desc").focus()};
 ["r-desc","r-place","r-affected"].forEach(id=>$(id).addEventListener("input",()=>{$("ex-flag").hidden=true}));
