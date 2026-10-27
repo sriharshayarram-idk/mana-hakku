@@ -17,6 +17,16 @@
  * KEYWORDS_URL). A report whose words clearly belong to another area is moved there; the original area is
  * kept in "sector_was". Type no in the "auto_fix" column of a row to stop it from ever being changed.
  *
+ * Spelling and grammar: before a report is saved, its text is tidied (spaces, punctuation, capitals) and English
+ * text is checked with the free LanguageTool service. The person's original words are kept in "desc_original".
+ * Telugu text is only tidied (no spell-checker for Telugu is used).
+ *
+ * Mandal: each report has a "mandal" column (chosen from a list in the app, or typed under "Other").
+ *
+ * Older reports follow new rules automatically: every row has a "rules_v" number. When the rules change, RULES_V
+ * goes up and rows with a lower number are checked again (area, mandal, spelling) a few at a time each time
+ * the app loads the list, until all rows are up to date.
+ *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
  *
  * Personal details (phone, Aadhaar / long ID numbers, email, PAN, name phrases) are
@@ -26,7 +36,9 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v'];
+const RULES_V = 2;            // raise this when the rules below change; older rows are re-checked automatically
+const GRAMMAR_PER_LOAD = 5;   // rows spell-checked per list load (keeps the app fast and within LanguageTool's free limit)
 const SUGGESTION_COLS = ['created', 'text', 'lang', 'state'];
 
 const DISTRICTS = {
@@ -196,6 +208,118 @@ function subOf_(kw, sector, s0) {
   return tie ? '' : best;
 }
 
+// ---------- mandals (list published with the app) ----------
+const MANDALS_URL = 'https://sriharshayarram-idk.github.io/mana-hakku/data/mandals.json';
+function mandals_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('md1');
+  if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+  try {
+    const r = UrlFetchApp.fetch(MANDALS_URL, { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) {
+      const j = JSON.parse(r.getContentText());
+      const slim = { ap: j.ap, ts: j.ts };
+      try { cache.put('md1', JSON.stringify(slim), 21600); } catch (e) {}
+      return slim;
+    }
+  } catch (e) {}
+  return null;
+}
+function reEsc_(x) { return String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+// The list's own spelling for a mandal typed or picked in the app ('' if it is not in the list).
+function mandalCanon_(md, state, district, name) {
+  const list = md && md[state] && md[state][district];
+  if (!list || !name) return '';
+  const n = String(name).toLowerCase().replace(/\s+/g, ' ').trim();
+  const hit = list.find(m => m[0].toLowerCase() === n || (m[1] && m[1] === String(name).trim()));
+  return hit ? hit[0] : '';
+}
+// Finds a mandal of the district named inside free text (older reports had "X mandal, village" in one box).
+function mandalIn_(md, state, district, text) {
+  const list = md && md[state] && md[state][district];
+  if (!list) return '';
+  const h = ' ' + String(text || '').toLowerCase() + ' ';
+  let best = '';
+  list.forEach(m => {
+    const a = m[0].toLowerCase().replace(/\s*\(.*\)/, '');
+    const hit = (a.length >= 4 && new RegExp('(^|[^a-z])' + reEsc_(a) + '([^a-z]|$)').test(h)) || (m[1] && h.indexOf(m[1]) >= 0);
+    if (hit && m[0].length > best.length) best = m[0];
+  });
+  return best;
+}
+
+// ---------- spelling and grammar ----------
+// Tidy any language: spaces, repeated punctuation, space after punctuation, capital letter at sentence start.
+function tidy_(x) {
+  let s = String(x || '').replace(/[ \t]+/g, ' ').replace(/\s*\n\s*/g, '\n').trim();
+  s = s.replace(/\s+([,.;:!?।])/g, '$1').replace(/([!?])\1+/g, '$1').replace(/\.{4,}/g, '...').replace(/,{2,}/g, ',')
+       .replace(/([,;!?।])(?=[A-Za-z\u0C00-\u0C7F])/g, '$1 ');
+  s = s.replace(/(^|(?<!\b(?:i\.e|e\.g|etc|vs|no|dr|mr|mrs|smt|st|approx))[.!?]\s+|\n)([a-z])/gi, (m, a, b) => a + b.toUpperCase()).replace(/(^|\s)i(?=[\s',])/g, '$1I');
+  if (s && /[A-Za-z0-9\u0C00-\u0C7F)]$/.test(s)) s += '.';
+  return s;
+}
+const latinShare_ = s => { const l = (s.match(/[A-Za-z]/g) || []).length, t = (s.match(/[\u0C00-\u0C7F]/g) || []).length; return l + t ? l / (l + t) : 0; };
+const LT_KEEP = ['TYPOS', 'GRAMMAR', 'PUNCTUATION', 'CASING', 'TYPOGRAPHY', 'CONFUSED_WORDS', 'MISC'];
+function ltRequest_(text) {
+  return { url: 'https://api.languagetool.org/v2/check', method: 'post', muteHttpExceptions: true,
+    payload: { text: text, language: 'en-GB', level: 'default' } };
+}
+// Applies LanguageTool's first suggestion where it is safe: never on names (capitalised words, place names),
+// numbers, or Telugu written in English letters (when many words look misspelt, spelling fixes are skipped).
+function ltApply_(text, resp, protect) {
+  let j;
+  try { j = JSON.parse(resp.getContentText()); } catch (e) { return text; }
+  const ms = (j && j.matches) || [];
+  const words = (text.match(/[A-Za-z]+/g) || []).length || 1;
+  const typos = ms.filter(m => m.rule && m.rule.category && m.rule.category.id === 'TYPOS').length;
+  const tenglish = typos / words > 0.45;
+  const edits = [];
+  ms.forEach(m => {
+    const cat = m.rule && m.rule.category ? m.rule.category.id : '';
+    if (LT_KEEP.indexOf(cat) < 0 || !m.replacements || !m.replacements.length) return;
+    const from = text.substr(m.offset, m.length), to = m.replacements[0].value;
+    if (cat === 'TYPOS') {
+      if (tenglish || /^[A-Z]/.test(from) || /\d/.test(from) || from.length < 3) return;
+      if (protect.some(w => w && w.toLowerCase() === from.toLowerCase())) return;
+      if (Math.abs(to.length - from.length) > 3 || to.toLowerCase()[0] !== from.toLowerCase()[0]) return;
+    }
+    if (to.length > from.length + 20) return;
+    edits.push([m.offset, m.length, to]);
+  });
+  edits.sort((a, b) => b[0] - a[0]);
+  let out = text, lastStart = Infinity;
+  edits.forEach(e => { if (e[0] + e[1] <= lastStart) { out = out.slice(0, e[0]) + e[2] + out.slice(e[0] + e[1]); lastStart = e[0]; } });
+  return out;
+}
+// Corrects several texts at once. Returns the corrected texts in the same order (unchanged when the service is unreachable).
+function correctMany_(texts, protect) {
+  const tidied = texts.map(tidy_);
+  const ask = [];
+  tidied.forEach((t, i) => { if (t && latinShare_(t) >= 0.6) ask.push(i); });
+  if (!ask.length) return tidied;
+  let resps = [];
+  try { resps = UrlFetchApp.fetchAll(ask.map(i => ltRequest_(tidied[i]))); } catch (e) { return tidied; }
+  ask.forEach((i, k) => { const r = resps[k]; if (r && r.getResponseCode() === 200) tidied[i] = tidy_(ltApply_(tidied[i], r, protect)); });
+  return tidied;
+}
+function protectWords_(md) {
+  const w = [];
+  Object.keys(DISTRICTS).forEach(st => DISTRICTS[st].forEach(d => w.push.apply(w, d.split(/[\s.–-]+/))));
+  if (md) ['ap', 'ts'].forEach(st => Object.keys(md[st] || {}).forEach(d => md[st][d].forEach(m => w.push.apply(w, m[0].split(/[\s()]+/)))));
+  return w.filter(x => x.length >= 3);
+}
+const titleOf_ = d => String(d || '').split(/[.!?।]/)[0].slice(0, 90);
+// The app makes the title from the first words of the description; when that is so, take the same words from the corrected text.
+function fixTitle_(title0, desc0, desc1) {
+  const t = String(title0 || '').trim(), norm = x => String(x).toLowerCase().replace(/[^a-z0-9\u0C00-\u0C7F]+/g, ' ').trim();
+  if (!t) return clip_(titleOf_(desc1), 90);
+  if (norm(desc0).indexOf(norm(t)) === 0) {
+    const n = norm(t).split(' ').length;
+    return clip_(String(desc1).split(/\s+/).slice(0, n).join(' ').replace(/[,.;:!?।]+$/, ''), 90);
+  }
+  return clip_(tidy_(t).replace(/\.$/, ''), 90);
+}
+
 // ---------- read: everyone's reports ----------
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'news') return json_(newsSearch_(e.parameter));
@@ -204,27 +328,50 @@ function doGet(e) {
   const idx = ensureColumns_(sh, REPORT_COLS);
   const values = sh.getDataRange().getValues();
   values.shift();
-  // Re-check categories and correct wrongly filed reports in the sheet (original area kept in sector_was).
-  const kw = keywords_();
-  if (kw) {
-    let writes = 0;
-    values.forEach((r, i) => {
-      if (writes >= 200 || !r[idx.id] || String(r[idx.auto_fix]).toLowerCase() === 'no' || r[idx.sector_was]) return;
+  // Bring older rows up to the current rules: area (original kept in sector_was), mandal, spelling (original kept).
+  const kw = keywords_(), md = mandals_();
+  const dirty = {};
+  const set = (r, i, k, v) => { if (String(r[idx[k]]) !== String(v)) { r[idx[k]] = v; dirty[k] = true; } };
+  let grammarTodo = [];
+  values.forEach((r, i) => {
+    if (!r[idx.id] || Number(r[idx.rules_v]) >= RULES_V) return;
+    const locked = String(r[idx.auto_fix]).toLowerCase() === 'no';
+    if (kw && !locked && !r[idx.sector_was]) {
       const f = autoFix_(kw, [r[idx.title], r[idx.desc], r[idx.place]].join(' '), String(r[idx.sector] || ''));
-      if (!f.changed) return;
-      const row = i + 2;
-      sh.getRange(row, idx.sector_was + 1).setValue(r[idx.sector]);
-      sh.getRange(row, idx.sector + 1).setValue(f.sector);
-      sh.getRange(row, idx.sub + 1).setValue(f.sub);
-      r[idx.sector_was] = r[idx.sector]; r[idx.sector] = f.sector; r[idx.sub] = f.sub;
-      writes++;
+      if (f.changed) { set(r, i, 'sector_was', r[idx.sector]); set(r, i, 'sector', f.sector); set(r, i, 'sub', f.sub); }
+    }
+    if (md && !r[idx.mandal]) {
+      const st = String(r[idx.state] || 'ap'), m = mandalIn_(md, st, String(r[idx.district]), r[idx.place]);
+      if (m) set(r, i, 'mandal', m);
+    }
+    if (locked || r[idx.desc_original]) set(r, i, 'rules_v', RULES_V);   // spelling already done (or the owner locked the row)
+    else if (md || kw) grammarTodo.push(i);
+  });
+  grammarTodo = grammarTodo.slice(0, GRAMMAR_PER_LOAD);
+  if (grammarTodo.length) {
+    const fixed = correctMany_(grammarTodo.map(i => String(values[i][idx.desc] || '')), protectWords_(md));
+    grammarTodo.forEach((i, k) => {
+      const r = values[i], d0 = String(r[idx.desc] || ''), d1 = clip_(fixed[k], 1500);
+      if (d1 && d1 !== d0) {
+        set(r, i, 'desc_original', clip_(d0, 1500)); set(r, i, 'desc', d1);
+        const t0 = String(r[idx.title] || ''), t1 = fixTitle_(t0, d0, d1);
+        if (t1 !== t0) { set(r, i, 'title_original', t0); set(r, i, 'title', t1); }
+      }
+      set(r, i, 'rules_v', RULES_V);
     });
   }
+  // Write each changed column in one go (skipped if another request is writing right now; it will run next time).
+  const wl = LockService.getScriptLock();
+  if (Object.keys(dirty).length && wl.tryLock(3000)) try { Object.keys(dirty).forEach(k => {
+    if (!values.length) return;
+    sh.getRange(2, idx[k] + 1, values.length, 1).setValues(values.map(r => [r[idx[k]] === undefined ? '' : r[idx[k]]]));
+  }); } finally { wl.releaseLock(); }
   const rows = values.filter(r => r[idx.id] && String(r[idx.state] || 'ap') === state).slice(-MAX_ROWS_RETURNED).reverse().map(r => ({
     id: String(r[idx.id]),
     state: state,
     created: r[idx.created] instanceof Date ? r[idx.created].toISOString() : String(r[idx.created] || ''),
     district: String(r[idx.district] || ''),
+    mandal: String(r[idx.mandal] || ''),
     place: String(r[idx.place] || ''),
     sector: String(r[idx.sector] || ''),
     title: String(r[idx.title] || ''),
@@ -236,7 +383,8 @@ function doGet(e) {
     lang: String(r[idx.lang] || ''),
     sub: String(r[idx.sub] || ''),
     sector_was: String(r[idx.sector_was] || ''),
-    locked: String(r[idx.auto_fix] || '').toLowerCase() === 'no'
+    locked: String(r[idx.auto_fix] || '').toLowerCase() === 'no',
+    text_fixed: !!r[idx.desc_original]
   }));
   return json_({ ok: true, state: state, reports: rows });
 }
@@ -261,9 +409,15 @@ function doPost(e) {
   if (DISTRICTS[state].indexOf(r.district) < 0 || (SECTORS.indexOf(r.sector) < 0 && !/^[a-z]{3,20}$/.test(String(r.sector || ''))) || URGENCY.indexOf(r.urgency) < 0) {
     return json_({ ok: false, error: 'bad_request' });
   }
-  const desc = clip_(r.desc, 1500).trim();
-  if (!desc) return json_({ ok: false, error: 'empty' });
-  if (hasPersonalDetails_([r.place, r.title, r.desc].join(' '))) return json_({ ok: false, error: 'pii' });
+  const desc0 = clip_(r.desc, 1500).trim();
+  if (!desc0) return json_({ ok: false, error: 'empty' });
+  if (hasPersonalDetails_([r.place, r.mandal, r.title, r.desc].join(' '))) return json_({ ok: false, error: 'pii' });
+  const md = mandals_();
+  const mandal = mandalCanon_(md, state, r.district, r.mandal) || clip_(tidy_(r.mandal).replace(/\.$/, ''), 40) || mandalIn_(md, state, r.district, r.place);
+  // Spelling and grammar are corrected before saving; the person's own words stay in desc_original.
+  const desc = clip_(correctMany_([desc0], protectWords_(md))[0], 1500) || desc0;
+  const title0 = clip_(r.title, 90);
+  const title = fixTitle_(title0, desc0, desc);
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -277,14 +431,15 @@ function doPost(e) {
     const sub = /^[a-z]{3,20}$/.test(String(r.sub || '')) && !f.changed ? String(r.sub) : f.sub;
     const row = [];
     const put = (k, v) => { row[idx[k]] = v; };
-    put('id', id); put('created', new Date().toISOString()); put('district', r.district); put('place', clip_(r.place, 80));
-    put('sector', f.sector); put('title', clip_(r.title, 90)); put('desc', desc);
+    put('id', id); put('created', new Date().toISOString()); put('district', r.district); put('mandal', mandal); put('place', clip_(tidy_(r.place).replace(/\.$/, ''), 80));
+    put('sector', f.sector); put('title', title); put('desc', desc);
+    put('desc_original', desc !== desc0 ? desc0 : ''); put('title_original', title !== title0 ? title0 : ''); put('rules_v', RULES_V);
     put('affected', Math.min(10000000, Math.max(1, parseInt(r.affected, 10) || 1))); put('urgency', r.urgency); put('status', 'reported');
     put('verify_level', Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0))); put('outlets', clip_(outlets, 200));
     put('lang', r.lang === 'te' ? 'te' : 'en'); put('state', state); put('sub', sub || ''); put('sector_was', f.changed ? r.sector : ''); put('auto_fix', '');
     for (let i = 0; i < row.length; i++) if (row[i] === undefined) row[i] = '';
     sh.appendRow(row);
-    return json_({ ok: true, id: id, sector: f.sector, corrected: f.changed });
+    return json_({ ok: true, id: id, sector: f.sector, corrected: f.changed, desc: desc, title: title, mandal: mandal, text_fixed: desc !== desc0 });
   } finally {
     lock.releaseLock();
   }
