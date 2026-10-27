@@ -82,7 +82,56 @@ def te_links(titles):
         time.sleep(0.3)
     return res
 
+def wikidata_te(titles):
+    """Telugu labels from Wikidata for English Wikipedia titles (covers mandals without a Telugu article)."""
+    res = {}
+    titles = [t for t in set(titles) if t]
+    for i in range(0, len(titles), 50):
+        u = "https://www.wikidata.org/w/api.php?" + urllib.parse.urlencode({"action": "wbgetentities", "sites": "enwiki", "titles": "|".join(titles[i:i + 50]),
+                                                                          "props": "labels|sitelinks", "languages": "te", "sitefilter": "enwiki", "format": "json", "normalize": 1})
+        try:
+            j = json.load(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=60))
+        except Exception:
+            time.sleep(3); continue
+        for ent in j.get("entities", {}).values():
+            lab = ent.get("labels", {}).get("te", {}).get("value")
+            sl = ent.get("sitelinks", {}).get("enwiki", {}).get("title")
+            if lab and sl:
+                res[sl] = lab
+        time.sleep(0.3)
+    return res
+
+def search_te(names):
+    """For mandals without an English article: search Wikidata by name for a mandal item and take its Telugu label."""
+    res = {}
+    for key, n in names:
+        for q in (n + " mandal", n):
+            u = "https://www.wikidata.org/w/api.php?" + urllib.parse.urlencode({"action": "wbsearchentities", "search": q, "language": "en", "limit": 5, "format": "json"})
+            try:
+                j = json.load(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=30))
+            except Exception:
+                continue
+            hit = next((x for x in j.get("search", []) if re.search(r"mandal|tehsil|village|town", x.get("description", ""), re.I)
+                        and re.search(r"telangana|andhra", x.get("description", ""), re.I)), None)
+            if hit:
+                e = api_wd(hit["id"])
+                if e:
+                    res[key] = e
+                    break
+            time.sleep(0.15)
+    return res
+
+def api_wd(qid):
+    u = "https://www.wikidata.org/w/api.php?" + urllib.parse.urlencode({"action": "wbgetentities", "ids": qid, "props": "labels", "languages": "te", "format": "json"})
+    try:
+        j = json.load(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=30))
+        return j["entities"][qid].get("labels", {}).get("te", {}).get("value")
+    except Exception:
+        return None
+
 def te_name(s):
+    if not re.search(r"[\u0C00-\u0C7F]", s or ""):
+        return ""
     s = re.sub(r"\s*\(.*?\)\s*", "", s)
     s = re.sub(r"\s*మండలం\s*$", "", s)
     s = re.sub(r",.*$", "", s)
@@ -108,15 +157,21 @@ def main():
     ap = parse_ap(wikitext("List of mandals in Andhra Pradesh"))
     ts = parse_ts(wikitext("List of mandals in Telangana"))
     te = te_links([t for _, _, t in ap + ts])
+    wd = wikidata_te([t for _, _, t in ap + ts if t and t not in te])
+    te.update({k: v for k, v in wd.items() if k not in te})
+    # mandals still without Telugu: search Wikidata by name
+    todo = [((d, n), n) for d, n, t in ap + ts if not (t and t in te)]
+    found = search_te(todo)
     data, report = {"ap": {}, "ts": {}}, []
     for key, rows in (("ap", ap), ("ts", ts)):
         for d, n, t in rows:
             if not d or not n:
                 continue
+            d0 = d
             d = re.sub(r"\s+", " ", re.sub(r"\s*district$", "", d.strip(), flags=re.I)).strip()
             d = ALIASES.get(d, d)
             lst = data[key].setdefault(d, [])
-            tn = te_name(te[t]) if t and t in te else ""
+            tn = te_name(te[t]) if t and t in te else te_name(found.get((d0, n), "")) if (d0, n) in found else ""
             if n.lower() not in [x[0].lower() for x in lst]:
                 lst.append([n, tn])
         for d in data[key]:
