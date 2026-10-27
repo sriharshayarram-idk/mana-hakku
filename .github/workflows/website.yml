@@ -27,6 +27,7 @@ jobs:
           node tools/export_keywords.js site/data/keywords.json
           cp -r app/src/main/assets/pdfjs site/pdfjs
           cp -r app/src/main/assets/docs site/docs
+          cp -r app/src/main/assets/people site/people
           touch site/.nojekyll
 
       - name: Push site to gh-pages branch
