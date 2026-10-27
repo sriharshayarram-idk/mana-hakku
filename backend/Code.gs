@@ -34,6 +34,8 @@
  *  - Anyone can flag a report (false, abusive, personal details, duplicate, other). Flags go to the "Flags" sheet
  *    and are counted in the "flags" column. At AUTO_HIDE_FLAGS flags a report is hidden for review automatically.
  *  - The same text cannot be posted twice within 10 minutes, and at most MAX_PER_HOUR reports are accepted per hour.
+ *  - Grievance number: when a report is saved, the phone that saved it gets a private key ("edit_key", never shown
+ *    to anyone else). Only that phone can later add the official grievance number (PGRS / Prajavani / CPGRAMS).
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -45,7 +47,8 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date'];
+const GRV_SYSTEMS = ['pgrs', 'prajavani', 'cpgrams', 'other'];
 const FLAGS = 'Flags';
 const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state'];
 const FLAG_REASONS = ['false', 'abusive', 'personal', 'duplicate', 'other'];
@@ -420,7 +423,10 @@ function doGet(e) {
     sub: String(r[idx.sub] || ''),
     sector_was: String(r[idx.sector_was] || ''),
     locked: String(r[idx.auto_fix] || '').toLowerCase() === 'no',
-    text_fixed: !!r[idx.desc_original]
+    text_fixed: !!r[idx.desc_original],
+    grv_system: String(r[idx.grv_system] || ''),
+    grv_number: String(r[idx.grv_number] || ''),
+    grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || '')
   }));
   return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
@@ -459,6 +465,31 @@ function doPost(e) {
       const fs = sheet_(FLAGS, FLAG_COLS);
       ensureColumns_(fs, FLAG_COLS);
       fs.appendRow([new Date().toISOString(), id, reason, note, state]);
+      return json_({ ok: true });
+    } finally {
+      lock.releaseLock();
+    }
+  }
+
+  if (d.type === 'grievance') {
+    const id = String(d.id || '').slice(0, 40), key = String(d.key || '');
+    const system = GRV_SYSTEMS.indexOf(d.system) >= 0 ? d.system : 'other';
+    const number = String(d.number || '').trim().slice(0, 40);
+    if (!/^r[a-z0-9]{4,30}$/.test(id) || !/^[A-Za-z0-9]{16,40}$/.test(key) || !/^[A-Za-z0-9][A-Za-z0-9\/\-_. ]{3,39}$/.test(number)) return json_({ ok: false, error: 'bad_request' });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const sh = sheet_(REPORTS, REPORT_COLS);
+      const idx = ensureColumns_(sh, REPORT_COLS);
+      const n = Math.max(1, sh.getLastRow() - 1);
+      const ids = sh.getRange(2, idx.id + 1, n, 1).getValues().map(x => String(x[0]));
+      const k = ids.indexOf(id);
+      if (k < 0) return json_({ ok: false, error: 'not_found' });
+      const stored = String(sh.getRange(k + 2, idx.edit_key + 1).getValue() || '');
+      if (!stored || stored !== key) return json_({ ok: false, error: 'not_allowed' });
+      sh.getRange(k + 2, idx.grv_system + 1).setValue(system);
+      sh.getRange(k + 2, idx.grv_number + 1).setValue(clip_(number, 40));
+      sh.getRange(k + 2, idx.grv_date + 1).setValue(new Date().toISOString());
       return json_({ ok: true });
     } finally {
       lock.releaseLock();
@@ -507,9 +538,11 @@ function doPost(e) {
     put('verify_level', Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0))); put('outlets', clip_(outlets, 200));
     put('lang', r.lang === 'te' ? 'te' : 'en'); put('state', state); put('sub', sub || ''); put('sector_was', f.changed ? r.sector : ''); put('auto_fix', '');
     put('hidden', ''); put('hide_reason', ''); put('flags', 0);
+    const key = Utilities.getUuid().replace(/-/g, '');
+    put('edit_key', key); put('grv_system', ''); put('grv_number', ''); put('grv_date', '');
     for (let i = 0; i < row.length; i++) if (row[i] === undefined) row[i] = '';
     sh.appendRow(row);
-    return json_({ ok: true, id: id, sector: f.sector, corrected: f.changed, desc: desc, title: title, mandal: mandal, text_fixed: desc !== desc0 });
+    return json_({ ok: true, id: id, key: key, sector: f.sector, corrected: f.changed, desc: desc, title: title, mandal: mandal, text_fixed: desc !== desc0 });
   } finally {
     lock.releaseLock();
   }
