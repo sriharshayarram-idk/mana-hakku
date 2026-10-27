@@ -36,6 +36,8 @@
  *  - The same text cannot be posted twice within 10 minutes, and at most MAX_PER_HOUR reports are accepted per hour.
  *  - Grievance number: when a report is saved, the phone that saved it gets a private key ("edit_key", never shown
  *    to anyone else). Only that phone can later add the official grievance number (PGRS / Prajavani / CPGRAMS).
+ *    Older reports (saved before keys existed) can be claimed once: the first phone to add a number gets the key,
+ *    and the row is marked "claimed" in "grv_by" so you can check it. Clear grv_number / edit_key to undo a wrong claim.
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -47,7 +49,7 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date', 'grv_by'];
 const GRV_SYSTEMS = ['pgrs', 'prajavani', 'cpgrams', 'other'];
 const FLAGS = 'Flags';
 const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state'];
@@ -426,7 +428,9 @@ function doGet(e) {
     text_fixed: !!r[idx.desc_original],
     grv_system: String(r[idx.grv_system] || ''),
     grv_number: String(r[idx.grv_number] || ''),
-    grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || '')
+    grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || ''),
+    grv_by: String(r[idx.grv_by] || ''),
+    claimable: !r[idx.edit_key] && !r[idx.grv_number]
   }));
   return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
@@ -475,7 +479,7 @@ function doPost(e) {
     const id = String(d.id || '').slice(0, 40), key = String(d.key || '');
     const system = GRV_SYSTEMS.indexOf(d.system) >= 0 ? d.system : 'other';
     const number = String(d.number || '').trim().slice(0, 40);
-    if (!/^r[a-z0-9]{4,30}$/.test(id) || !/^[A-Za-z0-9]{16,40}$/.test(key) || !/^[A-Za-z0-9][A-Za-z0-9\/\-_. ]{3,39}$/.test(number)) return json_({ ok: false, error: 'bad_request' });
+    if (!/^r[a-z0-9]{4,30}$/.test(id) || (key && !/^[A-Za-z0-9]{16,40}$/.test(key)) || !/^[A-Za-z0-9][A-Za-z0-9\/\-_. ]{3,39}$/.test(number)) return json_({ ok: false, error: 'bad_request' });
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
@@ -486,11 +490,22 @@ function doPost(e) {
       const k = ids.indexOf(id);
       if (k < 0) return json_({ ok: false, error: 'not_found' });
       const stored = String(sh.getRange(k + 2, idx.edit_key + 1).getValue() || '');
-      if (!stored || stored !== key) return json_({ ok: false, error: 'not_allowed' });
+      let newKey = '', by = 'owner_phone';
+      if (stored) {
+        if (stored !== key) return json_({ ok: false, error: 'not_allowed' });
+        if (String(sh.getRange(k + 2, idx.grv_by + 1).getValue() || '') === 'claimed') by = 'claimed';
+      } else {
+        // An older report without a key: the first phone to add a number claims it (owner can check and undo).
+        if (String(sh.getRange(k + 2, idx.grv_number + 1).getValue() || '')) return json_({ ok: false, error: 'not_allowed' });
+        newKey = Utilities.getUuid().replace(/-/g, '');
+        sh.getRange(k + 2, idx.edit_key + 1).setValue(newKey);
+        by = 'claimed';
+      }
       sh.getRange(k + 2, idx.grv_system + 1).setValue(system);
       sh.getRange(k + 2, idx.grv_number + 1).setValue(clip_(number, 40));
       sh.getRange(k + 2, idx.grv_date + 1).setValue(new Date().toISOString());
-      return json_({ ok: true });
+      sh.getRange(k + 2, idx.grv_by + 1).setValue(by);
+      return json_({ ok: true, key: newKey });
     } finally {
       lock.releaseLock();
     }
