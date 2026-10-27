@@ -9,7 +9,7 @@ fs.writeFileSync(path.join(__dirname,'../../app/src/main/assets/_promo.html'),sr
  const pg=await ctx.newPage();await pg.addInitScript(()=>{localStorage.setItem('mh-lang','te')});
  const ev=(fn,a)=>pg.evaluate(([c,x])=>window.__ev('('+c+')')(x),[fn.toString(),a]);
  const url='file://'+path.resolve(__dirname,'../../app/src/main/assets/_promo.html');
- const shot=async(name,sel,h)=>{await pg.waitForTimeout(700);const y=sel?await pg.evaluate(s=>document.querySelector(s).getBoundingClientRect().top+scrollY,sel):0;
+ const FIX=+process.env.SHOT_H||0;const shot=async(name,sel,h)=>{if(FIX)h=FIX;await pg.waitForTimeout(700);const y=sel?await pg.evaluate(s=>document.querySelector(s).getBoundingClientRect().top+scrollY,sel):0;
   const H=await pg.evaluate(()=>document.documentElement.scrollHeight);await pg.screenshot({path:`${OUT}/${name}.png`,fullPage:true,clip:{x:0,y:Math.max(0,y-8),width:390,height:Math.min(h,H-Math.max(0,y-8))}})};
  await pg.goto(url+'#ap/report');await pg.waitForTimeout(1500);
  await shot('home',null,844);
@@ -22,4 +22,7 @@ fs.writeFileSync(path.join(__dirname,'../../app/src/main/assets/_promo.html'),sr
  await ev(()=>{show("money");showMSec("ov")});await shot('money','#v-money',2000);
  await ev(()=>{showMSec("inc")});await shot('income','#v-money',1800);
  await ev(()=>show("rights"));await shot('rights','#v-rights',1600);
+ await ev(()=>show("history"));await shot('history','#hi-people',1600);
+ await ev(()=>show("news"));await shot('news','#v-news',1600);
+ await ev(()=>{show("report");const y=document.querySelector('.glancewrap');if(y)y.scrollIntoView()});await shot('glance','.glancewrap',1600);
  await b.close();fs.unlinkSync(path.join(__dirname,'../../app/src/main/assets/_promo.html'));console.log('shots ok')})();
