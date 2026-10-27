@@ -7,3 +7,7 @@ local.properties
 .DS_Store
 captures/
 *.apk
+tools/promo/shots/
+tools/promo/fonts/
+tools/promo/qr.png
+node_modules/

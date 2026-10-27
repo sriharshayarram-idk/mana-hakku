@@ -1,0 +1,25 @@
+// Captures Telugu screenshots of the app for the promo video (phone size, 2x).
+const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
+const OUT=process.argv[2]||'out/shots';fs.mkdirSync(OUT,{recursive:true});
+const src=fs.readFileSync(path.join(__dirname,'../../app/src/main/assets/index.html'),'utf8');
+const k=src.indexOf('(function(){\n"use strict";');const e=src.lastIndexOf('})();',src.indexOf('</script>',k));
+fs.writeFileSync(path.join(__dirname,'../../app/src/main/assets/_promo.html'),src.slice(0,e)+'window.__ev=s=>eval(s);\n'+src.slice(e));
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});
+ await ctx.route(/script\.google\.com/,r=>r.abort());
+ const pg=await ctx.newPage();await pg.addInitScript(()=>{localStorage.setItem('mh-lang','te')});
+ const ev=(fn,a)=>pg.evaluate(([c,x])=>window.__ev('('+c+')')(x),[fn.toString(),a]);
+ const url='file://'+path.resolve(__dirname,'../../app/src/main/assets/_promo.html');
+ const shot=async(name,sel,h)=>{await pg.waitForTimeout(700);const y=sel?await pg.evaluate(s=>document.querySelector(s).getBoundingClientRect().top+scrollY,sel):0;
+  const H=await pg.evaluate(()=>document.documentElement.scrollHeight);await pg.screenshot({path:`${OUT}/${name}.png`,fullPage:true,clip:{x:0,y:Math.max(0,y-8),width:390,height:Math.min(h,H-Math.max(0,y-8))}})};
+ await pg.goto(url+'#ap/report');await pg.waitForTimeout(1500);
+ await shot('home',null,844);
+ await shot('report','#f-report',1500);
+ await pg.click('#f-report button[type=submit]');await pg.waitForTimeout(1200);
+ await ev(()=>{const p=document.getElementById('cat-pop');if(p&&p.open)p.close();const s=document.getElementById('src-pop');if(s&&s.open)s.close()});
+ await shot('result','#r-result',2200);
+ await ev(()=>{const d=["2026-10-03","2026-10-08","2026-10-12","2026-10-17","2026-10-21","2026-10-24"];sharedReports=DEMO.map((x,i)=>({...x,id:"d"+i,state:"ap",place:L(x.place),title:L(x.title),desc:L(x.desc),created:d[i%d.length]+"T10:00:00Z",mandal:mandalIn(x.district,x.place[0])}));sharedLoaded=true;sharedError=false;show("all");renderAll()});
+ await shot('all','#v-all',2000);
+ await ev(()=>{show("money");showMSec("ov")});await shot('money','#v-money',2000);
+ await ev(()=>{showMSec("inc")});await shot('income','#v-money',1800);
+ await ev(()=>show("rights"));await shot('rights','#v-rights',1600);
+ await b.close();fs.unlinkSync(path.join(__dirname,'../../app/src/main/assets/_promo.html'));console.log('shots ok')})();
