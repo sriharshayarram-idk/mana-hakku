@@ -227,6 +227,61 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .stairs p{margin:2px 0 0;font-size:.93rem;color:var(--muted)}
 .start{font-size:.75rem;font-weight:700;color:var(--ochre);background:var(--ochre-soft);border-radius:999px;padding:1px 8px;margin-left:8px;white-space:nowrap}
 .tel{color:var(--indigo);font-weight:700;text-decoration:none;font-variant-numeric:tabular-nums}
+.herosub{margin:2px 0 0;color:rgba(255,255,255,.85);font-weight:600}
+.herometa{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem;color:rgba(255,255,255,.9)}
+.glancewrap{display:flex;flex-direction:column;gap:8px}
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{font:inherit;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0;color:var(--ink);position:relative}
+.tile:hover{border-color:var(--indigo)}
+.tile .ti{width:34px;height:34px;border-radius:10px;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center}
+.tile .ti .ico{width:20px;height:20px}
+.tile .tl2{font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+.tile .tv{font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tile .tx{font-size:.85rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile.t-first{grid-column:1/-1;background:var(--ochre-soft);border:2px solid var(--ochre)}
+.tile.t-first .ti{background:var(--ochre);color:#fff}.tile.t-first .tl2{color:var(--ochre)}.tile.t-first .tv{font-size:1.05rem;-webkit-line-clamp:4}
+.guideh{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:6px 0 -4px}
+.accs{display:flex;flex-direction:column;gap:10px}
+.acc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.acc[open]{border-color:var(--indigo);box-shadow:0 2px 0 var(--indigo-soft)}
+.acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px}
+.acc summary::-webkit-details-marker{display:none}
+.acc .an{width:26px;height:26px;border-radius:50%;background:var(--indigo);color:#fff;font-weight:700;font-size:.85rem;display:grid;place-items:center;flex:none}
+.acc .ai{width:36px;height:36px;border-radius:10px;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;flex:none}
+.acc .ai .ico{width:20px;height:20px}
+.acc .at{flex:1;min-width:0;display:flex;flex-direction:column}
+.acc .at b{font-size:1.02rem;line-height:1.3}.acc .at small{color:var(--muted);font-size:.84rem;line-height:1.35}
+.acc .ac{min-width:28px;height:24px;border-radius:999px;background:var(--sunk);font-size:.8rem;font-weight:700;display:grid;place-items:center;padding:0 8px;color:var(--muted)}
+.acc .chev{width:10px;height:10px;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px;transition:transform .2s;flex:none}
+.acc[open] .chev{transform:rotate(-135deg);margin-top:6px}
+.acc .ab{padding:0 14px 16px;display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.alisten{display:flex;justify-content:flex-end;margin:-6px 0 -8px}
+.phases{display:grid;gap:10px}
+.phases .phase{display:block;padding:0;background:var(--surface);border-top:1px solid var(--line)}
+.phases .chk{padding:10px 12px;gap:8px}
+.glance .tile:last-child:nth-child(4){grid-column:1/-1}
+.phase{border-radius:12px;border:1px solid var(--line);overflow:hidden}
+.phh{display:flex;align-items:center;gap:8px;padding:8px 12px;font-weight:700;color:#fff}
+.phn{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:.8rem}
+.ph1 .phh{background:var(--crit)}.ph2 .phh{background:var(--ochre)}.ph3 .phh{background:var(--ok)}
+.chk{list-style:none;margin:0;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.chk li{position:relative;padding-left:28px;line-height:1.45}
+.chk li::before{content:"";position:absolute;left:0;top:2px;width:18px;height:18px;border:2px solid var(--muted);border-radius:5px}
+.govcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gc{background:var(--indigo-soft);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.gc.cen{background:var(--ochre-soft)}
+.gch{margin:0;font-weight:700;font-size:.9rem}
+.gi{background:var(--surface);border-radius:8px;padding:8px 10px;font-size:.92rem;line-height:1.4}
+.schemes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scard{background:var(--ok-soft);border-radius:10px;padding:10px;display:flex;gap:8px;align-items:flex-start;font-weight:600;font-size:.92rem;line-height:1.4}
+.climb{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.climb li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;margin-left:calc(var(--i) * 10px);background:var(--sunk);border-radius:12px;padding:10px}
+.climb li:first-child{background:var(--ochre-soft);border:2px solid var(--ochre)}
+.climb .n{width:30px;height:30px;border-radius:50%;background:var(--indigo);color:#fff;font-weight:700;display:grid;place-items:center}
+.climb li:first-child .n{background:var(--ochre)}
+.climb p{margin:2px 0 0;font-size:.9rem;color:var(--muted)}
+.climb .start{margin-left:8px;font-size:.75rem;font-weight:700;background:var(--ochre);color:#fff;border-radius:999px;padding:2px 8px}
+@media (max-width:420px){.govcards,.schemes{grid-template-columns:1fr}.climb li{margin-left:calc(var(--i) * 6px)}}
 .calls{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .call{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--surface);min-width:0}
 .call .num{font-family:var(--f-display);font-weight:700;font-size:1.35rem;color:var(--indigo);font-variant-numeric:tabular-nums;line-height:1.2}
@@ -1230,6 +1285,8 @@ const RX={
  schemeQ:["Government schemes that can help","సహాయపడే ప్రభుత్వ పథకాలు"],schemeSub:["Ask the office whether you are covered by these.","ఈ పథకాలు మీకు వర్తిస్తాయేమో కార్యాలయంలో అడగండి."],
  escQ:["Not solved? Go one step up","పరిష్కారం కాలేదా? ఒక మెట్టు పైకి వెళ్లండి"],escSub:["Start at step 1. Go to the next step only if nothing happens.","1వ మెట్టుతో మొదలుపెట్టండి. ఏ చర్యా లేకపోతేనే తర్వాతి మెట్టుకు వెళ్లండి."],
  startHere:["Start here","ఇక్కడ మొదలుపెట్టండి"],
+ glanceH:["At a glance · tap a box to see more","ఒక్క చూపులో · మరిన్ని వివరాలకు బాక్స్ నొక్కండి"],tWho:["Responsible office","బాధ్యత గల కార్యాలయం"],tRight:["Your right","మీ హక్కు"],tWhere:["Complain first at","ముందుగా ఫిర్యాదు ఇక్కడ"],
+ guideH:["Full guide · tap a heading to open or close","పూర్తి మార్గదర్శి · తెరవడానికి/మూయడానికి శీర్షిక నొక్కండి"],
  helpQ:["Helpline numbers","హెల్ప్‌లైన్ నంబర్లు"],helpSub:["Free to call. Tap a number to call it.","కాల్ ఉచితం. కాల్ చేయడానికి నంబర్‌ను తాకండి."],
  termsQ:["Words explained","పదాల అర్థం"],
  yourProblem:["Your problem","మీ సమస్య"],first:["Do this first","ముందుగా ఇది చేయండి"],
@@ -1330,39 +1387,44 @@ function renderResult(r){
  const allText=[s.ap,s.un,s.law.map(x=>x.join(" ")),s.hr,s.sch,s.plan.now,s.plan.d30,s.plan.d90,LADDER.map(x=>L(x[0])+" "+L(x[1]))].flat().join(" ");
  const terms=TERMS.filter(([re])=>re.test(allText));
  const phase=(key,items)=>`<li><span class="when">${esc(R(key))}</span><ul>${items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></li>`;
+ const loc=[dName(r.district),r.mandal?mName(r.mandal)+" "+t("mandal"):"",r.place].filter(Boolean);
+ const subName=r.sub&&S[k].subs&&S[k].subs[r.sub]?L(S[k].subs[r.sub].name):"";
+ const PH=[["d7","ph1",s.plan.now],["d30","ph2",s.plan.d30],["d90","ph3",s.plan.d90]];
+ const acc=(id,n,icon,title,sub,count,body,open,listenId)=>`<details class="acc" id="rs-${id}"${open?" open":""}><summary><span class="an">${n}</span><span class="ai">${svg(ICONS[icon])}</span><span class="at"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</span>${count?`<span class="ac">${count}</span>`:""}<span class="chev" aria-hidden="true"></span></summary><div class="ab">${listenId&&TTS?`<div class="alisten">${miniListen(listenId)}</div>`:""}${body}</div></details>`;
+ const tile=(go,icon,lbl,val,extra,cls)=>`<button type="button" class="tile ${cls||""}" data-go="${go}"><span class="ti">${svg(ICONS[icon])}</span><span class="tl2">${esc(lbl)}</span><span class="tv">${esc(val)}</span>${extra?`<span class="tx">${extra}</span>`:""}</button>`;
+ const L0=LADDER[0];
  $("r-result").innerHTML=`<article class="result" aria-live="polite">
   <section class="hero">
    <div class="herotop"><span class="heroicon">${svg(ICONS[k]||ICONS.livelihood)}</span>
-    <div class="herotext"><p class="eyebrow">${esc(R("yourProblem"))}</p><h2>${esc(s.name)}</h2></div></div>
-   <p class="summary">${esc(summaryLine(r,s))}</p>
-   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span>${r.auto?`<span class="chip ind">${esc(t(r.confident?"detected":"guess"))}</span>`:""}<button type="button" class="chip chgbtn" id="r-change">${esc(t("changeArea"))}</button></div>
+    <div class="herotext"><p class="eyebrow">${esc(R("yourProblem"))}</p><h2>${esc(L(S[k].name))}</h2>${subName?`<p class="herosub">${esc(subName)}</p>`:""}</div></div>
+   <div class="herometa"><span>📍 ${esc(loc.join(" › "))}</span><span>👥 ${num(r.affected)} ${esc(t("people"))}</span></div>
+   <div class="chips"><span class="chip ${uc}">${esc(t(uk))}</span></div>
    ${TTS?`<button class="listen big" type="button" id="r-listen"></button>`:""}
   </section>
   ${r.fixedFrom?`<div class="fixnote" role="status"><p>${esc(t("fixedNote").replace("{a}",L(S[r.sector].name)).replace("{b}",L(S[r.fixedFrom].name)))}</p><button type="button" class="btn quiet" id="r-keep">${esc(t("keepChoice").replace("{b}",L(S[r.fixedFrom].name)))}</button></div>`:""}
-  ${subPickHTML(r)}
   ${r.urgency==="high"?`<section class="urgent" role="alert"><div class="q"><span class="qi">${svg(ICONS.alert)}</span><div class="qt"><h3>${esc(R("urgentMsg"))}</h3></div></div><div class="calls">${urgentNums.map(callLink).join("")}</div></section>`:""}
-  <section class="first"><div class="q"><span class="qi">${svg(ICONS.star)}</span><div class="qt"><p class="eyebrow">${esc(R("first"))}</p><p class="firsttext">${esc(s.plan.now[0])}</p></div>${miniListen("first")}</div></section>
-  <section class="card">${qHead("who",R("whoQ"),R("whoSub"),"who")}
-   <div class="gov"><div class="g"><p class="glbl">${esc(R("stateGov"))}</p><ul>${s.ap.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
-   <div class="g"><p class="glbl">${esc(R("centralGov"))}</p><ul>${s.un.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div></section>
-  <section class="card">${qHead("social",R("rightQ"),R("rightSub"),"right")}
-   <div class="rights">${s.law.map(([a,b])=>`<div class="art"><span class="badge">${esc(artL(a))}</span><span>${esc(b)}</span></div>`).join("")}</div>
-   <p class="hr"><b>${esc(R("humanRights"))}:</b> ${esc(s.hr)}</p></section>
-  <section class="card">${qHead("todo",R("doQ"),R("doSub"),"todo")}
-   <ol class="tl">${phase("d7",s.plan.now)}${phase("d30",s.plan.d30)}${phase("d90",s.plan.d90)}</ol></section>
-  <section class="card">${qHead("gift",R("schemeQ"),R("schemeSub"),"schemes")}
-   <div class="chips">${s.sch.map(x=>`<span class="chip scheme">${esc(x)}</span>`).join("")}</div></section>
-  <section class="card">${qHead("stairs",R("escQ"),R("escSub"),"esc")}
-   <ol class="stairs">${LADDER.map(([a,b,tel],i)=>`<li><span class="n">${i+1}</span><div><b>${esc(L(a))}</b>${i===0?`<span class="start">${esc(R("startHere"))}</span>`:""}<p>${esc(L(b))}${tel?` · <a class="tel" href="tel:${tel}">${fmtNum(tel)}</a>`:""}</p></div></li>`).join("")}</ol></section>
-  <section class="card">${qHead("phone",R("helpQ"),R("helpSub"),"help")}
-   <div class="calls">${helps.map(callLink).join("")}</div></section>
-  ${terms.length?`<section class="card">${qHead("book",R("termsQ"),"","")}<dl class="terms">${terms.map(([,w,en,te])=>`<dt>${esc(w)}</dt><dd>${esc(LANG==="te"?te:en)}</dd>`).join("")}</dl></section>`:""}
+  <section class="glancewrap"><p class="glbl">${esc(R("glanceH"))}</p><div class="glance">
+   ${tile("plan","star",R("first"),s.plan.now[0],"","t-first")}
+   ${tile("who","who",R("tWho"),s.ap[0],s.ap.length>1?esc("+"+(s.ap.length-1)):"","")}
+   ${tile("right","social",R("tRight"),artL(s.law[0][0]),esc(s.law[0][1]),"")}
+   ${tile("esc","stairs",R("tWhere"),L(L0[0]),L0[2]?`☎ ${fmtNum(L0[2])}`:"","")}
+  </div></section>
+  <p class="guideh">${esc(R("guideH"))}</p>
+  <div class="accs">
+  ${acc("plan",1,"todo",R("doQ"),R("doSub"),PH.reduce((a,x)=>a+x[2].length,0),`<div class="phases">${PH.map(([key,cls,items],pi)=>`<div class="phase ${cls}"><div class="phh"><span class="phn">${pi+1}</span>${esc(R(key))}</div><ul class="chk">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>`,true,"todo")}
+  ${acc("who",2,"who",R("whoQ"),R("whoSub"),s.ap.length+s.un.length,`<div class="govcards"><div class="gc"><p class="gch">🏛️ ${esc(R("stateGov"))}</p>${s.ap.map(x=>`<div class="gi">${esc(x)}</div>`).join("")}</div><div class="gc cen"><p class="gch">🇮🇳 ${esc(R("centralGov"))}</p>${s.un.map(x=>`<div class="gi">${esc(x)}</div>`).join("")}</div></div>`,false,"who")}
+  ${acc("right",3,"social",R("rightQ"),R("rightSub"),s.law.length,`<div class="rights">${s.law.map(([a,b])=>`<div class="art"><span class="badge">${esc(artL(a))}</span><span>${esc(b)}</span></div>`).join("")}</div><p class="hr"><b>${esc(R("humanRights"))}:</b> ${esc(s.hr)}</p>`,false,"right")}
+  ${acc("schemes",4,"gift",R("schemeQ"),R("schemeSub"),s.sch.length,`<div class="schemes">${s.sch.map(x=>`<div class="scard"><span>🎁</span>${esc(x)}</div>`).join("")}</div>`,false,"schemes")}
+  ${acc("esc",5,"stairs",R("escQ"),R("escSub"),LADDER.length,`<ol class="climb">${LADDER.map(([a,b,tel],i)=>`<li style="--i:${i}"><span class="n">${i+1}</span><div><b>${esc(L(a))}</b>${i===0?`<span class="start">${esc(R("startHere"))}</span>`:""}<p>${esc(L(b))}${tel?` · <a class="tel" href="tel:${tel}">☎ ${fmtNum(tel)}</a>`:""}</p></div></li>`).join("")}</ol>`,false,"esc")}
+  ${acc("help",6,"phone",R("helpQ"),R("helpSub"),helps.length,`<div class="calls">${helps.map(callLink).join("")}</div>`,false,"help")}
+  ${terms.length?acc("terms",7,"book",R("termsQ"),"",terms.length,`<dl class="terms">${terms.map(([,w,en,te])=>`<dt>${esc(w)}</dt><dd>${esc(LANG==="te"?te:en)}</dd>`).join("")}</dl>`,false,""):""}
+  </div>
   <section class="card actions">${footerHTML()}</section>
  </article>`;
+ $("r-result").querySelectorAll(".tile").forEach(b=>b.onclick=()=>{const d=$("rs-"+b.dataset.go);if(!d)return;d.open=true;d.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
  $("r-result").querySelectorAll(".subbtn").forEach(b=>b.onclick=()=>{subPick=[r.sector,b.dataset.sub];const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)});
  const kb=$("r-keep");if(kb)kb.onclick=()=>{keepChoice=r.fixedFrom;subPick=null;const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)};
- const cb=$("r-change");if(cb)cb.onclick=()=>renderChooser(r,true);
- const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
+  const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
  $("r-result").querySelectorAll("[data-sec]").forEach(b=>{const id=b.dataset.sec;if(!id){b.remove();return}b.onclick=()=>speak(sp[id]||"",b)});
  bindFooter();
 }
