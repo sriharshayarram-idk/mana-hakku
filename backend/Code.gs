@@ -27,6 +27,15 @@
  * goes up and rows with a lower number are checked again (area, mandal, spelling) a few at a time each time
  * the app loads the list, until all rows are up to date.
  *
+ * Safety (moderation that stays transparent):
+ *  - Type yes in the "hidden" column of a row (and a short reason in "hide_reason") to hide a false, abusive or
+ *    unsafe report. The app then shows "Report #N hidden by the moderator · reason" in its place, so nothing
+ *    disappears silently. Type no to show it again (no always wins, even over public flags).
+ *  - Anyone can flag a report (false, abusive, personal details, duplicate, other). Flags go to the "Flags" sheet
+ *    and are counted in the "flags" column. At AUTO_HIDE_FLAGS flags a report is hidden for review automatically.
+ *  - The same text cannot be posted twice within 10 minutes, and at most MAX_PER_HOUR reports are accepted per hour.
+ *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
+ *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
  *
  * Personal details (phone, Aadhaar / long ID numbers, email, PAN, name phrases) are
@@ -36,7 +45,12 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags'];
+const FLAGS = 'Flags';
+const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state'];
+const FLAG_REASONS = ['false', 'abusive', 'personal', 'duplicate', 'other'];
+const AUTO_HIDE_FLAGS = 5;    // public flags that hide a report until the owner reviews it
+const MAX_PER_HOUR = 60;      // reports accepted per hour (stops floods)
 const RULES_V = 2;            // raise this when the rules below change; older rows are re-checked automatically
 const GRAMMAR_PER_LOAD = 5;   // rows spell-checked per list load (keeps the app fast and within LanguageTool's free limit)
 const SUGGESTION_COLS = ['created', 'text', 'lang', 'state'];
@@ -380,7 +394,15 @@ function doGet(e) {
     if (!values.length) return;
     sh.getRange(2, idx[k] + 1, values.length, 1).setValues(values.map(r => [r[idx[k]] === undefined ? '' : r[idx[k]]]));
   }); } finally { wl.releaseLock(); }
-  const rows = values.filter(r => r[idx.id] && String(r[idx.state] || 'ap') === state).slice(-MAX_ROWS_RETURNED).reverse().map(r => ({
+  const isHidden = r => { const h = String(r[idx.hidden] || '').trim().toLowerCase(); if (h === 'no') return false;
+    return h === 'yes' || h === 'y' || h === 'hide' || h === 'true' || (Number(r[idx.flags]) || 0) >= AUTO_HIDE_FLAGS; };
+  const mine = values.filter(r => r[idx.id] && String(r[idx.state] || 'ap') === state);
+  const hidden = mine.filter(isHidden).map(r => ({
+    id: String(r[idx.id]),
+    created: r[idx.created] instanceof Date ? r[idx.created].toISOString() : String(r[idx.created] || ''),
+    reason: String(r[idx.hide_reason] || '').slice(0, 120) || ((Number(r[idx.flags]) || 0) >= AUTO_HIDE_FLAGS && String(r[idx.hidden] || '').trim().toLowerCase() !== 'yes' ? 'flagged' : '')
+  }));
+  const rows = mine.filter(r => !isHidden(r)).slice(-MAX_ROWS_RETURNED).reverse().map(r => ({
     id: String(r[idx.id]),
     state: state,
     created: r[idx.created] instanceof Date ? r[idx.created].toISOString() : String(r[idx.created] || ''),
@@ -400,7 +422,7 @@ function doGet(e) {
     locked: String(r[idx.auto_fix] || '').toLowerCase() === 'no',
     text_fixed: !!r[idx.desc_original]
   }));
-  return json_({ ok: true, state: state, reports: rows });
+  return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
 
 // ---------- write: a new report or a suggestion ----------
@@ -417,6 +439,30 @@ function doPost(e) {
     ensureColumns_(ss, SUGGESTION_COLS);
     ss.appendRow([new Date().toISOString(), text, d.lang === 'te' ? 'te' : 'en', state]);
     return json_({ ok: true });
+  }
+
+  if (d.type === 'flag') {
+    const id = String(d.id || '').slice(0, 40), reason = FLAG_REASONS.indexOf(d.reason) >= 0 ? d.reason : 'other';
+    const note = clip_(d.note, 300).trim();
+    if (!/^r[a-z0-9]{4,30}$/.test(id)) return json_({ ok: false, error: 'bad_request' });
+    if (note && hasPersonalDetails_(note)) return json_({ ok: false, error: 'pii' });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const sh = sheet_(REPORTS, REPORT_COLS);
+      const idx = ensureColumns_(sh, REPORT_COLS);
+      const ids = sh.getRange(2, idx.id + 1, Math.max(1, sh.getLastRow() - 1), 1).getValues().map(x => String(x[0]));
+      const k = ids.indexOf(id);
+      if (k < 0) return json_({ ok: false, error: 'not_found' });
+      const cell = sh.getRange(k + 2, idx.flags + 1);
+      cell.setValue((Number(cell.getValue()) || 0) + 1);
+      const fs = sheet_(FLAGS, FLAG_COLS);
+      ensureColumns_(fs, FLAG_COLS);
+      fs.appendRow([new Date().toISOString(), id, reason, note, state]);
+      return json_({ ok: true });
+    } finally {
+      lock.releaseLock();
+    }
   }
 
   const r = d.report || {};
@@ -440,6 +486,15 @@ function doPost(e) {
     const outlets = Array.isArray(r.verify && r.verify.outlets) ? r.verify.outlets.join(', ') : '';
     const sh = sheet_(REPORTS, REPORT_COLS);
     const idx = ensureColumns_(sh, REPORT_COLS);
+    // Flood guard: the same text twice within 10 minutes, or too many reports in the last hour, is refused.
+    const n0 = sh.getLastRow() - 1;
+    if (n0 > 0) {
+      const take = Math.min(n0, 200), recent = sh.getRange(n0 + 2 - take, 1, take, sh.getLastColumn()).getValues();
+      const now = Date.now(), norm = x => String(x || '').toLowerCase().replace(/[^a-z0-9\u0C00-\u0C7F]+/g, '');
+      const age = row => now - (row[idx.created] instanceof Date ? row[idx.created].getTime() : Date.parse(row[idx.created]) || 0);
+      if (recent.some(row => age(row) < 600000 && (norm(row[idx.desc]) === norm(desc) || norm(row[idx.desc_original]) === norm(desc0)))) return json_({ ok: false, error: 'dup' });
+      if (recent.filter(row => age(row) < 3600000).length >= MAX_PER_HOUR) return json_({ ok: false, error: 'busy' });
+    }
     // Correct a clearly wrong area before saving (the app does the same; this also covers older app versions).
     const f = autoFix_(keywords_(), [r.title, desc, r.place].join(' '), r.sector);
     const sub = /^[a-z]{3,20}$/.test(String(r.sub || '')) && !f.changed ? String(r.sub) : f.sub;
@@ -451,6 +506,7 @@ function doPost(e) {
     put('affected', Math.min(10000000, Math.max(1, parseInt(r.affected, 10) || 1))); put('urgency', r.urgency); put('status', 'reported');
     put('verify_level', Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0))); put('outlets', clip_(outlets, 200));
     put('lang', r.lang === 'te' ? 'te' : 'en'); put('state', state); put('sub', sub || ''); put('sector_was', f.changed ? r.sector : ''); put('auto_fix', '');
+    put('hidden', ''); put('hide_reason', ''); put('flags', 0);
     for (let i = 0; i < row.length; i++) if (row[i] === undefined) row[i] = '';
     sh.appendRow(row);
     return json_({ ok: true, id: id, sector: f.sector, corrected: f.changed, desc: desc, title: title, mandal: mandal, text_fixed: desc !== desc0 });
@@ -469,4 +525,16 @@ function checkSetup() {
   try { const r = UrlFetchApp.fetch('https://api.languagetool.org/v2/check', { method: 'post', muteHttpExceptions: true, payload: { text: 'no wter since july', language: 'en-GB' } }); Logger.log('LanguageTool ' + r.getResponseCode()); }
   catch (e) { Logger.log('LanguageTool FAILED -> ' + e); }
   Logger.log('keywords loaded: ' + !!keywords_() + ' · mandals loaded: ' + !!mandals_());
+}
+
+// ---------- weekly backup: run setupBackup once from the editor (pick setupBackup → Run → allow) ----------
+function setupBackup() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'backup_').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('backup_').timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(23).create();
+  backup_();
+  Logger.log('Weekly backup is on: a copy of this Sheet is made every Sunday night (first copy made now).');
+}
+function backup_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  ss.copy(ss.getName() + ' · backup ' + Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd'));
 }
