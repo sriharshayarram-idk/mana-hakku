@@ -43,6 +43,11 @@ CATS = [
 ]
 
 
+# Income (Appendix 1) and spending by kind (Appendix 2 = day-to-day, Appendix 4 = building assets / loans given).
+FLOW_FIELDS = ["ownTax", "centralShare", "ownNonTax", "grants", "revExp", "capOutlay", "loansGiven"]
+FLOW_CODES = [(1, "I.A"), (1, "I.B"), (1, "II.C"), (1, "II.D"), (2, "Total"), (4, "I"), (4, "IV")]
+
+
 def rnd(x, dec=0):
     """Round half away from zero (the RBI tables and the app use this, not banker's rounding)."""
     if x is None:
@@ -185,7 +190,7 @@ def build_fiscal(G):
 
     out = {"years": [f"{y}-{str(y + 1)[2:]}" for y in years]}
     for key, name in STATES.items():
-        yr, cats = [], []
+        yr, cats, flow = [], [], []
         for y in years:
             row = []
             for i in (2, 0):  # Budget Estimates, Accounts
@@ -199,7 +204,9 @@ def build_fiscal(G):
                             ssum(name, y, i, [(2, "II.E")])])
             yr.append(row)
             cats.append([[cat_val(name, y, 2, codes), cat_val(name, y, 0, codes)] for _, codes in CATS])
-        out[key] = {"yr": yr, "cat": cats}
+            # Money in and money out, family-budget style (FLOW_FIELDS order), [Budget Estimates, Accounts]
+            flow.append([[ssum(name, y, i, [(a, c)]) for a, c in FLOW_CODES] for i in (2, 0)])
+        out[key] = {"yr": yr, "cat": cats, "flow": flow}
     return out
 
 
@@ -268,12 +275,13 @@ def build(dir_, links):
             },
             "cats": [c for c, _ in CATS],
             "yrFields": ["revenue", "interest", "borrowed", "repaid", "deficit", "pensions"],
+            "flowFields": FLOW_FIELDS,
         },
         "years": years, "liabYears": lyears,
     }
     for k in STATES:
         data[k] = {"gsdp": gsdp[k], "nsdp": nsdp[k], "pop": pop[k], "pc": pc[k], "cpi": cpi[k], "liab": liab[k], "liabPct": liabpct[k],
-                   "yr": f[k]["yr"], "cat": f[k]["cat"]}
+                   "yr": f[k]["yr"], "cat": f[k]["cat"], "flow": f[k]["flow"]}
     return data
 
 
@@ -286,6 +294,10 @@ def sane(d):
         assert len(acc) >= 8, f"{k}: too few accounts years"
         assert sum(1 for v in s["gsdp"] if v) >= 8, f"{k}: GSDP missing"
         assert sum(1 for v in s["liab"] if v) >= 8, f"{k}: liabilities missing"
+        for y, fl in zip(s["yr"], s["flow"]):
+            for i in (0, 1):
+                if y[i][0] and all(v is not None for v in fl[i][:4]):
+                    assert abs(sum(fl[i][:4]) - y[i][0]) <= 5, f"{k}: income parts do not add up"
         tot = [c[0][0] for c in s["cat"] if c[0][0]]
         assert tot and min(tot) > 50000, f"{k}: totals look wrong"
     return True
