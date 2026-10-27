@@ -31,8 +31,10 @@ def parse_ap(wt):
     for row in body.split("\n|-"):
         cells = [c for c in re.split(r"\n\|", "\n" + row) if c.strip()]
         for c in cells:
-            if re.search(r"district\]\]", c):
-                district = link_parts(c.split("|", 1)[-1] if "rowspan" in c else c)[1]
+            # a district cell links to "<Name> district" (not a mandal or revenue division of that district)
+            for tgt, txt in re.findall(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", c):
+                if re.match(r"^[^,]+ district(, india)?$", tgt.strip(), flags=re.I) and "revenue division" not in tgt.lower() and "mandal" not in tgt.lower():
+                    district = re.sub(r"\s+", " ", re.sub(r",.*$", "", tgt if "," in tgt else (txt or tgt))).strip()
         if not cells or cells[0].lstrip().startswith(("!", "{", "class")):
             continue
         first = cells[0].strip()
@@ -51,13 +53,9 @@ def parse_ts(wt):
     district, span = None, 0
     for row in rows:
         items = re.findall(r"^\*\s*(.+)$", row, flags=re.M)
-        dcell = re.search(r"rowspan=\"?(\d+)\"?\s*\|\s*(\[\[[^\]]+\]\])", row)
+        dcell = re.search(r"^\|[^\n]*?(\[\[[^\]|]+ district(?:, India)?(?:\|[^\]]+)?\]\])", row, flags=re.M | re.I)
         if dcell:
-            district, span = link_parts(dcell.group(2))[1], int(dcell.group(1))
-        elif not dcell:
-            d2 = re.search(r"\n\|\s*(\[\[[^\]]*district[^\]]*\]\])\s*$", row)
-            if d2:
-                district, span = link_parts(d2.group(1))[1], 1
+            district = link_parts(dcell.group(1))[1]
         for it in items:
             title, text = link_parts(it) if "[[" in it else (None, it)
             out.append((district, clean_name(text), title))
@@ -90,6 +88,22 @@ def te_name(s):
     s = re.sub(r",.*$", "", s)
     return s.strip()
 
+ALIASES = {"Anantapuram": "Ananthapuramu", "Anantapur": "Ananthapuramu", "Sri Potti Sri Ramulu Nellore": "Sri Potti Sriramulu Nellore",
+           "Nellore": "Sri Potti Sriramulu Nellore", "Kadapa": "YSR Kadapa", "Konaseema": "Dr. B. R. Ambedkar Konaseema",
+           "Hanamkonda": "Hanumakonda", "Medchal-Malkajgiri": "Medchal–Malkajgiri", "Medchal–Malkajgiri": "Medchal–Malkajgiri",
+           "Nagarukurnool": "Nagarkurnool", "Rangareddy": "Ranga Reddy", "Jayashankar Bhupalapally": "Jayashankar Bhupalpally",
+           "Jayashankar": "Jayashankar Bhupalpally", "Bhadradri": "Bhadradri Kothagudem", "Komaram Bheem Asifabad": "Kumuram Bheem Asifabad",
+           "Jogulamba": "Jogulamba Gadwal", "Yadadri": "Yadadri Bhuvanagiri", "Sircilla": "Rajanna Sircilla", "Warangal Urban": "Hanumakonda",
+           "Warangal Rural": "Warangal"}
+APP = {"ap": ["Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu", "Annamayya", "Bapatla", "Chittoor", "Dr. B. R. Ambedkar Konaseema",
+              "East Godavari", "Eluru", "Guntur", "Kakinada", "Krishna", "Kurnool", "Markapuram", "Nandyal", "NTR", "Palnadu",
+              "Parvathipuram Manyam", "Polavaram", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai", "Srikakulam", "Tirupati",
+              "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+       "ts": ["Adilabad", "Bhadradri Kothagudem", "Hanumakonda", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal",
+              "Kamareddy", "Karimnagar", "Khammam", "Kumuram Bheem Asifabad", "Mahabubabad", "Mahabubnagar", "Mancherial", "Medak",
+              "Medchal–Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla",
+              "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal", "Yadadri Bhuvanagiri"]}
+
 def main():
     ap = parse_ap(wikitext("List of mandals in Andhra Pradesh"))
     ts = parse_ts(wikitext("List of mandals in Telangana"))
@@ -99,7 +113,8 @@ def main():
         for d, n, t in rows:
             if not d or not n:
                 continue
-            d = re.sub(r"\s*district$", "", d, flags=re.I).strip()
+            d = re.sub(r"\s+", " ", re.sub(r"\s*district$", "", d.strip(), flags=re.I)).strip()
+            d = ALIASES.get(d, d)
             lst = data[key].setdefault(d, [])
             tn = te_name(te[t]) if t and t in te else ""
             if n.lower() not in [x[0].lower() for x in lst]:
@@ -109,6 +124,10 @@ def main():
         tot = sum(len(v) for v in data[key].values())
         withte = sum(1 for v in data[key].values() for x in v if x[1])
         report.append(f"{key}: {len(data[key])} districts, {tot} mandals, {withte} with Telugu names")
+    for key in ("ap", "ts"):
+        extra = [d for d in data[key] if d not in APP[key]]
+        missing = [d for d in APP[key] if d not in data[key]]
+        report.append(f"{key}: not in app {extra} · app districts without mandals {missing}")
     data["meta"] = {"source": "Wikipedia: List of mandals in Andhra Pradesh / Telangana (+ Telugu Wikipedia links)", "built": time.strftime("%Y-%m-%d")}
     dest = sys.argv[1] if len(sys.argv) > 1 else "web/data/mandals.json"
     json.dump(data, open(dest, "w"), ensure_ascii=False, separators=(",", ":"))
