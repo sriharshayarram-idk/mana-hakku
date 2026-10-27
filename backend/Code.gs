@@ -36,8 +36,10 @@
  *  - The same text cannot be posted twice within 10 minutes, and at most MAX_PER_HOUR reports are accepted per hour.
  *  - Grievance number: when a report is saved, the phone that saved it gets a private key ("edit_key", never shown
  *    to anyone else). Only that phone can later add the official grievance number (PGRS / Prajavani / CPGRAMS).
- *    Older reports (saved before keys existed) can be claimed once: the first phone to add a number gets the key,
- *    and the row is marked "claimed" in "grv_by" so you can check it. Clear grv_number / edit_key to undo a wrong claim.
+ *    Older reports (saved before keys existed) can only be given a number by you, the owner: run makeOwnerCode once
+ *    from the editor, copy the code from the Execution log, then on your phone tap the "Mana Hakku" title 7 times
+ *    and paste it. With the owner code your phone can add or correct the number on any report ("grv_by" = owner).
+ *    Run makeOwnerCode again any time to replace the code (the old one stops working on every phone).
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -429,8 +431,7 @@ function doGet(e) {
     grv_system: String(r[idx.grv_system] || ''),
     grv_number: String(r[idx.grv_number] || ''),
     grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || ''),
-    grv_by: String(r[idx.grv_by] || ''),
-    claimable: !r[idx.edit_key] && !r[idx.grv_number]
+    grv_by: String(r[idx.grv_by] || '')
   }));
   return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
@@ -475,6 +476,10 @@ function doPost(e) {
     }
   }
 
+  if (d.type === 'owner_check') {
+    return json_({ ok: isOwner_(d.code) });
+  }
+
   if (d.type === 'grievance') {
     const id = String(d.id || '').slice(0, 40), key = String(d.key || '');
     const system = GRV_SYSTEMS.indexOf(d.system) >= 0 ? d.system : 'other';
@@ -490,22 +495,16 @@ function doPost(e) {
       const k = ids.indexOf(id);
       if (k < 0) return json_({ ok: false, error: 'not_found' });
       const stored = String(sh.getRange(k + 2, idx.edit_key + 1).getValue() || '');
-      let newKey = '', by = 'owner_phone';
-      if (stored) {
-        if (stored !== key) return json_({ ok: false, error: 'not_allowed' });
-        if (String(sh.getRange(k + 2, idx.grv_by + 1).getValue() || '') === 'claimed') by = 'claimed';
-      } else {
-        // An older report without a key: the first phone to add a number claims it (owner can check and undo).
-        if (String(sh.getRange(k + 2, idx.grv_number + 1).getValue() || '')) return json_({ ok: false, error: 'not_allowed' });
-        newKey = Utilities.getUuid().replace(/-/g, '');
-        sh.getRange(k + 2, idx.edit_key + 1).setValue(newKey);
-        by = 'claimed';
-      }
+      const byNow = String(sh.getRange(k + 2, idx.grv_by + 1).getValue() || '');
+      let by;
+      if (isOwner_(key)) by = 'owner';                      // you: any report, old or new
+      else if (stored && stored === key && byNow !== 'claimed' && byNow !== 'owner') by = 'owner_phone';   // the phone that saved it
+      else return json_({ ok: false, error: 'not_allowed' });
       sh.getRange(k + 2, idx.grv_system + 1).setValue(system);
       sh.getRange(k + 2, idx.grv_number + 1).setValue(clip_(number, 40));
       sh.getRange(k + 2, idx.grv_date + 1).setValue(new Date().toISOString());
       sh.getRange(k + 2, idx.grv_by + 1).setValue(by);
-      return json_({ ok: true, key: newKey });
+      return json_({ ok: true });
     } finally {
       lock.releaseLock();
     }
@@ -561,6 +560,18 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// ---------- owner code: run makeOwnerCode once from the editor, copy the code from the Execution log ----------
+function isOwner_(code) {
+  const own = PropertiesService.getScriptProperties().getProperty('OWNER_CODE') || '';
+  return !!own && String(code || '') === own;
+}
+function makeOwnerCode() {
+  const code = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+  PropertiesService.getScriptProperties().setProperty('OWNER_CODE', code);
+  Logger.log('Your owner code (keep it private, do not share or screenshot): ' + code);
+  Logger.log('On your phone: tap the "Mana Hakku" title 7 times, paste this code, tap Save.');
 }
 
 // ---------- setup check: run this from the Apps Script editor (pick checkSetup → Run) and read the Execution log ----------
