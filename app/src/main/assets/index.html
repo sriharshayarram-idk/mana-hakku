@@ -593,7 +593,6 @@ dialog.pop[open]{display:flex;flex-direction:column}
   <div class="guide" id="guide" aria-labelledby="guide-h">
     <div class="introhead"><h2 id="guide-h" data-t="guideHomeH"></h2><button class="listen" type="button" data-speak="guide"></button></div>
     <p class="note" id="guide-ver"></p>
-    <div class="gnew" id="guide-new"></div>
     <div class="gcommon" id="guide-common"></div>
     <div class="gsteps" id="guide-body"></div>
   </div>
@@ -2636,12 +2635,11 @@ function renderGuide(){if(!$("guide-body"))return;const te=LANG==="te";
  const last=(()=>{try{return localStorage.getItem("mh-state")||"ap"}catch(e){return "ap"}})();
  const tabsNow=[...document.querySelectorAll("#tabs .tab")].map(b=>({v:b.dataset.view,label:t(b.dataset.t)}));
  $("guide-ver").textContent=t("guideVer").replace("{d}",new Date(CHANGELOG[0].d).toLocaleDateString(te?"te-IN":"en-IN",{day:"numeric",month:"long",year:"numeric"}))+" · "+facts;
- $("guide-new").innerHTML=`<p class="glbl">✨ ${esc(t("guideNew"))}</p><ul>${CHANGELOG[0][te?"te":"en"].map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
  $("guide-common").innerHTML=[["🔊",t("gcListen")],["అ/A",t("gcLang")],["⇄",t("gcState")],["💬",t("gcSuggest")]].map(([i,x])=>`<div class="gc1"><span>${esc(i)}</span><p>${esc(x)}</p></div>`).join("");
  $("guide-body").innerHTML=tabsNow.map((x,i)=>{const g=GUIDE[x.v];const steps=g?g[te?"te":"en"]:[t("guideNoText")];
   return `<article class="gcard"><div class="gch2"><span class="gn">${i+1}</span><span class="gi2">${svg(ICONS[g&&g.icon]||ICONS.star)}</span><h3>${esc(x.label)}</h3></div><ol>${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol><button type="button" class="btn ghost gopen" data-v="${x.v}">${esc(t("guideOpen").replace("{x}",x.label))} →</button></article>`}).join("");
  $("guide-body").querySelectorAll(".gopen").forEach(b=>b.onclick=()=>enterState(last,b.dataset.v));
- guideSpeech=`${t("guideHomeH")}. ${CHANGELOG[0][te?"te":"en"].join(". ")}. `+tabsNow.map((x,i)=>{const g=GUIDE[x.v];return `${i+1}. ${x.label}. ${g?g[te?"te":"en"].join(" "):""}`}).join(" ")}
+ guideSpeech=`${t("guideHomeH")}. `+tabsNow.map((x,i)=>{const g=GUIDE[x.v];return `${i+1}. ${x.label}. ${g?g[te?"te":"en"].join(" "):""}`}).join(" ")}
 function enterState(code,view){
  stopSpeak();ST=code==="ts"?"ts":"ap";try{localStorage.setItem("mh-state",ST)}catch(e){}
  applyStateData();document.body.dataset.state=ST;
