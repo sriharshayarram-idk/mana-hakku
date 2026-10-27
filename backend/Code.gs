@@ -281,7 +281,7 @@ function ltApply_(text, resp, protect) {
     if (cat === 'TYPOS') {
       if (tenglish || /^[A-Z]/.test(from) || /\d/.test(from) || from.length < 3) return;
       if (protect.some(w => w && w.toLowerCase() === from.toLowerCase())) return;
-      if (Math.abs(to.length - from.length) > 3 || to.toLowerCase()[0] !== from.toLowerCase()[0]) return;
+      if (to.toLowerCase()[0] !== from.toLowerCase()[0] || lev_(from.toLowerCase(), to.toLowerCase().replace(/ /g, '')) > 2) return;
     }
     if (to.length > from.length + 20) return;
     edits.push([m.offset, m.length, to]);
@@ -291,6 +291,18 @@ function ltApply_(text, resp, protect) {
   edits.forEach(e => { if (e[0] + e[1] <= lastStart) { out = out.slice(0, e[0]) + e[2] + out.slice(e[0] + e[1]); lastStart = e[0]; } });
   return out;
 }
+function lev_(a, b) {
+  const d = []; for (let i = 0; i <= a.length; i++) { d[i] = [i]; }
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+// Local words a spell-checker does not know (never "corrected").
+const LOCAL_WORDS = ['mandal', 'mandals', 'panchayat', 'panchayats', 'gram', 'sachivalayam', 'anganwadi', 'anganwadis', 'handpump', 'handpumps',
+  'borewell', 'borewells', 'tanda', 'thanda', 'gudem', 'palem', 'peta', 'puram', 'pally', 'palli', 'thanda', 'ward', 'mgnregs', 'nrega', 'aasara',
+  'pension', 'ration', 'tahsildar', 'tehsildar', 'mro', 'mpdo', 'vro', 'phc', 'chc', 'asha', 'anm', 'jagananna', 'rythu', 'bharosa', 'dharani',
+  'kalyana', 'lakshmi', 'aarogyasri', 'swachh', 'bharat', 'jal', 'jeevan', 'mission', 'crore', 'lakh', 'lakhs', 'acre', 'acres', 'kms', 'km'];
 // Corrects several texts at once. Returns the corrected texts in the same order (unchanged when the service is unreachable).
 function correctMany_(texts, protect) {
   const tidied = texts.map(tidy_);
@@ -303,7 +315,9 @@ function correctMany_(texts, protect) {
   return tidied;
 }
 function protectWords_(md) {
-  const w = [];
+  const w = LOCAL_WORDS.slice();
+  const kw = keywords_();
+  if (kw && kw.sectors) Object.keys(kw.sectors).forEach(k => (kw.sectors[k].kw || []).forEach(x => { if (/^[a-z]+$/i.test(x)) w.push(x); }));
   Object.keys(DISTRICTS).forEach(st => DISTRICTS[st].forEach(d => w.push.apply(w, d.split(/[\s.–-]+/))));
   if (md) ['ap', 'ts'].forEach(st => Object.keys(md[st] || {}).forEach(d => md[st][d].forEach(m => w.push.apply(w, m[0].split(/[\s()]+/)))));
   return w.filter(x => x.length >= 3);
