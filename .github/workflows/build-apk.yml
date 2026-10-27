@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check complaint-category detection
-        run: node tools/test_detect.js
+        run: node tools/test_detect.js && node tools/test_guide.js
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
