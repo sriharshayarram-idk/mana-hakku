@@ -43,6 +43,9 @@
  *  - Follow-up: the app checks back with the person 7 days after they file. Their answer (solved / work started /
  *    nothing happened) is shown publicly as "Reporter says ..." and kept in "reporter_says". Only the phone that saved
  *    the report (or you, with the owner code) can set it. The "status" column stays yours to set.
+ *  - Review: run setupReview once. Tick the "reviewed" box on a report in Reports after you have checked it (optional
+ *    short public note in "review_note"); the app then shows "✔ Checked by the moderator". The "Review" tab always lists
+ *    the reports you have not checked yet, most-flagged first.
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -54,7 +57,7 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date', 'grv_by', 'reporter_says', 'reporter_says_date'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date', 'grv_by', 'reporter_says', 'reporter_says_date', 'reviewed', 'review_note'];
 const OUTCOMES = ['solved', 'progress', 'none'];
 const GRV_SYSTEMS = ['pgrs', 'prajavani', 'cpgrams', 'other'];
 const FLAGS = 'Flags';
@@ -436,7 +439,9 @@ function doGet(e) {
     grv_number: String(r[idx.grv_number] || ''),
     grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || ''),
     grv_by: String(r[idx.grv_by] || ''),
-    reporter_says: OUTCOMES.indexOf(String(r[idx.reporter_says])) >= 0 ? String(r[idx.reporter_says]) : ''
+    reporter_says: OUTCOMES.indexOf(String(r[idx.reporter_says])) >= 0 ? String(r[idx.reporter_says]) : '',
+    reviewed: r[idx.reviewed] === true || /^(yes|y|true|✔|checked)$/i.test(String(r[idx.reviewed] || '').trim()),
+    review_note: String(r[idx.review_note] || '').slice(0, 140)
   }));
   return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
@@ -578,11 +583,12 @@ function doPost(e) {
     put('affected', Math.min(10000000, Math.max(1, parseInt(r.affected, 10) || 1))); put('urgency', r.urgency); put('status', 'reported');
     put('verify_level', Math.min(2, Math.max(0, Number(r.verify && r.verify.level) || 0))); put('outlets', clip_(outlets, 200));
     put('lang', r.lang === 'te' ? 'te' : 'en'); put('state', state); put('sub', sub || ''); put('sector_was', f.changed ? r.sector : ''); put('auto_fix', '');
-    put('hidden', ''); put('hide_reason', ''); put('flags', 0);
+    put('hidden', ''); put('hide_reason', ''); put('flags', 0); put('reviewed', false); put('review_note', '');
     const key = Utilities.getUuid().replace(/-/g, '');
     put('edit_key', key); put('grv_system', ''); put('grv_number', ''); put('grv_date', '');
     for (let i = 0; i < row.length; i++) if (row[i] === undefined) row[i] = '';
     sh.appendRow(row);
+    try { sh.getRange(sh.getLastRow(), idx.reviewed + 1).setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build()); } catch (e) {}
     return json_({ ok: true, id: id, key: key, sector: f.sector, corrected: f.changed, desc: desc, title: title, mandal: mandal, text_fixed: desc !== desc0 });
   } finally {
     lock.releaseLock();
@@ -600,6 +606,38 @@ function makeOwnerCode() {
   Logger.log('Your owner code (keep it private, do not share or screenshot): ' + code);
   Logger.log('On your phone: tap the "Mana Hakku" title 7 times, paste this code, tap Save.');
 }
+
+// ---------- review: run setupReview once from the editor (pick setupReview → Run) ----------
+function setupReview() {
+  const sh = sheet_(REPORTS, REPORT_COLS);
+  const idx = ensureColumns_(sh, REPORT_COLS);
+  // Tick boxes (validation only, so empty rows stay empty); existing yes/no values become ticked / unticked.
+  const rows = Math.max(sh.getMaxRows() - 1, sh.getLastRow() + 2000);
+  if (sh.getMaxRows() < rows + 1) sh.insertRowsAfter(sh.getMaxRows(), rows + 1 - sh.getMaxRows());
+  sh.getRange(2, idx.reviewed + 1, rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build());
+  const n = sh.getLastRow() - 1;
+  if (n > 0) {
+    const r = sh.getRange(2, idx.reviewed + 1, n, 1), ids = sh.getRange(2, idx.id + 1, n, 1).getValues();
+    r.setValues(r.getValues().map((v, i) => [ids[i][0] ? (v[0] === true || /^(yes|y|true|✔|checked)$/i.test(String(v[0]).trim())) : '']));
+  }
+  const col = c => colLetter_(idx[c] + 1);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let rv = ss.getSheetByName('Review');
+  if (!rv) rv = ss.insertSheet('Review');
+  rv.clear();
+  rv.getRange('A1').setValue('Reports not checked yet (most flagged first). To check one: go to Reports, find the row number below, tick "reviewed". This tab updates by itself.')
+    .setFontWeight('bold').setWrap(true);
+  rv.getRange('A2:K2').setValues([['row', 'id', 'created', 'state', 'district', 'mandal', 'place', 'sector', 'flags', 'reporter_says', 'desc']]).setFontWeight('bold');
+  const pick = ['id', 'created', 'state', 'district', 'mandal', 'place', 'sector', 'flags', 'reporter_says', 'desc'].map(c => 'Reports!' + col(c) + '2:' + col(c));
+  const rowsExpr = 'ROW(Reports!' + col('id') + '2:' + col('id') + ')';
+  const keep = '(Reports!' + col('id') + '2:' + col('id') + '<>"")*(Reports!' + col('reviewed') + '2:' + col('reviewed') + '<>TRUE)';
+  rv.getRange('A3').setFormula('=IFERROR(SORT(FILTER({' + rowsExpr + ',' + pick.join(',') + '},' + keep + '),9,FALSE,1,TRUE),"All reports are checked ✔")');
+  rv.setFrozenRows(2);
+  rv.setColumnWidth(11, 480);
+  rv.getRange('K:K').setWrap(true);
+  Logger.log('Review is ready: tick "reviewed" in Reports; the Review tab lists what is left.');
+}
+function colLetter_(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
 
 // ---------- setup check: run this from the Apps Script editor (pick checkSetup → Run) and read the Execution log ----------
 function checkSetup() {
