@@ -2,7 +2,7 @@ name: Probe
 on:
   workflow_dispatch:
     inputs:
-      titles: { description: "Wikipedia titles separated by |", required: true }
+      cmd: { description: "Command to run (its outputs in out/ are kept)", required: true }
 permissions:
   contents: write
 jobs:
@@ -11,7 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          IFS='|' read -ra T <<< "${{ github.event.inputs.titles }}"
-          python3 tools/probe_wiki.py "${T[@]}" | tee out_log.txt || true
-          mkdir -p out && mv out_log.txt out/
+          mkdir -p out
+          bash -c "${{ github.event.inputs.cmd }}" > out/log.txt 2>&1 || true
           cd out && git init -q -b probe && git add -A && git -c user.name=gha -c user.email=gha@users.noreply.github.com commit -qm probe && git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" probe
