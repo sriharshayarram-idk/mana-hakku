@@ -282,6 +282,21 @@ body{margin:0;-webkit-text-size-adjust:100%}
 .climb p{margin:2px 0 0;font-size:.9rem;color:var(--muted)}
 .climb .start{margin-left:8px;font-size:.75rem;font-weight:700;background:var(--ochre);color:#fff;border-radius:999px;padding:2px 8px}
 @media (max-width:420px){.govcards,.schemes{grid-template-columns:1fr}.climb li{margin-left:calc(var(--i) * 6px)}}
+.jnav{position:sticky;top:var(--tabs-h,0px);z-index:4;display:flex;gap:6px;overflow-x:auto;padding:8px 0;background:var(--bg);scrollbar-width:none}
+.jnav::-webkit-scrollbar{display:none}
+.jnav button{font:inherit;font-size:.86rem;font-weight:600;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px 6px 6px;display:flex;gap:6px;align-items:center;cursor:pointer}
+.jnav button.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}.jnav button.on b{background:#fff;color:var(--indigo)}
+.jnav b{width:22px;height:22px;border-radius:50%;background:var(--indigo);color:#fff;display:grid;place-items:center;font-size:.78rem}
+.journey{display:flex;flex-direction:column;position:relative}
+.jstep{position:relative;padding:0 0 22px 40px;scroll-margin-top:calc(var(--tabs-h,0px) + 60px)}
+.jstep::before{content:"";position:absolute;left:13px;top:30px;bottom:0;width:3px;background:var(--indigo-soft);border-radius:2px}
+.jstep:last-child::before{display:none}
+.jh{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.jh .an{position:absolute;left:0;top:0;width:29px;height:29px;border-radius:50%;background:var(--indigo);color:#fff;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 4px var(--bg)}
+.jh .at{flex:1;min-width:0;display:flex;flex-direction:column}
+.jh .at b{font-size:1.1rem;line-height:1.3}.jh .at small{color:var(--muted);font-size:.86rem;line-height:1.35}
+.jb{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.jstep#rs-help .jb,.jstep#rs-plan .jb{background:transparent;border:0;padding:0}
 .calls{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .call{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--surface);min-width:0}
 .call .num{font-family:var(--f-display);font-weight:700;font-size:1.35rem;color:var(--indigo);font-variant-numeric:tabular-nums;line-height:1.2}
@@ -1285,8 +1300,8 @@ const RX={
  schemeQ:["Government schemes that can help","సహాయపడే ప్రభుత్వ పథకాలు"],schemeSub:["Ask the office whether you are covered by these.","ఈ పథకాలు మీకు వర్తిస్తాయేమో కార్యాలయంలో అడగండి."],
  escQ:["Not solved? Go one step up","పరిష్కారం కాలేదా? ఒక మెట్టు పైకి వెళ్లండి"],escSub:["Start at step 1. Go to the next step only if nothing happens.","1వ మెట్టుతో మొదలుపెట్టండి. ఏ చర్యా లేకపోతేనే తర్వాతి మెట్టుకు వెళ్లండి."],
  startHere:["Start here","ఇక్కడ మొదలుపెట్టండి"],
- glanceH:["At a glance · tap a box to see more","ఒక్క చూపులో · మరిన్ని వివరాలకు బాక్స్ నొక్కండి"],tWho:["Responsible office","బాధ్యత గల కార్యాలయం"],tRight:["Your right","మీ హక్కు"],tWhere:["Complain first at","ముందుగా ఫిర్యాదు ఇక్కడ"],
- guideH:["Full guide · tap a heading to open or close","పూర్తి మార్గదర్శి · తెరవడానికి/మూయడానికి శీర్షిక నొక్కండి"],
+ glanceH:["At a glance","ఒక్క చూపులో"],tWho:["Responsible office","బాధ్యత గల కార్యాలయం"],tRight:["Your right","మీ హక్కు"],tWhere:["Complain first at","ముందుగా ఫిర్యాదు ఇక్కడ"],
+ guideH:["Full guide","పూర్తి మార్గదర్శి"],jPlan:["Plan","ప్రణాళిక"],jWho:["Who","ఎవరు"],jRight:["Rights","హక్కులు"],jSch:["Schemes","పథకాలు"],jEsc:["Escalate","పైకి ఫిర్యాదు"],jHelp:["Helplines","హెల్ప్‌లైన్"],
  helpQ:["Helpline numbers","హెల్ప్‌లైన్ నంబర్లు"],helpSub:["Free to call. Tap a number to call it.","కాల్ ఉచితం. కాల్ చేయడానికి నంబర్‌ను తాకండి."],
  termsQ:["Words explained","పదాల అర్థం"],
  yourProblem:["Your problem","మీ సమస్య"],first:["Do this first","ముందుగా ఇది చేయండి"],
@@ -1390,7 +1405,7 @@ function renderResult(r){
  const loc=[dName(r.district),r.mandal?mName(r.mandal)+" "+t("mandal"):"",r.place].filter(Boolean);
  const subName=r.sub&&S[k].subs&&S[k].subs[r.sub]?L(S[k].subs[r.sub].name):"";
  const PH=[["d7","ph1",s.plan.now],["d30","ph2",s.plan.d30],["d90","ph3",s.plan.d90]];
- const acc=(id,n,icon,title,sub,count,body,open,listenId)=>`<details class="acc" id="rs-${id}"${open?" open":""}><summary><span class="an">${n}</span><span class="ai">${svg(ICONS[icon])}</span><span class="at"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</span>${count?`<span class="ac">${count}</span>`:""}<span class="chev" aria-hidden="true"></span></summary><div class="ab">${listenId&&TTS?`<div class="alisten">${miniListen(listenId)}</div>`:""}${body}</div></details>`;
+ const acc=(id,n,icon,title,sub,count,body,open,listenId)=>`<section class="jstep" id="rs-${id}"><div class="jh"><span class="an">${n}</span><span class="at"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</span>${listenId?miniListen(listenId):""}</div><div class="jb">${body}</div></section>`;
  const tile=(go,icon,lbl,val,extra,cls)=>`<button type="button" class="tile ${cls||""}" data-go="${go}"><span class="ti">${svg(ICONS[icon])}</span><span class="tl2">${esc(lbl)}</span><span class="tv">${esc(val)}</span>${extra?`<span class="tx">${extra}</span>`:""}</button>`;
  const L0=LADDER[0];
  $("r-result").innerHTML=`<article class="result" aria-live="polite">
@@ -1409,8 +1424,8 @@ function renderResult(r){
    ${tile("right","social",R("tRight"),artL(s.law[0][0]),esc(s.law[0][1]),"")}
    ${tile("esc","stairs",R("tWhere"),L(L0[0]),L0[2]?`☎ ${fmtNum(L0[2])}`:"","")}
   </div></section>
-  <p class="guideh">${esc(R("guideH"))}</p>
-  <div class="accs">
+  <nav class="jnav" aria-label="${esc(R("guideH"))}">${[["plan","jPlan"],["who","jWho"],["right","jRight"],["schemes","jSch"],["esc","jEsc"],["help","jHelp"]].map(([g,k],i)=>`<button type="button" data-go="${g}"><b>${i+1}</b>${esc(R(k))}</button>`).join("")}</nav>
+  <div class="journey">
   ${acc("plan",1,"todo",R("doQ"),R("doSub"),PH.reduce((a,x)=>a+x[2].length,0),`<div class="phases">${PH.map(([key,cls,items],pi)=>`<div class="phase ${cls}"><div class="phh"><span class="phn">${pi+1}</span>${esc(R(key))}</div><ul class="chk">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>`,true,"todo")}
   ${acc("who",2,"who",R("whoQ"),R("whoSub"),s.ap.length+s.un.length,`<div class="govcards"><div class="gc"><p class="gch">🏛️ ${esc(R("stateGov"))}</p>${s.ap.map(x=>`<div class="gi">${esc(x)}</div>`).join("")}</div><div class="gc cen"><p class="gch">🇮🇳 ${esc(R("centralGov"))}</p>${s.un.map(x=>`<div class="gi">${esc(x)}</div>`).join("")}</div></div>`,false,"who")}
   ${acc("right",3,"social",R("rightQ"),R("rightSub"),s.law.length,`<div class="rights">${s.law.map(([a,b])=>`<div class="art"><span class="badge">${esc(artL(a))}</span><span>${esc(b)}</span></div>`).join("")}</div><p class="hr"><b>${esc(R("humanRights"))}:</b> ${esc(s.hr)}</p>`,false,"right")}
@@ -1421,7 +1436,9 @@ function renderResult(r){
   </div>
   <section class="card actions">${footerHTML()}</section>
  </article>`;
- $("r-result").querySelectorAll(".tile").forEach(b=>b.onclick=()=>{const d=$("rs-"+b.dataset.go);if(!d)return;d.open=true;d.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
+ try{const tb=$("tabs"),st=tb&&getComputedStyle(tb).position==="sticky"&&tb.parentElement===document.body;document.documentElement.style.setProperty("--tabs-h",(st?tb.offsetHeight:0)+"px")}catch(e){}
+ try{if(window.IntersectionObserver){const nb=[...$("r-result").querySelectorAll(".jnav button")];const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){const id=en.target.id.slice(3);nb.forEach(x=>{const on=x.dataset.go===id;x.classList.toggle("on",on);if(on)x.scrollIntoView({block:"nearest",inline:"center"})})}})},{rootMargin:"-30% 0px -60% 0px"});$("r-result").querySelectorAll(".jstep").forEach(x=>io.observe(x))}}catch(e){}
+ $("r-result").querySelectorAll(".tile,.jnav button").forEach(b=>b.onclick=()=>{const d=$("rs-"+b.dataset.go);if(d)d.scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
  $("r-result").querySelectorAll(".subbtn").forEach(b=>b.onclick=()=>{subPick=[r.sector,b.dataset.sub];const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)});
  const kb=$("r-keep");if(kb)kb.onclick=()=>{keepChoice=r.fixedFrom;subPick=null;const r2=readForm();renderResult(r2);if(SHARED)runAutoSources(r2)};
   const lb=$("r-listen");if(lb)bindListen(lb,()=>resultSpeech(current)+(lastRefine&&lastRefine.key===refineKey()?"\n"+refineSpeech(lastRefine.j):""));
