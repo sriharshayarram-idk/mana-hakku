@@ -40,6 +40,9 @@
  *    from the editor, copy the code from the Execution log, then on your phone tap the "Mana Hakku" title 7 times
  *    and paste it. With the owner code your phone can add or correct the number on any report ("grv_by" = owner).
  *    Run makeOwnerCode again any time to replace the code (the old one stops working on every phone).
+ *  - Follow-up: the app checks back with the person 7 days after they file. Their answer (solved / work started /
+ *    nothing happened) is shown publicly as "Reporter says ..." and kept in "reporter_says". Only the phone that saved
+ *    the report (or you, with the owner code) can set it. The "status" column stays yours to set.
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -51,7 +54,8 @@
 
 const REPORTS = 'Reports';
 const SUGGESTIONS = 'Suggestions';
-const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date', 'grv_by'];
+const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'desc', 'affected', 'urgency', 'status', 'verify_level', 'outlets', 'lang', 'state', 'sub', 'sector_was', 'auto_fix', 'mandal', 'desc_original', 'title_original', 'rules_v', 'hidden', 'hide_reason', 'flags', 'edit_key', 'grv_system', 'grv_number', 'grv_date', 'grv_by', 'reporter_says', 'reporter_says_date'];
+const OUTCOMES = ['solved', 'progress', 'none'];
 const GRV_SYSTEMS = ['pgrs', 'prajavani', 'cpgrams', 'other'];
 const FLAGS = 'Flags';
 const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state'];
@@ -431,7 +435,8 @@ function doGet(e) {
     grv_system: String(r[idx.grv_system] || ''),
     grv_number: String(r[idx.grv_number] || ''),
     grv_date: r[idx.grv_date] instanceof Date ? r[idx.grv_date].toISOString() : String(r[idx.grv_date] || ''),
-    grv_by: String(r[idx.grv_by] || '')
+    grv_by: String(r[idx.grv_by] || ''),
+    reporter_says: OUTCOMES.indexOf(String(r[idx.reporter_says])) >= 0 ? String(r[idx.reporter_says]) : ''
   }));
   return json_({ ok: true, state: state, reports: rows, hidden: hidden });
 }
@@ -478,6 +483,28 @@ function doPost(e) {
 
   if (d.type === 'owner_check') {
     return json_({ ok: isOwner_(d.code) });
+  }
+
+  if (d.type === 'outcome') {
+    const id = String(d.id || '').slice(0, 40), key = String(d.key || ''), value = String(d.value || '');
+    if (!/^r[a-z0-9]{4,30}$/.test(id) || !/^[A-Za-z0-9]{16,40}$/.test(key) || OUTCOMES.indexOf(value) < 0) return json_({ ok: false, error: 'bad_request' });
+    const lock = LockService.getScriptLock();
+    lock.waitLock(10000);
+    try {
+      const sh = sheet_(REPORTS, REPORT_COLS);
+      const idx = ensureColumns_(sh, REPORT_COLS);
+      const ids = sh.getRange(2, idx.id + 1, Math.max(1, sh.getLastRow() - 1), 1).getValues().map(x => String(x[0]));
+      const k = ids.indexOf(id);
+      if (k < 0) return json_({ ok: false, error: 'not_found' });
+      const stored = String(sh.getRange(k + 2, idx.edit_key + 1).getValue() || '');
+      const byNow = String(sh.getRange(k + 2, idx.grv_by + 1).getValue() || '');
+      if (!isOwner_(key) && !(stored && stored === key && byNow !== 'claimed')) return json_({ ok: false, error: 'not_allowed' });
+      sh.getRange(k + 2, idx.reporter_says + 1).setValue(value);
+      sh.getRange(k + 2, idx.reporter_says_date + 1).setValue(new Date().toISOString());
+      return json_({ ok: true });
+    } finally {
+      lock.releaseLock();
+    }
   }
 
   if (d.type === 'grievance') {
