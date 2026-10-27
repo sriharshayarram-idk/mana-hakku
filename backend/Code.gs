@@ -529,12 +529,12 @@ function checkSetup() {
 
 // ---------- weekly backup: run setupBackup once from the editor (pick setupBackup → Run → allow) ----------
 function setupBackup() {
-  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'backup_').forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('backup_').timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(23).create();
-  backup_();
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'weeklyBackup').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('weeklyBackup').timeBased().onWeekDay(ScriptApp.WeekDay.SUNDAY).atHour(23).create();
+  weeklyBackup();
   Logger.log('Weekly backup is on: a copy of this Sheet is made every Sunday night (first copy made now).');
 }
-function backup_() {
+function weeklyBackup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   ss.copy(ss.getName() + ' · backup ' + Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd'));
 }
