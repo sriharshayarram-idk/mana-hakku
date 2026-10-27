@@ -458,3 +458,15 @@ function doPost(e) {
     lock.releaseLock();
   }
 }
+
+// ---------- setup check: run this from the Apps Script editor (pick checkSetup → Run) and read the Execution log ----------
+function checkSetup() {
+  const urls = [KEYWORDS_URL, MANDALS_URL, 'https://news.google.com/rss/search?q=Guntur&hl=en-IN&gl=IN&ceid=IN:en'];
+  urls.forEach(u => {
+    try { const r = UrlFetchApp.fetch(u, { muteHttpExceptions: true }); Logger.log('OK ' + r.getResponseCode() + ' ' + r.getContentText().length + ' chars  ' + u); }
+    catch (e) { Logger.log('FAILED ' + u + '  ->  ' + e); }
+  });
+  try { const r = UrlFetchApp.fetch('https://api.languagetool.org/v2/check', { method: 'post', muteHttpExceptions: true, payload: { text: 'no wter since july', language: 'en-GB' } }); Logger.log('LanguageTool ' + r.getResponseCode()); }
+  catch (e) { Logger.log('LanguageTool FAILED -> ' + e); }
+  Logger.log('keywords loaded: ' + !!keywords_() + ' · mandals loaded: ' + !!mandals_());
+}
