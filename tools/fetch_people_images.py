@@ -14,7 +14,7 @@ TITLES = {
  "Burgula Ramakrishna Rao": "Burgula Ramakrishna Rao", "Komaram Bheem": "Komaram Bheem", "Ravi Narayana Reddy": "Ravi Narayana Reddy",
  "Kaloji Narayana Rao": "Kaloji Narayana Rao", "P. V. Narasimha Rao": "P. V. Narasimha Rao",
  "Dasarathi Krishnamacharyulu": "Dasarathi Krishnamacharyulu", "Prof. K. Jayashankar": "Kothapalli Jayashankar"}
-FREE = re.compile(r"^(public domain|pd|cc0|cc[ -]by(-sa)?[ -]?[0-9.]*|cc by(-sa)? [0-9.]+( [a-z]+)?|gfdl.*)$", re.I)
+FREE = re.compile(r"^(godl[- ]india|public domain|pd|cc0|cc[ -]by(-sa)?[ -]?[0-9.]*|cc by(-sa)? [0-9.]+( [a-z]+)?|gfdl.*)$", re.I)
 def get(u):
     for _ in range(3):
         try:
@@ -45,6 +45,8 @@ for name, title in TITLES.items():
     if not ii["thumburl"].lower().endswith((".jpg", ".jpeg")):
         from PIL import Image; import io
         im = Image.open(io.BytesIO(data)).convert("RGB"); b = io.BytesIO(); im.save(b, "JPEG", quality=85); data = b.getvalue()
+    from PIL import Image; import io
+    im = Image.open(io.BytesIO(data)).convert("RGB"); im.thumbnail((320, 400)); b = io.BytesIO(); im.save(b, "JPEG", quality=80, optimize=True); data = b.getvalue()
     open(os.path.join(OUT, fn), "wb").write(data)
     credits[name] = {"file": "people/" + fn, "source": ii["descriptionurl"], "license": lic,
                      "artist": strip(md.get("Artist", {}).get("value", ""))[:120], "desc": strip(md.get("ImageDescription", {}).get("value", ""))[:160]}
