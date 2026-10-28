@@ -26,6 +26,16 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // Private release key: the build writes it from the GitHub Secrets MH_KEYSTORE_B64 / MH_KEYSTORE_PASS.
+        // It is never stored in the repository. Without those secrets the shared test key is used.
+        if (file("release.keystore").exists() && !System.getenv("MH_KEYSTORE_PASS").isNullOrEmpty()) {
+            create("private") {
+                storeFile = file("release.keystore")
+                storePassword = System.getenv("MH_KEYSTORE_PASS")
+                keyAlias = "manahakku"
+                keyPassword = System.getenv("MH_KEYSTORE_PASS")
+            }
+        }
     }
 
     buildTypes {
@@ -34,7 +44,7 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("shared")
+            signingConfig = signingConfigs.findByName("private") ?: signingConfigs.getByName("shared")
         }
     }
 

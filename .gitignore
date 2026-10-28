@@ -11,3 +11,6 @@ tools/promo/shots/
 tools/promo/fonts/
 tools/promo/qr.png
 node_modules/
+
+*.keystore.b64
+app/release.keystore

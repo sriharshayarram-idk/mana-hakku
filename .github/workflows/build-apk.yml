@@ -29,8 +29,20 @@ jobs:
         with:
           gradle-version: "8.9"
 
+      - name: Private signing key (from GitHub Secrets, if set)
+        env:
+          MH_KEYSTORE_B64: ${{ secrets.MH_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$MH_KEYSTORE_B64" ]; then echo "$MH_KEYSTORE_B64" | base64 -d > app/release.keystore; echo "Using the private release key"; else echo "No private key set: using the shared test key"; fi
+
       - name: Build APK
+        env:
+          MH_KEYSTORE_PASS: ${{ secrets.MH_KEYSTORE_PASS }}
         run: gradle :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Remove the key file
+        if: always()
+        run: rm -f app/release.keystore
 
       - name: Name the APK
         run: cp app/build/outputs/apk/release/app-release.apk "ManaHakku-v0.1.${{ github.run_number }}.apk"
