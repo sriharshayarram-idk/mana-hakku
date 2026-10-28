@@ -44,13 +44,14 @@ body{font-family:"Anek","Noto Sans Telugu","Noto Sans",sans-serif;color:#fff;pos
 .steps{display:flex;flex-direction:column;gap:22px;margin-top:50px}
 .step{display:flex;gap:26px;align-items:center;font-size:50px;font-weight:600}
 .step i{width:78px;height:78px;border-radius:50%;background:var(--ochre);color:var(--ind2);display:grid;place-items:center;font-style:normal;font-weight:800;flex:none}
+.duo{display:flex;gap:36px;margin-top:44px;align-items:flex-start}.card2{flex:1;border-radius:36px;overflow:hidden;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.4)}.card2 img{width:100%;display:block}
 .big{font-size:200px;font-weight:800;color:var(--ochre);line-height:1}
 </style></head><body>
 <div class="bg"></div><div class="dots"></div>
 <div class="brand"><i>హ</i><div>మన హక్కు <small>· Mana Hakku</small></div></div>
 
 <!-- 1 hook -->
-<section class="scene" data-s="0" data-e="6">
+<section class="scene" data-s="0" data-e="5.5">
  <div class="te" data-a="up" data-t=".2">మీ ఊరిలో <span class="hl">సమస్య</span> ఉందా?</div>
  <div class="en" data-a="up" data-t=".6">Is something missing in your village or ward?</div>
  <div class="icons">
@@ -62,7 +63,7 @@ body{font-family:"Anek","Noto Sans Telugu","Noto Sans",sans-serif;color:#fff;pos
 </section>
 
 <!-- 2 logo -->
-<section class="scene center" data-s="6" data-e="11.5">
+<section class="scene center" data-s="5.5" data-e="10.5">
  <div class="te m" data-a="up" data-t=".1">ఎవరికి చెప్పాలో తెలియదా?</div>
  <div class="en" data-a="up" data-t=".4">Don't know whom to tell?</div>
  <div class="logo" data-a="pop" data-t="1.3" style="margin-top:90px">హ</div>
@@ -71,51 +72,66 @@ body{font-family:"Anek","Noto Sans Telugu","Noto Sans",sans-serif;color:#fff;pos
  <div class="tag" data-a="up" data-t="2.6">ప్రతి అవసరానికి సరైన శాఖ, సరైన చట్టం<div class="en" style="font-size:32px;margin-top:10px">Every need, the right department, the right law</div></div>
 </section>
 
-<!-- 3 report -->
-<section class="scene" data-s="11.5" data-e="18.5">
- <div class="cap"><div class="te s" data-a="up" data-t=".1"><span class="hl">1 నిమిషంలో</span> సమస్య నమోదు</div>
- <div class="en" data-a="up" data-t=".35">Report a problem in a minute: district, mandal, village. Type or speak in Telugu.</div></div>
- <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/report.png" data-pan="1.4,6.6,.6"></div></div>
+<!-- 3 home: three big buttons -->
+<section class="scene" data-s="10.5" data-e="16">
+ <div class="cap"><div class="te s" data-a="up" data-t=".1"><span class="hl">సులభం:</span> మూడు పెద్ద బటన్లు</div>
+ <div class="en" data-a="up" data-t=".35">Simple to use: report a problem, see problems near you, know your rights.</div></div>
+ <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/home.png"></div></div>
 </section>
 
-<!-- 4 result -->
-<section class="scene" data-s="18.5" data-e="25.5">
+<!-- 4 report in 3 steps -->
+<section class="scene" data-s="16" data-e="23">
+ <div class="cap"><div class="te s" data-a="up" data-t=".1"><span class="hl">3 చిన్న దశల్లో</span> సమస్య చెప్పండి</div>
+ <div class="en" data-a="up" data-t=".35">Say what is wrong, where, and how serious. Type or speak in Telugu.</div></div>
+ <div class="steps" style="margin-top:10px">
+  <div class="step" data-a="up" data-t=".7"><i>1</i>సమస్య ఏమిటి? · రాయండి లేదా మాట్లాడండి</div>
+  <div class="step" data-a="up" data-t="1"><i>2</i>ఎక్కడ? · జిల్లా, మండలం, గ్రామం</div>
+  <div class="step" data-a="up" data-t="1.3"><i>3</i>ఎంత తీవ్రమైనది?</div>
+ </div>
+ <div class="duo">
+  <div class="card2" data-a="phone" data-t="1.6"><img src="shots/step1.png"></div>
+  <div class="card2" data-a="phone" data-t="2.2"><img src="shots/step3.png"></div>
+ </div>
+</section>
+
+<!-- 5 result -->
+<section class="scene" data-s="23" data-e="30">
  <div class="cap"><div class="te s" data-a="up" data-t=".1">బాధ్యత ఎవరిది? <span class="hl">మీ హక్కు</span> ఏమిటి?</div>
- <div class="en" data-a="up" data-t=".35">See the responsible department, your rights under the Constitution and a step-by-step plan.</div></div>
- <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/result.png" data-pan="1.2,6.8,.85"></div></div>
+ <div class="en" data-a="up" data-t=".35">First step, responsible office, your right and where to complain, in one look. Helplines if it is urgent.</div></div>
+ <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/result.png" data-pan="1.4,6.6,.75"></div></div>
 </section>
 
-<!-- 5 transparency -->
-<section class="scene" data-s="25.5" data-e="32.5">
+<!-- 6 transparency -->
+<section class="scene" data-s="30" data-e="36">
  <div class="cap"><div class="te s" data-a="up" data-t=".1">అన్ని సమస్యలు <span class="hl">అందరికీ</span> కనిపిస్తాయి</div>
- <div class="en" data-a="up" data-t=".35">Every report is public. Transparency is our strength. No names or phone numbers are ever taken.</div></div>
- <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/all.png" data-pan="1.2,6.8,.7"></div></div>
+ <div class="en" data-a="up" data-t=".35">Every report is public. No names or phone numbers are ever taken.</div></div>
+ <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/all.png" data-pan="1.2,5.6,.6"></div></div>
  <div class="note" style="text-align:center" data-a="up" data-t="1">ఉదాహరణ నివేదికలు చూపబడ్డాయి · Example reports shown</div>
 </section>
 
-<!-- 6 money -->
-<section class="scene" data-s="32.5" data-e="38.5">
- <div class="cap"><div class="te s" data-a="up" data-t=".1"><span class="hl">ప్రజా ధనం</span>: మన డబ్బు ఎక్కడికి?</div>
- <div class="en" data-a="up" data-t=".35">Praja Dhanam: the state's income, spending, savings, loans and interest, made simple.</div></div>
- <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/money.png" data-pan="1.2,5.8,.7"></div></div>
+<!-- 7 promised vs delivered -->
+<section class="scene" data-s="36" data-e="42.5">
+ <div class="cap"><div class="te s" data-a="up" data-t=".1">హామీ ఎప్పుడు? <span class="hl">పూర్తి</span> ఎప్పుడు?</div>
+ <div class="en" data-a="up" data-t=".35">Landmark projects of every district: promised date, status and cost, from government sources only.</div></div>
+ <div class="phone" data-a="phone" data-t=".5"><div class="notch"></div><div class="screen"><img src="shots/project.png" data-pan="1.6,5.8,.5"></div></div>
 </section>
 
-<!-- 7 rights -->
-<section class="scene" data-s="38.5" data-e="43.5">
- <div class="cap"><div class="te s" data-a="up" data-t=".1">మీ హక్కులు తెలుసుకోండి</div>
- <div class="en" data-a="up" data-t=".35">Know your rights. The Constitution in Telugu and English, inside the app.</div></div>
+<!-- 8 money + rights -->
+<section class="scene" data-s="42.5" data-e="48">
+ <div class="cap"><div class="te s" data-a="up" data-t=".1"><span class="hl">ప్రజా ధనం</span>, మీ హక్కులు</div>
+ <div class="en" data-a="up" data-t=".35">Where the state's money goes, made simple. Your rights and the Constitution in Telugu.</div></div>
  <div class="pills">
-  <span class="pill o" data-a="pop" data-t=".8">రాజ్యాంగం · PDF</span><span class="pill" data-a="pop" data-t="1.1">ప్రాథమిక హక్కులు</span><span class="pill" data-a="pop" data-t="1.4">చరిత్ర</span><span class="pill" data-a="pop" data-t="1.7">వార్తల తనిఖీ</span>
+  <span class="pill o" data-a="pop" data-t=".8">ప్రజా ధనం</span><span class="pill" data-a="pop" data-t="1">హక్కులు</span><span class="pill" data-a="pop" data-t="1.2">రాజ్యాంగం</span><span class="pill" data-a="pop" data-t="1.4">చరిత్ర</span><span class="pill" data-a="pop" data-t="1.6">వార్తల తనిఖీ</span>
  </div>
- <div class="phone" data-a="phone" data-t=".6" style="margin-top:40px;height:1150px"><div class="notch"></div><div class="screen"><img src="shots/rights.png" data-pan="1.4,4.6,.45"></div></div>
+ <div class="phone" data-a="phone" data-t=".6" style="margin-top:40px;height:1150px"><div class="notch"></div><div class="screen"><img src="shots/money.png" data-pan="1.4,5,.45"></div></div>
 </section>
 
-<!-- 8 CTA -->
-<section class="scene" data-s="43.5" data-e="54">
+<!-- 9 CTA -->
+<section class="scene" data-s="48" data-e="58">
  <div class="cta" data-a="up" data-t=".1">ఉపయోగించండి.<br><span class="hl">మీ అభిప్రాయం</span> చెప్పండి.</div>
  <div class="en" data-a="up" data-t=".5" style="font-size:42px">Use it. Tell us what to improve.</div>
  <div class="steps">
-  <div class="step" data-a="up" data-t="1.2"><i>1</i>మీ ఊరి సమస్య నమోదు చేయండి</div>
+  <div class="step" data-a="up" data-t="1.2"><i>1</i>మీ ఊరి సమస్య తెలపండి</div>
   <div class="step" data-a="up" data-t="1.6"><i>2</i>“సూచన ఇవ్వండి” నొక్కి చెప్పండి</div>
   <div class="step" data-a="up" data-t="2"><i>3</i>మీ వాళ్లకు షేర్ చేయండి</div>
  </div>
@@ -126,7 +142,7 @@ body{font-family:"Anek","Noto Sans Telugu","Noto Sans",sans-serif;color:#fff;pos
 <script>
 window.ready=new Promise(res=>window.addEventListener("load",()=>document.fonts.ready.then(()=>{setup();res(true)})));
 function setup(){
-const TOTAL=54;
+const TOTAL=58;
 var anim=[];
 function A(el,kf,start,dur,easing){const a=el.animate(kf,{delay:start*1000,duration:dur*1000,fill:"both",easing:easing||"cubic-bezier(.2,.8,.2,1)"});a.pause();anim.push(a)}
 document.querySelectorAll(".scene").forEach(sc=>{const s=+sc.dataset.s,e=+sc.dataset.e,len=e-s,f=.4/len;
