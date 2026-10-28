@@ -47,6 +47,8 @@
  *  - Review: run setupReview once. Tick the "reviewed" box on a report in Reports after you have checked it (optional
  *    short public note in "review_note"); the app then shows "✔ Checked by the moderator". The "Review" tab always lists
  *    the reports you have not checked yet, most-flagged first.
+ *  - Usage: the app counts how many people reach each step (Home, report steps 1-3, save, file) in the "Usage" tab,
+ *    one row per day and state. No phone id, no text, no place is sent: only the step name.
  *  - Weekly backup: run setupBackup once from the editor; a copy of this Sheet is then made every Sunday in your Drive.
  *
  * Every report is public as soon as it is saved. Each row has a "state" (ap or ts); the app shows one state at a time.
@@ -72,6 +74,11 @@ const SUGGESTIONS_PER_HOUR = 60, FLAGS_PER_HOUR = 120;
 const RULES_V = 2;            // raise this when the rules below change; older rows are re-checked automatically
 const GRAMMAR_PER_LOAD = 5;   // rows spell-checked per list load (keeps the app fast and within LanguageTool's free limit)
 const SUGGESTION_COLS = ['created', 'text', 'lang', 'state'];
+// Usage counts: how many people reach each step, per day. No phone id, no text, no place: only a step name and a count.
+const USAGE = 'Usage';
+const STEPS = { v_home: 'opened Home', r0: 'opened Report', r1: 'report step 1 done', r2: 'report step 2 done', r3: 'saw the result', save: 'saved a report',
+  file: 'opened File it officially', v_all: 'opened Problems', v_rights: 'opened Rights', v_dash: 'opened Area summary', v_money: 'opened Public money', v_news: 'opened News check', v_history: 'opened History' };
+const STEPS_PER_HOUR = 3000;
 
 const DISTRICTS = {
   ap: ['Alluri Sitharama Raju', 'Anakapalli', 'Ananthapuramu', 'Annamayya', 'Bapatla', 'Chittoor',
@@ -511,6 +518,25 @@ function doPost(e) {
     } finally {
       lock.releaseLock();
     }
+  }
+
+  if (d.type === 'step') {
+    const s = String(d.s || '');
+    if (!STEPS[s] || !rate_('st', '*', STEPS_PER_HOUR)) return json_({ ok: false });
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(3000)) return json_({ ok: false });
+    try {
+      const keys = Object.keys(STEPS), us = sheet_(USAGE, ['date', 'state'].concat(keys.map(k => STEPS[k])));
+      const head = us.getRange(1, 1, 1, us.getLastColumn()).getValues()[0].map(String);
+      keys.forEach(k => { if (head.indexOf(STEPS[k]) < 0) { head.push(STEPS[k]); us.getRange(1, head.length).setValue(STEPS[k]).setFontWeight('bold'); } });
+      const day = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd'), col = head.indexOf(STEPS[s]) + 1;
+      const last = us.getLastRow(), rows = last > 1 ? us.getRange(Math.max(2, last - 3), 1, Math.min(4, last - 1), 2).getValues() : [];
+      let row = -1;
+      rows.forEach((r, i) => { const dv = r[0] instanceof Date ? Utilities.formatDate(r[0], 'Asia/Kolkata', 'yyyy-MM-dd') : String(r[0]); if (dv === day && String(r[1]) === state) row = Math.max(2, last - 3) + i; });
+      if (row < 0) { us.appendRow([day, state]); row = us.getLastRow(); us.getRange(row, 1).setNumberFormat('@').setValue(day); }
+      const cell = us.getRange(row, col); cell.setValue((Number(cell.getValue()) || 0) + 1);
+      return json_({ ok: true });
+    } finally { lock.releaseLock(); }
   }
 
   if (d.type === 'owner_check') {

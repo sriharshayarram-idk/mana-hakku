@@ -15,7 +15,9 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@500;600;700&family=Hind+Guntur:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@500;600;700&family=Hind+Guntur:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@500;600;700&family=Hind+Guntur:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"></noscript>
 <style>
 /* Layout: single mobile-first column, sticky tab bar, cards only for results; indigo ink + turmeric accent on cool paper */
 :root{
@@ -1476,7 +1478,7 @@ $("lang-te").onclick=()=>setLang("te");$("lang-en").onclick=()=>setLang("en");
 
 // ---------- Tabs ----------
 const tabs=[...document.querySelectorAll(".tab")];
-function show(view){stopSpeak();const home=view==="home";try{if(window.AndroidScreen)AndroidScreen.secure(view==="dash"||view==="all")}catch(e){}tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["home","report","dash","all","money","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);
+function show(view){stopSpeak();try{trackStep(view==="report"?"r0":"v_"+view)}catch(e){}const home=view==="home";try{if(window.AndroidScreen)AndroidScreen.secure(view==="dash"||view==="all")}catch(e){}tabs.forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));["home","report","dash","all","money","news","rights","history"].forEach(v=>$("v-"+v).hidden=v!==view);
  $("tabs").hidden=false;closeMore();$("t-home").classList.toggle("on",home);$("t-more").classList.toggle("on",["dash","money","news","history"].includes(view));$("st-btn").hidden=home;if(view==="report"&&!current)wGo(1);$("home-eb").hidden=!home;if(SHARED)$("suggest").hidden=home;
  if(view==="money"){renderMoney();refreshFin()}if(view==="rights"){try{renderRightScore()}catch(e){}}if(view==="dash"){try{renderScore()}catch(e){}}
  if(home){document.querySelectorAll(".hsc").forEach(c=>c.classList.toggle("on",c.dataset.hs===gsState));renderGuide();try{$("g-q").placeholder=t("srchPh");renderG()}catch(e){}let last="";try{last=localStorage.getItem("mh-state")||""}catch(e){}document.querySelectorAll(".stcard").forEach(c=>c.classList.toggle("last",c.dataset.state===last))}
@@ -1795,7 +1797,7 @@ function repNo(id){const all=allData(false);const k=all.findIndex(x=>x.id===id);
 function complaintText(r){const s=sec(r.sector,r.sub),where=[r.place,r.mandal?mName(r.mandal)+" "+t("mandal"):"",dName(r.district)+" "+t("lDistrict")].filter(Boolean).join(", ");
  return `${t("lSub")}: ${t("lSubText").replace("{p}",s.name).replace("{w}",where)}\n\n${r.desc}\n\n${t("lBody1").replace("{w}",where).replace("{n}",num(r.affected))}\n${t("lBody3")}\n${[...s.plan.now].map((x,i)=>(i+1)+". "+x).join("\n")}`}
 let fileId="",fileStep=1;
-function fileOpen(id,step){const r=repById(id);if(!r)return;fileId=id;const f=FILINGS[id]||(FILINGS[id]={step:1,at:Date.now()});fileStep=step||Math.min(4,f.step||1);fileRender();const d=$("file-pop");try{if(!d.open)d.showModal()}catch(e){d.setAttribute("open","")}}
+function fileOpen(id,step){trackStep("file");const r=repById(id);if(!r)return;fileId=id;const f=FILINGS[id]||(FILINGS[id]={step:1,at:Date.now()});fileStep=step||Math.min(4,f.step||1);fileRender();const d=$("file-pop");try{if(!d.open)d.showModal()}catch(e){d.setAttribute("open","")}}
 function fileClose(){const d=$("file-pop");try{d.close()}catch(e){d.removeAttribute("open")}}
 $("file-x").onclick=fileClose;
 function fileRender(){const r=repById(fileId);if(!r)return fileClose();const f=FILINGS[fileId],s=sec(r.sector,r.sub),ch=FILE_CH().find(c=>c.k===f.ch);const b=$("file-body");
@@ -1921,11 +1923,11 @@ $("r-mandal").addEventListener("change",()=>{const o=$("r-mandal").value==="__ot
 let wStep=1;
 function wGo(n){const f0=$("wbar-fill");if(f0)f0.style.width=(n/3*100)+"%";const nx=document.querySelector(`#f-report .wstep[data-step="${n}"]`);if(nx&&nx.hidden){nx.classList.remove("win");void nx.offsetWidth;nx.classList.add("win")}wStep=n;document.querySelectorAll("#f-report .wstep").forEach(s=>s.hidden=+s.dataset.step!==n);document.querySelectorAll("#f-report .wsteps li").forEach(l=>{const i=+l.dataset.ws;l.classList.toggle("on",i===n);l.classList.toggle("done",i<n)})}
 function wTop(){const f=$("f-report");const y=f.getBoundingClientRect().top+window.scrollY-12;window.scrollTo({top:Math.max(0,y),behavior:reduceMotion()?"auto":"smooth"})}
-$("w-next1").onclick=()=>{const d=$("r-desc").value.trim();if(!d){toast(t("describeFirst"));$("r-desc").focus();return}if(!piiCheckForm()){toast(t("piiBlocked"));return}wGo(2);wTop();clearTimeout(secTimer);secSuggest(false)};
-$("w-next2").onclick=()=>{const r=readForm();if(!r.mandal){toast(t("mandalNeed"));$("r-mandal").focus();return}wGo(3);wTop()};
+$("w-next1").onclick=()=>{const d=$("r-desc").value.trim();if(!d){toast(t("describeFirst"));$("r-desc").focus();return}if(!piiCheckForm()){toast(t("piiBlocked"));return}trackStep("r1");wGo(2);wTop();clearTimeout(secTimer);secSuggest(false)};
+$("w-next2").onclick=()=>{const r=readForm();if(!r.mandal){toast(t("mandalNeed"));$("r-mandal").focus();return}trackStep("r2");wGo(3);wTop()};
 document.querySelectorAll("#f-report [data-wback]").forEach(b=>b.onclick=()=>{wGo(+b.dataset.wback);wTop()});
 $("r-district").addEventListener("change",()=>{try{localStorage.setItem("mh-dist-"+ST,$("r-district").value)}catch(e){}});
-$("f-report").addEventListener("submit",e=>{e.preventDefault();if(wStep<3){(wStep===1?$("w-next1"):$("w-next2")).click();return}const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!r.mandal){toast(t("mandalNeed"));$("r-mandal").focus();return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();if(secState.mode!=="confirmed"){subPick=null;keepChoice=null}
+$("f-report").addEventListener("submit",e=>{e.preventDefault();if(wStep<3){(wStep===1?$("w-next1"):$("w-next2")).click();return}trackStep("r3");const r=readForm();if(!r.desc){toast(t("describeFirst"));return}if(!r.mandal){toast(t("mandalNeed"));$("r-mandal").focus();return}if(!piiCheckForm()){toast(t("piiBlocked"));$("pii-warn").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"center"});return}$("ex-flag").hidden=true;stopSpeak();if(secState.mode!=="confirmed"){subPick=null;keepChoice=null}
  if(secState.mode==="suggested"){const d=detect(r.desc);clearTimeout(secTimer);renderConfirm(secState.key,secState.sub,d.rank||[],()=>finishPick());return}
  catMode="submit";const r0=readForm();if(r0.auto&&!r0.confident){renderChooser(r0);return}if(S[r0.sector].subs&&!r0.subSure){renderSubChooser(r0);return}renderResult(r0);if(SHARED)runAutoSources(r0);$("r-result").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"})});
 $("r-clear").onclick=()=>{$("f-report").reset();$("r-sector").value="auto";secReset();keepChoice=null;subPick=null;$("ex-flag").hidden=true;stopSpeak();$("r-result").innerHTML="";current=null;wGo(1);$("r-desc").focus()};
@@ -1957,6 +1959,8 @@ async function loadShared(){
  try{fileCheckIn()}catch(e){}
 }
 function devId(){let v="";try{v=localStorage.getItem("mh-dev")||""}catch(e){}if(!/^[A-Za-z0-9]{20,40}$/.test(v)){const a=new Uint8Array(16);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<16;i++)a[i]=Math.random()*256|0}v=[...a].map(x=>x.toString(16).padStart(2,"0")).join("");try{localStorage.setItem("mh-dev",v)}catch(e){}}return v}
+const STEP_SENT=new Set();
+function trackStep(s){if(!SHARED||STEP_SENT.has(s))return;STEP_SENT.add(s);try{fetch(REGISTER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"step",s,state:ST}),keepalive:true}).catch(()=>{})}catch(e){}}
 async function postRegister(payload){
  const res=await fetch(REGISTER_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...payload,dev:devId()})});
  return res.json();
@@ -1967,7 +1971,7 @@ function tidyText(x){let s=String(x||"").replace(/[ \t]+/g," ").replace(/\s*\n\s
  s=s.replace(/\s+([,.;:!?।])/g,"$1").replace(/([!?])\1+/g,"$1").replace(/\.{4,}/g,"...").replace(/,{2,}/g,",").replace(/([,;!?।])(?=[A-Za-z\u0C00-\u0C7F])/g,"$1 ");
  s=s.replace(/(^|(?<!\b(?:i\.e|e\.g|etc|vs|no|dr|mr|mrs|smt|st|approx))[.!?]\s+|\n)([a-z])/gi,(m,a,b)=>a+b.toUpperCase()).replace(/(^|\s)i(?=[\s',])/g,"$1I");
  if(s&&/[A-Za-z0-9\u0C00-\u0C7F)]$/.test(s))s+=".";return s}
-async function save(){
+async function save(){trackStep("save");
  if(!current)return;
  if(!piiCheckForm()||piiFound(current.desc+" "+current.place).length){toast(t("piiBlocked"));return}
  const btn=$("r-save");btn.disabled=true;
@@ -3126,7 +3130,7 @@ function renderHistory(){
  const tlCard=$("hi-tl-body").parentElement;if(!tlCard.querySelector("[data-ks]"))tlCard.insertAdjacentHTML("afterbegin",`<div class="q"><div class="qt"></div>${miniSpeak("tl")}</div>`);
  $("hi-people-body").innerHTML=PEOPLE.map((p,i)=>{const ev=PLIFE[p[0]]||[],ph=PPHOTO[p[0]],nm=LANG==="te"?p[1]:p[0];
   KS["pp"+i]=()=>`${nm}, ${L(p[2])}. ${LANG==="te"?p[4]:p[3]} ${ev.map(e=>(LANG==="te"?e[1]:e[0])+": "+(LANG==="te"?e[3]:e[2])).join(". ")}.`;
-  const pic=ph?`<img class="pimg" src="${esc(ph[0])}" alt="${esc(nm)}" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'pav big',textContent:this.alt.slice(0,1)}))">`:`<span class="pav big">${esc(nm.slice(0,1))}</span>`;
+  const pic=ph?`<img class="pimg" src="${esc(ph[0])}" alt="${esc(nm)}" decoding="async" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'pav big',textContent:this.alt.slice(0,1)}))">`:`<span class="pav big">${esc(nm.slice(0,1))}</span>`;
   return `<article class="person" data-pp="${i}"><div class="ptop">${pic}<div class="qt"><b>${esc(nm)}</b><span class="note">${esc(LANG==="te"?p[0]:p[1])}</span><span class="pyrs">${esc(L(p[2]))}</span></div>${miniSpeak("pp"+i)}</div><p class="pdesc">${esc(LANG==="te"?p[4]:p[3])}</p>
    ${ev.length?`<ol class="life">${ev.map(e=>`<li><span class="ly">${esc(LANG==="te"?e[1]:e[0])}</span><span class="le">${esc(LANG==="te"?e[3]:e[2])}</span></li>`).join("")}</ol>`:""}
    ${ph?`<p class="pcredit">${esc(t("photoL"))}: ${esc(ph[2]||"")}${ph[2]?" · ":""}${esc(ph[1])} · <a href="${esc(ph[3])}" target="_blank" rel="noopener">Wikimedia Commons</a></p>`:""}</article>`}).join("");
@@ -3581,6 +3585,7 @@ document.querySelectorAll("[data-ni]").forEach(b=>{const s=b.querySelector(".ni"
 document.querySelectorAll("[data-hico]").forEach(s=>{s.innerHTML=svg(ICONS[s.dataset.hico]||ICONS.star)});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-hc]");if(!b)return;e.preventDefault();if($("v-history").hidden)show("history");setTimeout(()=>{const d=document.querySelector("#hi-dist details.howchose");if(d){d.open=true;flashEl(d)}},60)});
 $("sc-dist").addEventListener("change",()=>{try{localStorage.setItem("mh-dist-"+ST,$("sc-dist").value)}catch(e){}renderScore()});
+if(location.protocol==="https:"&&!NATIVE&&"serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
 // ---------- Init ----------
 try{const ls=localStorage.getItem("mh-state");if(ls==="ts")ST="ts"}catch(e){}
 applyStateData();applyStatic();fillSelects();renderIndic();
@@ -3595,7 +3600,7 @@ if(SHARED){$("reg-note").hidden=false;$("d-refresh").hidden=false;$("suggest").h
 // change log below. A new tab shows up here automatically; tools/test_guide.js fails the build if a tab has no guide text
 // or the change log is not updated, so the guide always matches the app.
 const CHANGELOG=[
- {d:"2026-10-29",en:["District scorecard in Area summary: reports, solved, waiting, state money and the landmark project for any district"],te:["ప్రాంత సారాంశంలో జిల్లా స్కోర్‌కార్డ్: ఏ జిల్లాకైనా నివేదికలు, పరిష్కారం, వేచి ఉన్నవి, రాష్ట్ర నిధులు, ప్రముఖ ప్రాజెక్టు"]},
+ {d:"2026-10-29",en:["Faster on basic phones: the page shows before fonts load, photos load only when scrolled to, and the website opens instantly (even offline) after the first visit","Anonymous step counts (which step people reach; no phone id, no text, no place) to find where people get stuck","District scorecard in Area summary: reports, solved, waiting, state money and the landmark project for any district"],te:["సాధారణ ఫోన్లలో వేగంగా: ఫాంట్లు లోడ్ కాకముందే పేజీ కనిపిస్తుంది, ఫోటోలు స్క్రోల్ చేసినప్పుడే లోడ్ అవుతాయి, మొదటిసారి తర్వాత వెబ్‌సైట్ వెంటనే (ఆఫ్‌లైన్‌లోనూ) తెరుచుకుంటుంది","అజ్ఞాత దశల లెక్క (ప్రజలు ఏ దశ వరకు చేరారో మాత్రమే; ఫోన్ ఐడీ, వివరాలు, ప్రదేశం లేవు)","ప్రాంత సారాంశంలో జిల్లా స్కోర్‌కార్డ్: ఏ జిల్లాకైనా నివేదికలు, పరిష్కారం, వేచి ఉన్నవి, రాష్ట్ర నిధులు, ప్రముఖ ప్రాజెక్టు"]},
  {d:"2026-10-28",en:["Fairness: numbers wait for at least 5 reports; “How we chose these records” explains the rules; each phone can flag a report only once","Delivery record for landmark projects: started, promised, finished, cost then and now, from government sources only","Rights scorecard: how many problems rest on each right, how many were solved, how many waited over 30 days","Public money next to problems: what the state planned and spent on each kind of problem (RBI), and how many were reported and solved","Simpler app: 3 big buttons on Home, a bottom bar with Report · Problems · Rights · More","Report in 3 short steps; no example to clear first","Short result first; the full plan opens on tap","Rights and History open one section at a time","One search on Home for everything"],te:["న్యాయబద్ధత: కనీసం 5 నివేదికలు వచ్చాకే సంఖ్యలు; “ఈ రికార్డులను ఎలా ఎంచుకున్నాం”లో నియమాలు; ఒక ఫోన్ ఒక నివేదికపై ఒక్కసారే ఫిర్యాదు చేయగలదు","ప్రముఖ ప్రాజెక్టుల పనితీరు రికార్డు: ప్రారంభం, హామీ, పూర్తి, అప్పటి-ఇప్పటి ఖర్చు, ప్రభుత్వ ఆధారాలతోనే","హక్కుల స్కోర్‌కార్డ్: ఒక్కో హక్కుపై ఎన్ని సమస్యలు, ఎన్ని పరిష్కారం, ఎన్ని 30 రోజులకు పైగా వేచి ఉన్నాయి","సమస్యల పక్కనే ప్రజా ధనం: ఒక్కో రకం సమస్యకు రాష్ట్రం కేటాయించింది, ఖర్చు చేసింది (RBI), ఎన్ని నమోదయ్యాయి, ఎన్ని పరిష్కారమయ్యాయి","సులభమైన యాప్: హోమ్‌లో 3 పెద్ద బటన్లు, కింద తెలపండి · సమస్యలు · హక్కులు · మరిన్ని","3 చిన్న దశల్లో సమస్య తెలపండి; ముందుగా ఉదాహరణ తుడవనక్కర్లేదు","ముందుగా చిన్న ఫలితం; పూర్తి ప్రణాళిక నొక్కితే తెరుచుకుంటుంది","హక్కులు, చరిత్ర ఒక్కో విభాగం తెరుచుకుంటాయి","హోమ్‌లో అన్నింటికీ ఒకే వెతుకు"]},
  {d:"2026-10-27",en:["Complaint letter, grievance number and 7-day reminder to close the loop","Safety: report a problem with any post; false or abusive posts are hidden openly","Famous people now have photos and a life timeline (History)","Thank-you message after every report and suggestion","The result guide is always open, with a section bar to jump","The Sector box fills itself from your description; you confirm it","Mandal list for every district; spelling is corrected before saving"],te:["ఫిర్యాదు లేఖ, ఫిర్యాదు సంఖ్య, 7 రోజుల గుర్తు","భద్రత: ఏ పోస్టుపైనైనా సమస్యను తెలపవచ్చు; తప్పుడు, దూషించే పోస్టులు బహిరంగంగా దాచబడతాయి","ప్రముఖులకు చిత్రాలు, జీవిత కాలరేఖ (చరిత్ర)","ప్రతి నివేదిక, సూచన తర్వాత ధన్యవాద సందేశం","ఫలితం మార్గదర్శి ఎప్పుడూ తెరిచే ఉంటుంది, విభాగాలకు దూకే బార్‌తో","మీ వివరణ నుండి విభాగం ఆటోమేటిక్‌గా నిండుతుంది; మీరు నిర్ధారిస్తారు","ప్రతి జిల్లాకు మండలాల జాబితా; భద్రపరిచే ముందు అక్షర దోషాల సవరణ"]},
  {d:"2026-10-26",en:["Public money (Praja Dhanam) in 8 simple sections","Automatic news check with safe links only","All issues: every report from the start"],te:["ప్రజా ధనం 8 సులభ విభాగాల్లో","సురక్షిత లింకులతో ఆటోమేటిక్ వార్తల తనిఖీ","అన్ని సమస్యలు: మొదటి నుండి ప్రతి నివేదిక"]}
