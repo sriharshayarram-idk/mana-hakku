@@ -18,6 +18,6 @@ for line in open('tools/probe/urls.txt'):
             s=re.sub(r'(?s)<[^>]+>',' ',s); s=html.unescape(s)
             txt=re.sub(r'[ \t\r\f\v]+',' ',s); txt=re.sub(r'\n\s*\n+','\n',txt)
     except Exception as e: txt='ERR '+str(e)
-    open('out/t/'+k+'.txt','w').write(('URL '+u+'\n'+(r.stderr or '')+'\n'+txt)[:60000])
+    open('out/t/'+k+'.txt','w').write(('URL '+u+'\n'+(r.stderr or '')+'\n'+txt)[:3000000])
     os.remove(raw) if os.path.exists(raw) else None
     print(k, len(txt))

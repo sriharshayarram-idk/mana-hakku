@@ -1,3 +1,9 @@
-mha|https://www.mha.gov.in/sites/default/files/2022-08/CCSAP-REPORT-060111%5B1%5D.pdf
-martyrs4|https://www.culture.gov.in/files/inline-documents/Martyrs_Vol_4_06_03_2019_6.pdf
-akam|https://cmsadmin.amritmahotsav.nic.in/unsung-heroes-detail.htm?42=
+sfar_ts|https://cag.gov.in/uploads/download_audit_report/2021/English_SFAR%202019-20%20Telangana%20State-0622eea435a8313.67214654.pdf
+cag_pola|https://cag.gov.in/webroot/uploads/download_audit_report/2025/PA-on-Polavaram-Irrigation-Project-069aaece202fa02.61046831.pdf
+cag_kal5|https://cag.gov.in/uploads/download_audit_report/2024/08_Chapter-V_Execution-of-Kaleshwaram-Project-065cdab5633b085.36569039.pdf
+prlis|https://mahabubnagar.telangana.gov.in/prlis-palamuru-rangareddy-lift-irrigation-scheme/
+hmr|http://hmrl.telangana.gov.in/about-hmr.html
+hmr2|http://hmrl.telangana.gov.in/project-description.html
+mohua|https://www.mohua.gov.in/upload/uploadfiles/files/Hyd_Metro_PPT.pdf
+cwcprl|https://cwc.gov.in/en/file/40251/download?token=S0Cnf47t
+cag_ts22|https://cag.gov.in/webroot/uploads/download_audit_report/2021/00_AR_NO_4_of_2022_GS&ES_Telangana_(Full-Report)-065cdd22152c8b9.04865773.pdf
