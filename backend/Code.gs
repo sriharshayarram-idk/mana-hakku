@@ -34,6 +34,7 @@
  *  - Anyone can flag a report (false, abusive, personal details, duplicate, other). Flags go to the "Flags" sheet
  *    and are counted in the "flags" column. At AUTO_HIDE_FLAGS flags a report is hidden for review automatically.
  *  - The same text cannot be posted twice within 10 minutes, and at most MAX_PER_HOUR reports are accepted per hour.
+ *  - Each phone may send at most 6 reports, 5 suggestions and 10 flags an hour; a phone's flag counts once per report.
  *  - Grievance number: when a report is saved, the phone that saved it gets a private key ("edit_key", never shown
  *    to anyone else). Only that phone can later add the official grievance number (PGRS / Prajavani / CPGRAMS).
  *    Older reports (saved before keys existed) can only be given a number by you, the owner: run makeOwnerCode once
@@ -61,10 +62,13 @@ const REPORT_COLS = ['id', 'created', 'district', 'place', 'sector', 'title', 'd
 const OUTCOMES = ['solved', 'progress', 'none'];
 const GRV_SYSTEMS = ['pgrs', 'prajavani', 'cpgrams', 'other'];
 const FLAGS = 'Flags';
-const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state'];
+const FLAG_COLS = ['created', 'id', 'reason', 'note', 'state', 'dev'];
 const FLAG_REASONS = ['false', 'abusive', 'personal', 'duplicate', 'other'];
 const AUTO_HIDE_FLAGS = 5;    // public flags that hide a report until the owner reviews it
 const MAX_PER_HOUR = 60;      // reports accepted per hour (stops floods)
+// Per-phone limits (each app install sends a random phone id, never anything personal) and overall hourly caps.
+const DEV_REPORTS_PER_HOUR = 6, DEV_SUGGESTIONS_PER_HOUR = 5, DEV_FLAGS_PER_HOUR = 10;
+const SUGGESTIONS_PER_HOUR = 60, FLAGS_PER_HOUR = 120;
 const RULES_V = 2;            // raise this when the rules below change; older rows are re-checked automatically
 const GRAMMAR_PER_LOAD = 5;   // rows spell-checked per list load (keeps the app fast and within LanguageTool's free limit)
 const SUGGESTION_COLS = ['created', 'text', 'lang', 'state'];
@@ -447,15 +451,28 @@ function doGet(e) {
 }
 
 // ---------- write: a new report or a suggestion ----------
+// Counts actions per phone (or overall, with dev '*') in the current hour; false when the limit is reached.
+function rate_(bucket, dev, limit) {
+  if (!dev) return true;
+  const cache = CacheService.getScriptCache(), key = 'rl:' + bucket + ':' + dev + ':' + Math.floor(Date.now() / 3600000);
+  const n = Number(cache.get(key)) || 0;
+  if (n >= limit) return false;
+  cache.put(key, String(n + 1), 3700);
+  return true;
+}
+function devId_(d) { return String(d.dev || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 40); }
+
 function doPost(e) {
   let d;
   try { d = JSON.parse(e.postData.contents); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
+  const dev = devId_(d);
   const state = d.state === 'ts' || (d.report && d.report.state === 'ts') ? 'ts' : 'ap';
 
   if (d.type === 'suggestion') {
     const text = clip_(d.text, 1500).trim();
     if (!text) return json_({ ok: false, error: 'empty' });
     if (hasPersonalDetails_(text)) return json_({ ok: false, error: 'pii' });
+    if (!rate_('sg', dev, DEV_SUGGESTIONS_PER_HOUR) || !rate_('sg', '*', SUGGESTIONS_PER_HOUR)) return json_({ ok: false, error: 'busy' });
     const ss = sheet_(SUGGESTIONS, SUGGESTION_COLS);
     ensureColumns_(ss, SUGGESTION_COLS);
     ss.appendRow([new Date().toISOString(), text, d.lang === 'te' ? 'te' : 'en', state]);
@@ -467,6 +484,7 @@ function doPost(e) {
     const note = clip_(d.note, 300).trim();
     if (!/^r[a-z0-9]{4,30}$/.test(id)) return json_({ ok: false, error: 'bad_request' });
     if (note && hasPersonalDetails_(note)) return json_({ ok: false, error: 'pii' });
+    if (!rate_('fl', dev, DEV_FLAGS_PER_HOUR) || !rate_('fl', '*', FLAGS_PER_HOUR)) return json_({ ok: false, error: 'busy' });
     const lock = LockService.getScriptLock();
     lock.waitLock(10000);
     try {
@@ -475,12 +493,21 @@ function doPost(e) {
       const ids = sh.getRange(2, idx.id + 1, Math.max(1, sh.getLastRow() - 1), 1).getValues().map(x => String(x[0]));
       const k = ids.indexOf(id);
       if (k < 0) return json_({ ok: false, error: 'not_found' });
-      const cell = sh.getRange(k + 2, idx.flags + 1);
-      cell.setValue((Number(cell.getValue()) || 0) + 1);
       const fs = sheet_(FLAGS, FLAG_COLS);
-      ensureColumns_(fs, FLAG_COLS);
-      fs.appendRow([new Date().toISOString(), id, reason, note, state]);
-      return json_({ ok: true });
+      const fi = ensureColumns_(fs, FLAG_COLS);
+      // One phone counts once per report, so one person cannot hide a report by tapping again and again.
+      // Flags from old app versions (no phone id) are recorded for you to read but do not count towards auto-hide.
+      let counts = !!dev;
+      if (dev && fs.getLastRow() > 1) {
+        const prev = fs.getRange(2, 1, fs.getLastRow() - 1, fs.getLastColumn()).getValues();
+        if (prev.some(p => String(p[fi.id]) === id && String(p[fi.dev]) === dev)) counts = false;
+      }
+      if (counts) { const cell = sh.getRange(k + 2, idx.flags + 1); cell.setValue((Number(cell.getValue()) || 0) + 1); }
+      const frow = [];
+      frow[fi.created] = new Date().toISOString(); frow[fi.id] = id; frow[fi.reason] = reason; frow[fi.note] = note; frow[fi.state] = state; frow[fi.dev] = dev;
+      for (let i = 0; i < frow.length; i++) if (frow[i] === undefined) frow[i] = '';
+      fs.appendRow(frow);
+      return json_({ ok: true, counted: counts });
     } finally {
       lock.releaseLock();
     }
@@ -548,6 +575,7 @@ function doPost(e) {
   }
   const desc0 = clip_(r.desc, 1500).trim();
   if (!desc0) return json_({ ok: false, error: 'empty' });
+  if (!rate_('rp', dev, DEV_REPORTS_PER_HOUR)) return json_({ ok: false, error: 'busy' });
   if (hasPersonalDetails_([r.place, r.mandal, r.title, r.desc].join(' '))) return json_({ ok: false, error: 'pii' });
   const md = mandals_();
   const mandal = mandalCanon_(md, state, r.district, r.mandal) || clip_(tidy_(r.mandal).replace(/\.$/, ''), 40) || mandalIn_(md, state, r.district, r.place);
